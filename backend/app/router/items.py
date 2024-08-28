@@ -7,6 +7,7 @@ from sqlmodel import Field, SQLModel, select
 from .. import models
 from .. import deps
 from sqlmodel.ext.asyncio.session import AsyncSession
+from datetime import datetime, timedelta
 
 router = APIRouter(prefix="/items")
 
@@ -16,20 +17,23 @@ async def create_item(
     session: Annotated[AsyncSession, Depends(models.get_session)],
     current_user: models.User = Depends(deps.get_current_user),
 ) -> models.Item | None:
-    # Check if the current user is a merchant
-       
+    # ตรวจสอบสิทธิ์ของ current_user
     if  current_user != current_user:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only user can create items."
+            detail="Only active users can create items."
+        )
+    
+    # ตรวจสอบและตั้งค่า end_date หากไม่ได้กำหนด
+    if not item.end_date:
+        item.end_date = item.start_date + timedelta(days=5)
+    elif item.end_date < item.start_date:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="End date cannot be earlier than start date"
         )
 
-    # statement = select(models.DBUser).where(models.DBUser.id == current_user.id)
-    # result = await session.exec(statement)
-    # dbuser = result.one_or_none()
-
-
-    # Create the item
+    # สร้างไอเท็ม
     dbitem = models.DBItem.from_orm(item)
     dbitem.user_id = current_user.id
 

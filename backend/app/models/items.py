@@ -1,7 +1,7 @@
 from typing import Optional, List
 from pydantic import BaseModel, ConfigDict
 from sqlmodel import Relationship, SQLModel, Field
-
+import datetime
 
 from .users import *
 
@@ -10,7 +10,8 @@ class BaseItem(BaseModel):
     name: str
     description: Optional[str] = None
 
-    #datetime: datetime.datetime
+    start_date: datetime.date = datetime.date.today()
+    end_date: datetime.date = datetime.date.isocalendar
 
 
 class CreatedItem(BaseItem):
@@ -21,7 +22,6 @@ class UpdatedItem(BaseItem):
 
 class Item(BaseItem):
     id: int
-    
     user_id: int
 
 class DBItem(SQLModel, Item, table=True):
