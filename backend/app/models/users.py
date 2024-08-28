@@ -1,10 +1,15 @@
 
+from typing import TYPE_CHECKING, List
 import pydantic
 import bcrypt
 from pydantic import BaseModel , ConfigDict , EmailStr
 import datetime
 from sqlmodel import Relationship, SQLModel, Field
 
+
+if TYPE_CHECKING:
+    
+    from .items import DBItem
 
 class BaseUser(BaseModel):
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
@@ -90,7 +95,8 @@ class DBUser(BaseUser, SQLModel, table=True):
     register_date: datetime.datetime = Field(default_factory=datetime.datetime.now)
     updated_date: datetime.datetime = Field(default_factory=datetime.datetime.now)
     last_login_date: datetime.datetime | None = Field(default=None)
-
+    item: List["DBItem"] = Relationship(back_populates="user", cascade_delete=True)
+    
 
     async def has_roles(self, roles):
         for role in roles:
