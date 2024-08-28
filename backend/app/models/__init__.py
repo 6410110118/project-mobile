@@ -7,6 +7,8 @@ from typing import AsyncGenerator
 
 
 from .users import *
+from .items import *
+
 connect_args = {}
 
 engine = None
