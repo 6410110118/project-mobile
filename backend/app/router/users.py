@@ -7,8 +7,8 @@ from typing import Annotated
 
 from .. import deps
 from .. import models
-
-
+import math
+from sqlalchemy import func
 
 
 router = APIRouter(prefix="/users", tags=["users"])
@@ -19,33 +19,35 @@ def get_me(current_user: models.User = Depends(deps.get_current_user)) -> models
     return current_user
 
 
-# @router.get("/{user_id}")
-# async def get_user(
-#     user_id: str,
-#     session: Annotated[AsyncSession, Depends(models.get_session)],
-#     current_user: Annotated[models.User, Depends(deps.get_current_user)],
-# ) -> models.User:
-#     # Check if the current user is requesting their own information
-#     if user_id == str(current_user.id):
-#         return current_user
+SIZE_PER_PAGE = 50
+@router.get("")
+async def read_user(
+    session: Annotated[AsyncSession, Depends(models.get_session)],
+    current_user: models.User = Depends(deps.get_current_user),
+    page: int = 1,
     
-#     # If not, check if the current user has permission to view other users
-#     if not current_user.is_admin:  # Assuming there's an is_admin field
-#         raise HTTPException(
-#             status_code=status.HTTP_403_FORBIDDEN,
-#             detail="Not authorized to view other users' information",
-#         )
+) -> models.UserList:
+    query = select(models.DBUser).where(models.DBUser.id != current_user.id)
+    result = await session.exec(
+        query.offset((page - 1) * SIZE_PER_PAGE).limit(SIZE_PER_PAGE)
+    )
+    users = result.all() or []
     
-#     # If the current user is an admin, proceed to fetch the requested user
-#     user = await session.get(models.User, user_id)
     
-#     if not user:
-#         raise HTTPException(
-#             status_code=status.HTTP_404_NOT_FOUND,
-#             detail="User not found",
-#         )
     
-#     return user
+
+    page_count = int(
+        math.ceil(
+            (await session.exec(select(func.count(models.DBUser.id)))).first()
+            / SIZE_PER_PAGE
+        )
+    )
+
+    print("page_count", page_count)
+    print("users", users)
+    return models.UserList.from_orm(
+        dict(users=users, page_count=page_count, page=page, size_per_page=SIZE_PER_PAGE)
+    )
 
 
 @router.post("/create")

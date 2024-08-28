@@ -10,6 +10,7 @@ from sqlmodel import Relationship, SQLModel, Field
 if TYPE_CHECKING:
     
     from .items import DBItem
+    from.groups import DBGroup
 
 class BaseUser(BaseModel):
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
@@ -96,7 +97,10 @@ class DBUser(BaseUser, SQLModel, table=True):
     updated_date: datetime.datetime = Field(default_factory=datetime.datetime.now)
     last_login_date: datetime.datetime | None = Field(default=None)
     item: List["DBItem"] = Relationship(back_populates="user", cascade_delete=True)
+    group: List["DBGroup"] = Relationship(back_populates="user", cascade_delete=True)
     
+
+
 
     async def has_roles(self, roles):
         for role in roles:
@@ -114,3 +118,11 @@ class DBUser(BaseUser, SQLModel, table=True):
         return bcrypt.checkpw(
             plain_password.encode("utf-8"), self.password.encode("utf-8")
         )
+    
+class UserList(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    users: List[User]
+    page: int
+    page_count: int
+    
+    size_per_page: int
