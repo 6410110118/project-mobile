@@ -64,21 +64,24 @@ async def read_items(
 
 @router.put("/{item_id}")
 async def update_item(
-    item_id: int, item: Annotated[models.UpdatedItem, Depends()], 
+    item_id: int, 
+    item: models.UpdatedItem, 
     session: Annotated[AsyncSession, Depends(models.get_session)],
     current_user: models.User = Depends(deps.get_current_user),
     ) -> models.Item:
-    print("update_item", item)
-    data = item.dict(exclude_unset=True)
-    db_item = await session.get(models.DBItem, item_id)
-    if not db_item:
-        raise HTTPException(status_code=404, detail="Item not found")
-    for key, value in data.items():
-        setattr(db_item, key, value)
-    session.add(db_item)
-    await session.commit()
-    await session.refresh(db_item)
-    return models.Item.from_orm(db_item)
+    result = await session.exec(
+        select(models.DBItem).where(models.DBItem.id == item_id)
+    )
+    db_item = result.one_or_none()
+
+    
+    if  db_item:
+        db_item.sqlmodel_update(item)
+        session.add(db_item)
+        await session.commit()
+        await session.refresh(db_item)
+        return models.Item.from_orm(db_item)
+    raise HTTPException(status_code=404, detail="Item not found")
 
 @router.delete("/{item_id}")
 async def delete_item(
@@ -86,9 +89,14 @@ async def delete_item(
     session: Annotated[AsyncSession, Depends(models.get_session)],
     current_user: models.User = Depends(deps.get_current_user),
     ) -> dict:
-    db_item = await session.get(models.DBItem, item_id)
-    if not db_item:
-        raise HTTPException(status_code=404, detail="Item not found")
-    await session.delete(db_item)
-    await session.commit()
-    return {"message": "Item deleted successfully"}
+    result = await session.exec(
+        select(models.DBItem).where(models.DBItem.id == item_id)
+    )
+    db_item = result.one_or_none()
+    
+    if db_item:
+        await session.delete(db_item)
+        await session.commit()
+        
+        return dict(message="delete success")
+    raise HTTPException(status_code=404, detail="Item not found")
