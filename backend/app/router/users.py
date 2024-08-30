@@ -200,11 +200,14 @@ async def change_password(
 
 @router.delete("/{user_id}")
 async def delete_user(
-    user_id: int,
+   
     current_user: Annotated[models.User, Depends(deps.get_current_user)],
     session: Annotated[AsyncSession, Depends(models.get_session)],
 ) -> dict:
-    db_user = await session.get(models.DBUser, user_id)
+    result = await session.exec(
+        select(models.DBUser).where(models.DBUser.id == current_user.id)
+    )
+    db_user = result.one_or_none()
     if db_user:
         await session.delete(db_user)
         await session.commit()
