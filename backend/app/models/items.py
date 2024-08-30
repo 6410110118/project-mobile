@@ -4,6 +4,7 @@ from sqlmodel import Relationship, SQLModel, Field
 import datetime
 
 from .users import *
+from .leaders import *
 
 class BaseItem(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -22,6 +23,7 @@ class UpdatedItem(BaseItem):
 
 class Item(BaseItem):
     id: int
+    role: UserRole
     user_id: int
 
 class DBItem(SQLModel, Item, table=True):
@@ -31,6 +33,10 @@ class DBItem(SQLModel, Item, table=True):
 
     user_id: int = Field( default=None, foreign_key="users.id")
     user: DBUser | None = Relationship(back_populates="item")
+    role: UserRole = Field(default=None)
+    # leader_id: int = Field(default=None, primary_key=True)
+    # leader: DBLeader | None = Relationship(back_populates="item")
+
 
 class ItemList(BaseModel):
     model_config = ConfigDict(from_attributes=True)

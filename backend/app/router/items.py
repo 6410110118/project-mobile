@@ -21,7 +21,7 @@ async def create_item(
     if  current_user != current_user:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only active users can create items."
+            detail="You is not current user."
         )
     
     # ตรวจสอบและตั้งค่า end_date หากไม่ได้กำหนด
@@ -36,7 +36,7 @@ async def create_item(
     # สร้างไอเท็ม
     dbitem = models.DBItem.from_orm(item)
     dbitem.user_id = current_user.id
-
+    dbitem.role = current_user.role
     session.add(dbitem)
     await session.commit()
     await session.refresh(dbitem)
