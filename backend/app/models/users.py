@@ -5,12 +5,19 @@ import bcrypt
 from pydantic import BaseModel , ConfigDict , EmailStr
 import datetime
 from sqlmodel import Relationship, SQLModel, Field
-
+from enum import Enum
 
 if TYPE_CHECKING:
     
     from .items import DBItem
     from.groups import DBGroup
+    from .add_user_to_groups import DBAddUserToGroup
+    from .leaders import DBLeader
+    from .peoples import DBPeople
+
+class UserRole(str, Enum):
+    leader = "Leader"
+    people= "People"
 
 class BaseUser(BaseModel):
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
@@ -22,7 +29,7 @@ class BaseUser(BaseModel):
 
 class User(BaseUser):
     id: int
-    
+    role:UserRole
 
     last_login_date: datetime.datetime | None = pydantic.Field(
         json_schema_extra=dict(example="2023-01-01T00:00:00.000000"), default=None
@@ -91,13 +98,16 @@ class DBUser(BaseUser, SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
 
     password: str
-    
+    role: UserRole = Field(default=None)
 
     register_date: datetime.datetime = Field(default_factory=datetime.datetime.now)
     updated_date: datetime.datetime = Field(default_factory=datetime.datetime.now)
     last_login_date: datetime.datetime | None = Field(default=None)
     item: List["DBItem"] = Relationship(back_populates="user", cascade_delete=True)
     group: List["DBGroup"] = Relationship(back_populates="user", cascade_delete=True)
+    add_user_to_group: List["DBAddUserToGroup"] = Relationship(back_populates="user", cascade_delete=True)
+    leader: List["DBLeader"] = Relationship(back_populates="user", cascade_delete=True)
+    people: List["DBPeople"] = Relationship(back_populates="user", cascade_delete=True)
     
 
 
