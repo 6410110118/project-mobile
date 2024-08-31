@@ -12,7 +12,20 @@ class BaseItem(BaseModel):
     description: Optional[str] = None
 
     start_date: datetime.date = datetime.date.today()
-    end_date: datetime.date = datetime.date.isocalendar
+    expiration_days: int  # จำนวนวันที่หมดอายุที่ต้องป้อนเข้ามา
+    end_date: datetime.date  # ฟิลด์ที่จะคำนวณ
+
+    @root_validator(pre=True)
+    def calculate_end_date(cls, values):
+        start_date = values.get('start_date', datetime.date.today())
+        expiration_days = values.get('expiration_days')
+        end_date = values.get('end_date')
+        
+        if expiration_days is not None:
+            values['end_date'] = start_date + datetime.timedelta(days=expiration_days)
+        return values
+        else :
+            return values = start_date + datetime.timedelta(days=7)
 
 
 class CreatedItem(BaseItem):
