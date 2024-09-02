@@ -3,8 +3,9 @@ from . import authentications
 from . import items
 from . import item_activities
 from . import groups
-from . import add_user_to_groups
+# from . import add_user_to_groups
 from . import leaders
+from . import peoples
 def init_router(app):
 
     app.include_router(users.router)
@@ -12,5 +13,6 @@ def init_router(app):
     app.include_router(items.router)
     app.include_router(item_activities.router)
     app.include_router(groups.router)
-    app.include_router(add_user_to_groups.router)
+    # app.include_router(add_user_to_groups.router)
     app.include_router(leaders.router)
+    app.include_router(peoples.router)
