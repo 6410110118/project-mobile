@@ -32,24 +32,6 @@ async def update_people(
 
 
 
-# @router.delete("/{people_id}")
-# async def delete_people(
-#     people_id: int,
-#     current_user: Annotated[models.User, Depends(deps.get_current_user)],
-#     session: Annotated[AsyncSession, Depends(models.get_session)],
-# ) -> dict:
-#     if current_user.role != "People":
-#         raise HTTPException(status_code=403, detail="Only one person can delete")
-#     result = await session.execute(
-#         select(models.DBPeople).where(models.DBPeople.id == people_id)
-#     )
-#     db_people = result.scalar_one_or_none()
-    
-#     if not db_people:
-#         raise HTTPException(status_code=404, detail="People not found")
-    
-#     await session.delete(db_people)
-#     await session.commit()
 
-#     return {"message": "People deleted successfully"}
+
 

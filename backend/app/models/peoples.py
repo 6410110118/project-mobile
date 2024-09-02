@@ -4,13 +4,15 @@ from pydantic import BaseModel, ConfigDict
 from sqlmodel import Field, SQLModel,Relationship
 
 from .users import *
+from .groups import DBGroup
 
 
 class BasePeople(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    name: str
-    description: str | None = None
+    firstname: str
+    
+    lastname: str
     
     
 class CreatedPeople(BasePeople):
@@ -30,6 +32,8 @@ class DBPeople(BasePeople, SQLModel, table=True):
     
     user_id: int = Field(default=None, foreign_key="users.id")
     user: DBUser | None = Relationship(back_populates="people")
+    group_id: int | None = Field(default=None, foreign_key="groups.id" ,nullable=True)
+    group: Optional["DBGroup"] = Relationship(back_populates="people")
 
  
     
