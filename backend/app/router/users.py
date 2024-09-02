@@ -15,8 +15,9 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 
 @router.get("/me")
-def get_me(current_user: models.User = Depends(deps.get_current_user)) -> models.User:
-    return current_user
+def get_me( session: Annotated[AsyncSession, Depends(models.get_session)],current_user: models.User = Depends(deps.get_current_user)) -> models.User:
+    
+        return current_user 
 
 
 SIZE_PER_PAGE = 50

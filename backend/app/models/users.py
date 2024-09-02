@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     
     from .items import DBItem
     from.groups import DBGroup
-    from .add_user_to_groups import DBAddUserToGroup
+    # from .add_user_to_groups import DBAddUserToGroup
     from .leaders import DBLeader
     from .peoples import DBPeople
 
@@ -104,8 +104,8 @@ class DBUser(BaseUser, SQLModel, table=True):
     updated_date: datetime.datetime = Field(default_factory=datetime.datetime.now)
     last_login_date: datetime.datetime | None = Field(default=None)
     item: List["DBItem"] = Relationship(back_populates="user", cascade_delete=True)
-    group: List["DBGroup"] = Relationship(back_populates="user", cascade_delete=True)
-    add_user_to_group: List["DBAddUserToGroup"] = Relationship(back_populates="user", cascade_delete=True)
+    # group: List["DBGroup"] = Relationship(back_populates="user", cascade_delete=True)
+    # add_user_to_group: List["DBAddUserToGroup"] = Relationship(back_populates="user", cascade_delete=True)
     leader: List["DBLeader"] = Relationship(back_populates="user", cascade_delete=True)
     people: List["DBPeople"] = Relationship(back_populates="user", cascade_delete=True)
     
