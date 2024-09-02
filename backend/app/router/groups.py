@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, status
+from sqlalchemy import func
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import select
 
@@ -6,7 +7,43 @@ from typing import Annotated
 from .. import deps
 from .. import models
 
+import math
+
 router = APIRouter(prefix="/groups", tags=["groups"])
+
+SIZE_PER_PAGE = 50
+@router.get("")
+async def read_group(
+    session: Annotated[AsyncSession, Depends(models.get_session)],
+    current_user: models.User = Depends(deps.get_current_user),
+    page: int = 1,
+    
+) -> models.GroupList:
+    dbleader = (await session.exec(
+        select(models.DBLeader).where(models.DBLeader.user_id == current_user.id)
+    )).one_or_none()
+
+    query = select(models.DBGroup).where(models.DBGroup.leader_id == dbleader.id)
+    result = await session.exec(
+        query.offset((page - 1) * SIZE_PER_PAGE).limit(SIZE_PER_PAGE)
+    )
+    groups = result.all() 
+    
+    
+    
+
+    page_count = int(
+        math.ceil(
+            (await session.exec(select(func.count(models.DBGroup.id)))).first()
+            / SIZE_PER_PAGE
+        )
+    )
+
+    print("page_count", page_count)
+    print("groups", groups)
+    return models.GroupList.from_orm(
+        dict(groups=groups, page_count=page_count, page=page, size_per_page=SIZE_PER_PAGE)
+    )
 @router.post("")
 async def create(
     group_info: models.CreatedGroup,
@@ -15,7 +52,7 @@ async def create(
 ) -> models.Group:
 
     result = await session.exec(
-        select(models.DBLeader).where(models.DBLeader.user_id == current_user.id)
+        select(models.DBLeader).where(models.DBLeader.id == current_user.id)
     )
 
 
@@ -29,9 +66,88 @@ async def create(
 
     new_group = models.DBGroup.from_orm(group_info)
     new_group.leader = db_leader
-    new_group.user_id = current_user.id
+    new_group.id = current_user.id
     session.add(new_group)
     await session.commit()
     await session.refresh(new_group)
 
     return new_group
+
+@router.put("/add_people_to_group")
+
+async def dd_person_to_group(
+    # request: Request,
+    group_id: int,
+    people_id: int,
+    session: Annotated[AsyncSession, Depends(models.get_session)],
+    current_user: models.User = Depends(deps.get_current_user),
+) -> models.Group:
+    result = await session.exec(
+        select(models.DBGroup).where(models.DBGroup.id == group_id)
+    )
+    db_group = result.one_or_none()
+    if not db_group:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Not found this group",
+        )
+    if not db_group.id == current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only group owner can add people",
+        )
+    
+    result = await session.exec(
+        select(models.DBPeople).where(models.DBPeople.id == people_id)
+    )
+    db_people = result.one_or_none()
+    
+    if db_people:
+        # db_people.group_id = db_group.id
+        # db_group.people.append(db_people)
+        db_people.group = db_group
+        session.add(db_people)
+        await session.commit()
+        await session.refresh(db_group)
+        raise HTTPException(status.HTTP_200_OK, detail="New person successfully added")
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail="Not found this people",
+    )
+    
+
+@router.delete("/delete_group/{group_id}")
+async def delete_group(
+    group_id: int,
+    session: Annotated[AsyncSession, Depends(models.get_session)],
+    current_user: models.User = Depends(deps.get_current_user),
+) -> dict:
+    result = await session.exec(
+        select(models.DBGroup).where(models.DBGroup.id == group_id)
+    )
+    db_group = result.one_or_none()
+    if not db_group:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Group not found",
+        )
+    if db_group.id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only group owner can delete the group",
+        )
+    result = await session.exec(
+        select(models.DBPeople).where(models.DBPeople.group_id == group_id)
+    )
+
+    db_people = result.all()
+    
+    await session.delete(db_group)
+    
+    for people in db_people:
+        people.group_id = None
+
+    await session.commit()
+    
+    return {"message": "Group deleted successfully"}
+
