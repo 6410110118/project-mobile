@@ -2,16 +2,16 @@ from fastapi import APIRouter, HTTPException, Depends
 from sqlmodel import Session, select
 from .. import deps
 from .. import models
-from googlemaps import Client
+from .. import security
 from sqlmodel.ext.asyncio.session import AsyncSession
 from typing import Annotated
 
-import os
+
 # ... (keep the existing imports and setup)
 router = APIRouter(tags=["google_map"])
 
-api_key = os.environ.get("GOOGLE_MAPS_API_KEY")
-gmaps = Client(key=api_key)
+
+
 
 @router.get("/geocode", response_model=models.GoogleMap)
 async def geocode_address(
@@ -29,7 +29,7 @@ async def geocode_address(
         return dbmap
 
     # If not in database, request geocoding from Google Maps API
-    api_result = gmaps.geocode(address)
+    api_result = security.gmaps.geocode(address)
 
     if not api_result:
         raise HTTPException(status_code=404, detail="Address not found")
