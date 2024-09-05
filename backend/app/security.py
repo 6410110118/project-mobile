@@ -2,13 +2,19 @@ from datetime import datetime, timedelta
 from typing import Any, Union
 
 import jwt
-
+from googlemaps import Client
 from . import config
 
+from dotenv import load_dotenv
+import os
 
 ALGORITHM = "HS256"
 
 settings = config.get_settings()
+
+load_dotenv()
+api_key = os.getenv("GOOGLE_MAPS_API_KEY")
+gmaps = Client(key=api_key)
 
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
