@@ -9,11 +9,13 @@ from .. import deps
 from sqlmodel.ext.asyncio.session import AsyncSession
 from datetime import datetime, timedelta
 
+
 router = APIRouter(prefix="/items")
 
 @router.post("")
 async def create_item(
     item: models.CreatedItem,
+    google_map_id: int,
     session: Annotated[AsyncSession, Depends(models.get_session)],
     current_user: models.User = Depends(deps.get_current_user),
 ) -> models.Item | None:
@@ -32,11 +34,15 @@ async def create_item(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="End date cannot be earlier than start date"
         )
-
+    
+    
+    
+    
     # สร้างไอเท็ม
     dbitem = models.DBItem.from_orm(item)
     dbitem.user_id = current_user.id
     dbitem.role = current_user.role
+    dbitem.google_map_id = google_map_id
     session.add(dbitem)
     await session.commit()
     await session.refresh(dbitem)
