@@ -6,6 +6,7 @@ from . import groups
 # from . import add_user_to_groups
 from . import leaders
 from . import peoples
+from . import google_maps
 def init_router(app):
 
     app.include_router(users.router)
@@ -16,3 +17,4 @@ def init_router(app):
     # app.include_router(add_user_to_groups.router)
     app.include_router(leaders.router)
     app.include_router(peoples.router)
+    app.include_router(google_maps.router)

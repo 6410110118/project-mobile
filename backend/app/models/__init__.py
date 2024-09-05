@@ -12,6 +12,7 @@ from .groups import *
 # from .add_user_to_groups import *
 from .leaders import *
 from .peoples import * 
+from .google_maps import *
 
 connect_args = {}
 
@@ -29,7 +30,7 @@ def init_db(settings):
 async def create_all():
     async with engine.begin() as conn:
 
-        # await conn.run_sync(SQLModel.metadata.drop_all)
+        #await conn.run_sync(SQLModel.metadata.drop_all)
         await conn.run_sync(SQLModel.metadata.create_all)
 
 
