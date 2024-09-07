@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/components/home.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _LoginPageState createState() => _LoginPageState();
 }
 
@@ -15,23 +15,23 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
 
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  
-
-    // Google SignIn instance
-    final GoogleSignIn _googleSignIn = GoogleSignIn();
-
-    Future<void> _handleGoogleSignIn() async {
-      try {
-        final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-        if (googleUser != null) {
-          print('Google User: ${googleUser.displayName}');
-          // ทำการดำเนินการเพิ่มเติมหลังจาก login สำเร็จ เช่น ส่งข้อมูลไปยัง backend
-        }
-      } catch (error) {
-        print('Google Sign-In error: $error');
+  Future<void> _handleGoogleSignIn() async {
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser != null) {
+        print('Google User: ${googleUser.displayName}');
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
       }
+    } catch (error) {
+      print('Google Sign-In error: $error');
     }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,12 +44,21 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    'Plan For Travel',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Column(
+                    children: [
+                      
+                      Expanded(
+                        child: Center(
+                          child: Text(
+                            'Plan For Travel',
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 40),
                   TextFormField(
@@ -115,43 +124,43 @@ class _LoginPageState extends State<LoginPage> {
                   ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        // ทำการ login
                         print('Login with email: ${_emailController.text}, password: ${_passwordController.text}');
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => const HomePage()),
+                        );
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 95, 62, 49), // สีปุ่ม
-                      minimumSize: const Size(double.infinity, 50), // ขนาดปุ่ม
+                      backgroundColor: const Color.fromARGB(255, 95, 62, 49),
+                      padding: EdgeInsets.symmetric(horizontal: 60, vertical: 15),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
                     child: const Text(
-                      'Login', 
-                      style: TextStyle(
-                        fontSize: 18, color: Colors.white
-                      ),
+                      'Login',
+                      style: TextStyle(fontSize: 18, color: Colors.white),
+                      
                     ),
                   ),
                   const SizedBox(height: 20),
                   const Text('OR'),
                   const SizedBox(height: 20),
-                  ElevatedButton.icon(
+                  TextButton.icon(
                     onPressed: _handleGoogleSignIn,
                     icon: Image.asset(
-                      'assets/images/google.png', // โลโก้ Google
+                      'assets/images/google.png',
                       height: 24,
                       width: 24,
                     ),
                     label: const Text('Login with Google'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black,
+                    style: TextButton.styleFrom(
                       minimumSize: const Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
-                        side: const BorderSide(color: Colors.grey),
                       ),
+                      foregroundColor: Colors.black,
                     ),
                   ),
                 ],
@@ -170,5 +179,3 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 }
-
-
