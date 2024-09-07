@@ -44,21 +44,12 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Column(
-                    children: [
-                      
-                      Expanded(
-                        child: Center(
-                          child: Text(
-                            'Plan For Travel',
-                            style: TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                  Text(
+                    'Plan For Travel',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 40),
                   TextFormField(
@@ -141,7 +132,6 @@ class _LoginPageState extends State<LoginPage> {
                     child: const Text(
                       'Login',
                       style: TextStyle(fontSize: 18, color: Colors.white),
-                      
                     ),
                   ),
                   const SizedBox(height: 20),
