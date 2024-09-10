@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/components/home.dart';
+import 'package:frontend/login-register/home.dart';
 
 
 void main() {
