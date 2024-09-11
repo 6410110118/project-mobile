@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/widgets/register_check.dart';
 
 class CreateAccount extends StatefulWidget {
+  const CreateAccount({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _RegisterPageState createState() => _RegisterPageState();
 }
 
@@ -248,9 +252,8 @@ class _RegisterPageState extends State<CreateAccount> {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Creating account...')),
-                    );
+                    // Show success dialog from the separate file
+                    RegisterCheck(context, _selectedRole ?? 'User');
                   }
                 },
                 style: ElevatedButton.styleFrom(
