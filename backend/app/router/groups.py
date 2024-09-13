@@ -151,3 +151,52 @@ async def delete_group(
     
     return {"message": "Group deleted successfully"}
 
+@router.delete("/delete_person/{group_id}/{people_id}")
+async def delete_person_from_group(
+    group_id: int,
+    people_id: int,
+    session: Annotated[AsyncSession, Depends(models.get_session)],
+    current_user: models.User = Depends(deps.get_current_user),
+) -> dict:
+    # ตรวจสอบว่ากลุ่มนี้มีอยู่หรือไม่
+    result = await session.exec(
+        select(models.DBGroup).where(models.DBGroup.id == group_id)
+    )
+    db_group = result.one_or_none()
+    
+    if not db_group:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Group not found",
+        )
+
+    # ตรวจสอบว่าผู้ใช้ที่ลบเป็นเจ้าของกลุ่มหรือไม่
+    if db_group.leader_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only the group leader can delete people from the group",
+        )
+    
+    # ค้นหาว่าสมาชิกที่ต้องการลบอยู่ในกลุ่มนี้หรือไม่
+    result = await session.exec(
+        select(models.DBPeople).where(
+            (models.DBPeople.id == people_id) &
+            (models.DBPeople.group_id == group_id)
+        )
+    )
+    db_people = result.one_or_none()
+
+    if not db_people:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Person not found in this group",
+        )
+    
+    # ลบสมาชิกออกจากกลุ่ม
+    db_people.group_id = None
+    session.add(db_people)
+    await session.commit()
+    await session.refresh(db_people)
+
+    return {"message": "Person removed from group successfully"}
+
