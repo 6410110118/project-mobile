@@ -21,6 +21,8 @@ class GoogleMap(BaseGoogleMap):
     latitude: float
     longitude: float
     formatted_address: str
+    map_image_url: Optional[str] = None
+
 
 class DBGoogleMap(GoogleMap, SQLModel, table=True):
     __tablename__ = "google_maps"
