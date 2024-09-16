@@ -13,6 +13,7 @@ from .groups import *
 from .leaders import *
 from .peoples import * 
 from .google_maps import *
+from .messages import *
 
 connect_args = {}
 
