@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 from sqlmodel import Field, SQLModel , Relationship
 from typing import List
+from .messages import DBMessage
 from .users import *
 from .leaders import *
 # from .add_user_to_groups import *
@@ -31,6 +32,7 @@ class DBGroup(SQLModel, Group ,table=True):
     leader: Optional["DBLeader"] | None = Relationship(back_populates="groups")
     leader_id: int= Field(default=None, foreign_key="leaders.id")
     people: list["DBPeople"] = Relationship(back_populates="group", passive_deletes=True)
+    messages: List[DBMessage] = Relationship(back_populates="group", passive_deletes=True)
 
     
     # add_user_to_group: list["DBAddUserToGroup"] =  Relationship(back_populates="group", cascade_delete=True)

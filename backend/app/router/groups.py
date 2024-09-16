@@ -75,7 +75,7 @@ async def create(
 
 @router.put("/add_people_to_group")
 
-async def dd_person_to_group(
+async def add_person_to_group(
     # request: Request,
     group_id: int,
     people_id: int,

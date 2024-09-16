@@ -4,7 +4,8 @@ from pydantic import BaseModel, ConfigDict
 from sqlmodel import Field, SQLModel,Relationship
 
 from .users import *
-from .groups import DBGroup
+from .groups import *
+from .messages import *
 
 
 class BasePeople(BaseModel):
@@ -34,6 +35,7 @@ class DBPeople(BasePeople, SQLModel, table=True):
     user: DBUser | None = Relationship(back_populates="people")
     group_id: int | None = Field(default=None, foreign_key="groups.id" ,nullable=True)
     group: Optional["DBGroup"] = Relationship(back_populates="people")
+    messages: List["DBMessage"] = Relationship(back_populates="people")
 
  
     
