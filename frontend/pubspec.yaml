@@ -7,9 +7,14 @@ environment:
   sdk: '>=3.4.0 <4.0.0'
 
 dependencies:
+  bloc: ^8.1.4
+  equatable: ^2.0.5
   flutter:
     sdk: flutter
+  flutter_bloc: ^8.1.6
   google_sign_in: ^5.4.2
+  provider: ^6.1.2
+  
 
 dev_dependencies:
   flutter_test:

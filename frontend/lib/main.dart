@@ -1,23 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/login-register/home.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frontend/bloc/bloc.dart';
+import 'package:provider/provider.dart';
+import 'package:frontend/screen/main_screens.dart';
 
 
 void main() {
-  runApp(const MainApp());
+  runApp(const MyApp());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: HomePage(),
-      routes: {
-        
-      },
+    return MultiProvider(
+      providers: [
+        BlocProvider<TripBloc>(
+          create: (context) => TripBloc(),
+        ),
+      ],
+      child: MaterialApp(
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home:  const MainScreen(),
+      ),
     );
   }
 }
+
 
 
