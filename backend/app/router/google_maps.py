@@ -14,7 +14,8 @@ router = APIRouter(tags=["google_map"])
 async def geocode_address(
     address: str,
     session: Annotated[AsyncSession, Depends(models.get_session)],
-    current_user: models.User = Depends(deps.get_current_user)) -> models.GoogleMap:
+    current_user: models.User = Depends(deps.get_current_user)
+) -> models.GoogleMap:
     
     # Check if address is already in the database
     async with session:
@@ -26,43 +27,48 @@ async def geocode_address(
         if dbmap:
             return dbmap
 
-        # If not in database, request geocoding from Google Maps API
+        # If not in database, request geocoding from Google Places API
         try:
-            api_result = security.gmaps.geocode(address)
+            api_result = security.gplaces(address)  # เรียกใช้ฟังก์ชัน gplaces
         except Exception as e:
-            raise HTTPException(status_code=500, detail="Geocoding API request failed")
+            print(f"error {e}")
+            raise HTTPException(status_code=500, detail="Places API request failed")
 
-        if not api_result or not api_result[0]['geometry']:
+        if not api_result or not api_result.get('results'):
             raise HTTPException(status_code=404, detail="Address not found")
 
-        # Extract latitude, longitude, and formatted address
-        location = api_result[0]['geometry']['location']
-        formatted_address = api_result[0]['formatted_address']
+        # Extract data from the first result
+        place_data = api_result['results'][0]
+        location = place_data['geometry']['location']
+        formatted_address = place_data['formatted_address']
+        place_id = place_data['place_id']
 
-        # Generate Static Map URL
+        # Check for photo references in the result
+        # Check for photo references in the result
+        photo_reference = None
+        if 'photos' in place_data and place_data['photos']:
+            photo_reference = place_data['photos'][0].get('photo_reference')  # ใช้ get() เพื่อลดโอกาสเกิด KeyError
 
-        base_url = "https://maps.googleapis.com/maps/api/staticmap"
-        map_image_url = (
-            
-            f"{base_url}?center={location['lat']},{location['lng']}"
-            f"&zoom=15&size=600x300&maptype=roadmap"
-            f"&markers=color:red%7Clabel:P%7C{location['lat']},{location['lng']}"
-            f"&key={security.api_key}"
-        )
 
-        # Create new GeocodingData instance and add to database
+        # Generate Place Photo URL if available
+        photo_url = None
+        if photo_reference:
+            base_photo_url = "https://maps.googleapis.com/maps/api/place/photo"
+            photo_url = (
+                f"{base_photo_url}?maxwidth=400&photoreference={photo_reference}&key={security.api_key}"
+            )
+
+        # Create new GoogleMap instance and add to database
         new_data = models.DBGoogleMap(
             address=address,
             latitude=location['lat'],
             longitude=location['lng'],
-            formatted_address=formatted_address
-            
+            formatted_address=formatted_address,
+            place_id=place_id,  # Store place_id for future reference
+            photo_reference=photo_url  # Save the photo URL if available
         )
-        new_data.map_image_url = map_image_url
         session.add(new_data)
         await session.commit()
         await session.refresh(new_data)
-
-        
 
     return new_data
