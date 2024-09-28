@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from . import router
 from . import models
@@ -6,8 +7,15 @@ from . import config
 
 def create_app():
     settings = config.get_settings()
-
+    
     app = FastAPI()
+    app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    )
     models.init_db(settings)
     
 

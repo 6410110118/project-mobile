@@ -27,4 +27,4 @@ class GoogleMap(BaseGoogleMap):
 class DBGoogleMap(GoogleMap, SQLModel, table=True):
     __tablename__ = "google_maps"
     id: int = Field(default=None, primary_key=True)
-    items: list["DBItem"] = Relationship(back_populates="google_map")
+    # items: list["DBItem"] = Relationship(back_populates="google_map")
