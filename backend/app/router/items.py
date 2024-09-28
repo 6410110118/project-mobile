@@ -4,6 +4,8 @@ from typing import Optional, List, Annotated
 from sqlalchemy import func
 from sqlmodel import Field, SQLModel, select
 
+from ..router import google_maps
+
 from .. import models
 from .. import deps
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -15,7 +17,7 @@ router = APIRouter(prefix="/items")
 @router.post("")
 async def create_item(
     item: models.CreatedItem,
-    google_map_id: int,
+    
     session: Annotated[AsyncSession, Depends(models.get_session)],
     current_user: models.User = Depends(deps.get_current_user),
 ) -> models.Item | None:
@@ -34,7 +36,17 @@ async def create_item(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="End date cannot be earlier than start date"
         )
-    
+    if item.address:
+        try:
+            geocoded_data = await google_maps.geocode_address(item.address, session, current_user)
+            # เพิ่มข้อมูลจาก geocoded_data ลงใน item
+            item.latitude = geocoded_data.latitude
+            item.longitude = geocoded_data.longitude
+            item.formatted_address = geocoded_data.formatted_address
+            item.place_id = geocoded_data.place_id
+            item.photo_reference = geocoded_data.photo_reference
+        except HTTPException as e:
+            raise HTTPException(status_code=e.status_code, detail=e.detail)
     
     
     
@@ -42,37 +54,10 @@ async def create_item(
     dbitem = models.DBItem.from_orm(item)
     dbitem.user_id = current_user.id
     dbitem.role = current_user.role
-    dbitem.google_map_id = google_map_id
+    
     session.add(dbitem)
     await session.commit()
     await session.refresh(dbitem)
 
     return models.Item.from_orm(dbitem)
 
-# SIZE_PER_PAGE = 50
-
-
-# @router.get("")
-# async def read_items(
-#     session: Annotated[AsyncSession, Depends(models.get_session)],
-#     current_user: models.User = Depends(deps.get_current_user),
-#     page: int = 1,
-# ) -> models.ItemList:
-
-#     result = await session.exec(
-#         select(models.DBItem).offset((page - 1) * SIZE_PER_PAGE).limit(SIZE_PER_PAGE)
-#     )
-#     items = result.all()
-
-#     page_count = int(
-#         math.ceil(
-#             (await session.exec(select(func.count(models.DBItem.id)))).first()
-#             / SIZE_PER_PAGE
-#         )
-#     )
-
-#     print("page_count", page_count)
-#     print("items", items)
-#     return models.ItemList.from_orm(
-#         dict(items=items, page_count=page_count, page=page, size_per_page=SIZE_PER_PAGE)
-#     )

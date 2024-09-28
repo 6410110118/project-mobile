@@ -41,6 +41,7 @@ async def read_items(
 async def read_items(
     page_size : int,
     session: Annotated[AsyncSession, Depends(models.get_session)],
+    current_user: models.User = Depends(deps.get_current_user),
     page: int = 1,
 ) -> models.ItemList:
 
