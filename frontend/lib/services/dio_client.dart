@@ -4,7 +4,7 @@ import 'token_storage.dart';
 class DioClient {
   static Dio createDio() {
     Dio dio = Dio(BaseOptions(
-      baseUrl: 'http://10.0.2.2:8000', // ตั้ง Base URL ของคุณที่นี่
+      baseUrl: 'http://127.0.0.1:8000', // ตั้ง Base URL ของคุณที่นี่
       connectTimeout: const Duration(milliseconds: 10000),  // 10 วินาที
       receiveTimeout: const Duration(milliseconds: 10000),  // 10 วินาที
     ));

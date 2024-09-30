@@ -87,7 +87,7 @@ class _LoginState extends State<Login> {
                         context.read<LoginBloc>().add(
                               LoginButtonPressed(
                                 username: username,
-                                password: password,
+                                password: password, email: '',
                               ),
                             );
                       },
