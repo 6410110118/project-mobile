@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:frontend/bloc/bloc.dart';
-import 'package:provider/provider.dart';
-import 'package:frontend/screen/main_screens.dart';
+import 'package:frontend/screen/login.dart';
 
 
 void main() {
@@ -14,21 +11,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        BlocProvider<TripBloc>(
-          create: (context) => TripBloc(),
-        ),
-      ],
-      child: MaterialApp(
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home:  const MainScreen(),
+    return MaterialApp(
+      title: 'Plan For Travel',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
       ),
+      home: Login(), // ไม่ส่ง trips เข้าไป
     );
   }
 }
-
-
-
