@@ -1,11 +1,15 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../export_bloc.dart';
+import 'package:bloc/bloc.dart';
+import '/bloc/export_bloc.dart';
 
+class BottomNavigationBloc
+    extends Bloc<BottomNavigationEvent, BottomNavigationState> {
+  BottomNavigationBloc() : super(const BottomNavigationState(selectedIndex: 0));
 
-class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
-  NavigationBloc() : super(PageLoaded(0)) {
-    on<PageSelected>((event, emit) {
-      emit(PageLoaded(event.index));
-    });
+  @override
+  Stream<BottomNavigationState> mapEventToState(
+      BottomNavigationEvent event) async* {
+    if (event is ChangeBottomNavigation) {
+      yield BottomNavigationState(selectedIndex: event.selectedIndex);
+    }
   }
 }

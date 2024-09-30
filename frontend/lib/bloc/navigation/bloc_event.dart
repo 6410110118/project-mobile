@@ -1,6 +1,17 @@
-abstract class NavigationEvent {}
+import 'package:equatable/equatable.dart';
 
-class PageSelected extends NavigationEvent {
-  final int index;
-  PageSelected(this.index);
+abstract class BottomNavigationEvent extends Equatable {
+  const BottomNavigationEvent();
+
+  @override
+  List<Object> get props => [];
+}
+
+class ChangeBottomNavigation extends BottomNavigationEvent {
+  final int selectedIndex;
+
+  const ChangeBottomNavigation(this.selectedIndex);
+
+  @override
+  List<Object> get props => [selectedIndex];
 }

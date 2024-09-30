@@ -1,8 +1,10 @@
-abstract class NavigationState {}
+import 'package:equatable/equatable.dart';
 
-class PageLoading extends NavigationState {}
-
-class PageLoaded extends NavigationState {
+class BottomNavigationState extends Equatable {
   final int selectedIndex;
-  PageLoaded(this.selectedIndex);
+
+  const BottomNavigationState({required this.selectedIndex});
+
+  @override
+  List<Object> get props => [selectedIndex];
 }
