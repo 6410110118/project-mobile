@@ -1,9 +1,11 @@
-import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/export_bloc.dart';
 
 class TravelPage extends StatelessWidget {
+  const TravelPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
