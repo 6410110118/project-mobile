@@ -22,16 +22,12 @@ async def create_item(
     current_user: models.User = Depends(deps.get_current_user),
 ) -> models.Item | None:
     # ตรวจสอบสิทธิ์ของ current_user
-    if  current_user != current_user:
+    if  current_user.role != 'leader':
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="You is not current user."
+            detail="You is not Leader."
         )
-    if current_user != 'leader':
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only leader can create item."
-        )
+    
     # ตรวจสอบและตั้งค่า end_date หากไม่ได้กำหนด
     if not item.end_date:
         item.end_date = item.start_date + timedelta(days=5)
