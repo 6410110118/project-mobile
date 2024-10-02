@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/repositories/trip_repository.dart';
+import 'package:frontend/widgets/detail_page.dart';
+import 'package:intl/intl.dart';
 
 import '../bloc/export_bloc.dart';
 import '../models/models.dart';
 
-class TripHome extends StatelessWidget {
+class TripHome extends StatefulWidget {
+  @override
+  _TripHomeState createState() => _TripHomeState();
+}
+
+class _TripHomeState extends State<TripHome> {
+  final TextEditingController _searchController = TextEditingController();
+  List<Trip> _filteredTrips = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,6 +28,11 @@ class TripHome extends StatelessWidget {
             if (state is TripLoading) {
               return Center(child: CircularProgressIndicator());
             } else if (state is TripLoaded) {
+              // เริ่มต้นด้วยการตั้งค่า _filteredTrips เป็น trips ทั้งหมด
+              if (_filteredTrips.isEmpty) {
+                _filteredTrips = state.trips.cast<Trip>(); // แปลงที่นี่
+              }
+
               return SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,6 +81,7 @@ class TripHome extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       child: TextField(
+                        controller: _searchController,
                         decoration: InputDecoration(
                           prefixIcon: Icon(Icons.search),
                           hintText: 'Advanced search',
@@ -73,6 +89,21 @@ class TripHome extends StatelessWidget {
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
+                        onChanged: (value) {
+                          setState(() {
+                            // ตรวจสอบว่ามีทริปอยู่หรือไม่
+                            if (state.trips.isNotEmpty) {
+                              _filteredTrips = state.trips
+                                  .where((trip) => trip.tripName
+                                      ?.toLowerCase()
+                                      .contains(value.toLowerCase()) ?? false)
+                                  .cast<Trip>() // แปลงที่นี่
+                                  .toList();
+                            } else {
+                              _filteredTrips = []; // หากไม่มีทริปให้แสดงเป็นรายการว่าง
+                            }
+                          });
+                        },
                       ),
                     ),
 
@@ -110,8 +141,8 @@ class TripHome extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       child: Column(
-                        children: List.generate(state.trips.length, (index) {
-                          final trip = state.trips[index];
+                        children: List.generate(_filteredTrips.length, (index) {
+                          final trip = _filteredTrips[index];
                           return _buildTripCard(trip);
                         }),
                       ),
@@ -158,46 +189,63 @@ class TripHome extends StatelessWidget {
 
   // Card สำหรับแสดงทริปแต่ละทริป
   Widget _buildTripCard(Trip trip) {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 10),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // รูปภาพของทริป
-          ClipRRect(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-            child: Image.network(
-              trip.imageUrl ?? 'https://via.placeholder.com/300',
-              height: 180,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
+    DateTime startTime = trip.starttime!; // แปลงจาก str เป็น DateTime
+    DateTime endTime = trip.endtime!; // แปลงจาก str เป็น DateTime
+
+    // กำหนดรูปแบบวันที่ที่ต้องการ
+    String formattedStartTime = DateFormat('dd MMM yyyy').format(startTime);
+    String formattedEndTime = DateFormat('dd MMM yyyy').format(endTime);
+    return GestureDetector(
+      onTap: () {
+        // Navigate to trip detail page when card is tapped
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => TripDetailPage(trip: trip),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  trip.tripName ?? 'No Name',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 5),
-                Text(
-                  '10 Jun - 17 Jun 2023', // แสดงวันที่ทริป
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
+        );
+      },
+      child: Card(
+        margin: EdgeInsets.symmetric(vertical: 10),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // รูปภาพของทริป
+            ClipRRect(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+              child: Image.network(
+                trip.imageUrl ?? 'https://via.placeholder.com/300',
+                height: 180,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    trip.tripName ?? 'No Name',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  Text(
+                    '$formattedStartTime - $formattedEndTime', // แสดงวันที่ทริป
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
