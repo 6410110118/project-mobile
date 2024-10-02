@@ -31,7 +31,7 @@ class _LoginState extends State<Login> {
         body: BlocListener<LoginBloc, LoginState>(
           listener: (context, state) {
             if (state is LoginSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Text('Login Success!'),
               ));
               Navigator.pushReplacement(
@@ -39,7 +39,7 @@ class _LoginState extends State<Login> {
                 MaterialPageRoute(builder: (context) => MainScreen()),
               );
             } else if (state is LoginFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Text('Login Failed'),
               ));
             }
@@ -47,7 +47,7 @@ class _LoginState extends State<Login> {
           child: BlocBuilder<LoginBloc, LoginState>(
             builder: (context, state) {
               if (state is LoginLoading) {
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               }
 
               return Padding(
@@ -57,12 +57,14 @@ class _LoginState extends State<Login> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Column(
+                        const Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.airplanemode_active,
-                                size: 128,
-                                color: Color.fromARGB(255, 25, 216, 241)),
+                            ImageIcon(
+                              AssetImage('assets/icon/flight.png'),
+                              size: 128,
+                              color: Colors.blue,
+                            ),
                             SizedBox(height: 10), // Space between icon and text
                             Text(
                               'Plan For Travel',
@@ -71,18 +73,18 @@ class _LoginState extends State<Login> {
                             ),
                           ],
                         ),
-                        SizedBox(height: 40),
+                        const SizedBox(height: 40),
                         TextField(
                           controller: emailController,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             labelText: 'Username',
                             border: OutlineInputBorder(),
                           ),
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         TextField(
                           controller: passwordController,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             labelText: 'Password',
                             border: OutlineInputBorder(),
                             suffixIcon: Icon(Icons.visibility_off),
@@ -96,10 +98,10 @@ class _LoginState extends State<Login> {
                               Navigator.pushReplacementNamed(
                                   context, '/changepassword');
                             },
-                            child: Text('Forgot Password?'),
+                            child: const Text('Forgot Password?'),
                           ),
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
@@ -109,7 +111,7 @@ class _LoginState extends State<Login> {
 
                               if (email.isEmpty || password.isEmpty) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
+                                  const SnackBar(
                                     content:
                                         Text('Please enter email and password'),
                                   ),
@@ -126,30 +128,31 @@ class _LoginState extends State<Login> {
                                   );
                             },
                             style: ElevatedButton.styleFrom(
-                              padding: EdgeInsets.symmetric(vertical: 16),
+                              padding: const EdgeInsets.symmetric(vertical: 16),
                               backgroundColor:
-                                  Color.fromARGB(255, 41, 140, 155),
+                                  const Color.fromARGB(255, 41, 140, 155),
                             ),
-                            child: Text('Login',
+                            child: const Text('Login',
                                 style: TextStyle(
                                     color: Color.fromARGB(255, 255, 255, 255))),
                           ),
                         ),
-                        SizedBox(height: 20),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         TextButton(
                           onPressed: () {
                             Navigator.pushReplacementNamed(
                                 context, '/register');
                           },
-                          child: Text("Don't have an account? Register now"),
+                          child:
+                              const Text("Don't have an account? Register now"),
                         ),
                         if (state is LoginFailure)
                           Padding(
                             padding: const EdgeInsets.only(top: 10),
                             child: Text(
                               state.error,
-                              style: TextStyle(color: Colors.red),
+                              style: const TextStyle(color: Colors.red),
                             ),
                           ),
                       ],
