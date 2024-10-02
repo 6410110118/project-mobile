@@ -8,13 +8,15 @@ environment:
 
 dependencies:
   bloc: ^8.1.4
+  dio: ^5.7.0
   equatable: ^2.0.5
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.6
   google_sign_in: ^5.4.2
   provider: ^6.1.2
-  
+  cached_network_image: ^3.0.0
+  flutter_secure_storage: ^8.0.0
 
 dev_dependencies:
   flutter_test:
