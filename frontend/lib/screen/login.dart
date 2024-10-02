@@ -13,12 +13,12 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  final TextEditingController emailController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
   @override
   void dispose() {
-    emailController.dispose();
+    usernameController.dispose();
     passwordController.dispose();
     super.dispose();
   }
@@ -75,7 +75,7 @@ class _LoginState extends State<Login> {
                         ),
                         const SizedBox(height: 40),
                         TextField(
-                          controller: emailController,
+                          controller: usernameController,
                           decoration: const InputDecoration(
                             labelText: 'Username',
                             border: OutlineInputBorder(),
@@ -106,10 +106,10 @@ class _LoginState extends State<Login> {
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: () {
-                              final email = emailController.text.trim();
+                              final username = usernameController.text.trim();
                               final password = passwordController.text.trim();
 
-                              if (email.isEmpty || password.isEmpty) {
+                              if (username.isEmpty || password.isEmpty) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content:
@@ -121,9 +121,9 @@ class _LoginState extends State<Login> {
 
                               context.read<LoginBloc>().add(
                                     LoginButtonPressed(
-                                      username: '',
+                                      username: username,
                                       password: password,
-                                      email: email,
+                                      
                                     ),
                                   );
                             },
