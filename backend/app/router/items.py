@@ -22,7 +22,7 @@ async def create_item(
     current_user: models.User = Depends(deps.get_current_user),
 ) -> models.Item | None:
     # ตรวจสอบสิทธิ์ของ current_user
-    if  current_user.role != 'leader':
+    if  current_user.role != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You is not Leader."
