@@ -13,6 +13,9 @@ export 'register/register_event.dart';
 export 'register/register_state.dart';
 export 'welcome/welcome_state.dart';
 export 'welcome/welcome_bloc.dart';
+export 'group/group_bloc.dart';
+export 'group/group_event.dart';
+export 'group/group_state.dart';
 
 export 'login/login_event.dart';
 
