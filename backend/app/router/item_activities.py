@@ -75,7 +75,11 @@ async def update_item(
     )
     db_item = result.one_or_none()
 
-    
+    if  current_user.role != 'Leader':
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You is not Leader."
+        )
     if  db_item:
         db_item.sqlmodel_update(item)
         session.add(db_item)
@@ -86,7 +90,7 @@ async def update_item(
 
 @router.delete("/{item_id}")
 async def delete_item(
-    item_id: int, 
+    item_id: int,
     session: Annotated[AsyncSession, Depends(models.get_session)],
     current_user: models.User = Depends(deps.get_current_user),
     ) -> dict:
@@ -94,7 +98,11 @@ async def delete_item(
         select(models.DBItem).where(models.DBItem.id == item_id)
     )
     db_item = result.one_or_none()
-    
+    if  current_user.role != 'Leader':
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You is not Leader."
+        )
     if db_item:
         await session.delete(db_item)
         await session.commit()
