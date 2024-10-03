@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-// สมมติว่า TripHome อยู่ในไฟล์นี้
+import 'package:frontend/screen/group_page.dart';
 import '../bloc/export_bloc.dart';
 import 'trip_homs.dart';
 
@@ -27,13 +26,12 @@ class MainScreen extends StatelessWidget {
             }
           },
         ),
-        bottomNavigationBar:
-            BlocBuilder<BottomNavigationBloc, BottomNavigationState>(
+        bottomNavigationBar: BlocBuilder<BottomNavigationBloc, BottomNavigationState>(
           builder: (context, state) {
             return BottomNavigationBar(
-              type: BottomNavigationBarType.fixed, // ทำให้แสดงข้อความใต้ไอคอนตลอดเวลา
+              type: BottomNavigationBarType.fixed,
               currentIndex: state.selectedIndex,
-              backgroundColor: const Color.fromARGB(255, 227, 229, 228), // สีพื้นหลัง
+              backgroundColor: const Color.fromARGB(255, 227, 229, 228),
               onTap: (index) {
                 context
                     .read<BottomNavigationBloc>()
@@ -57,11 +55,11 @@ class MainScreen extends StatelessWidget {
                   label: 'About',
                 ),
               ],
-              unselectedItemColor: const Color.fromARGB(255, 0, 0, 0), // สีของไอเท็มที่ไม่ได้เลือก
-              selectedItemColor: const Color.fromARGB(255, 125, 0, 250), // สีของไอเท็มที่เลือก
-              selectedFontSize: 12, // ขนาดฟอนต์ของไอเท็มที่เลือก
-              unselectedFontSize: 12, // ขนาดฟอนต์ของไอเท็มที่ไม่ได้เลือก
-              iconSize: 24, // ขนาดไอคอน
+              unselectedItemColor: const Color.fromARGB(255, 0, 0, 0),
+              selectedItemColor: const Color.fromARGB(255, 125, 0, 250),
+              selectedFontSize: 12,
+              unselectedFontSize: 12,
+              iconSize: 24,
             );
           },
         ),
@@ -70,12 +68,7 @@ class MainScreen extends StatelessWidget {
   }
 }
 
-class GroupScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('Group Screen'));
-  }
-}
+
 
 class MapScreen extends StatelessWidget {
   @override
