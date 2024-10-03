@@ -1,21 +1,13 @@
 class Group {
-  int? id;
-  String? name;
-
+  final String name;
 
   Group({
-    this.id,
-    this.name,
+    required this.name,
   });
 
-  factory Group.fromJson(Map<String, dynamic> json) => Group(
-    id: json['id'],
-    name: json['name'],
-  );
-
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'name': name,
-  };
-
+  factory Group.fromJson(Map<String, dynamic> json) {
+    return Group(
+      name: json['name'],
+    );
+  }
 }
