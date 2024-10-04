@@ -14,8 +14,11 @@ settings = config.get_settings()
 # โหลดคีย์ API จากไฟล์ .env
 load_dotenv()
 api_key = os.getenv("GOOGLE_PLACE_API_KEY")
+
 gmaps = Client(key=api_key)
 
+image_key = os.getenv("IMAGE_API_KEY")
+# image = Client(key=image_key)
 def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
     to_encode = data.copy()
     if expires_delta:
