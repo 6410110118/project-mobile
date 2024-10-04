@@ -2,11 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy import func
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import select
-
+import httpx
 from typing import Annotated
 from .. import deps
 from .. import models
-
+from .. import security
+import random
 import math
 
 router = APIRouter(prefix="/groups", tags=["groups"])
@@ -44,6 +45,8 @@ async def read_group(
     return models.GroupList.from_orm(
         dict(groups=groups, page_count=page_count, page=page, size_per_page=SIZE_PER_PAGE)
     )
+
+
 @router.post("")
 async def create(
     group_info: models.CreatedGroup,
@@ -51,11 +54,10 @@ async def create(
     current_user: models.User = Depends(deps.get_current_user),
 ) -> models.Group:
 
+    # ตรวจสอบว่าเป็น leader หรือไม่
     result = await session.exec(
         select(models.DBLeader).where(models.DBLeader.id == current_user.id)
     )
-
-
     db_leader = result.one_or_none()
 
     if not db_leader:
@@ -64,14 +66,41 @@ async def create(
             detail="Only leader can create groups.",
         )
 
+    # สุ่ม URL รูปภาพสำหรับกลุ่ม
+    random_sticker_url = await get_random_sticker()  # เรียกฟังก์ชันเพื่อดึง URL
+
+    # สร้างกลุ่มใหม่และเพิ่มค่า image_url
     new_group = models.DBGroup.from_orm(group_info)
     new_group.leader = db_leader
-    new_group.id = current_user.id
+    new_group.image_url = random_sticker_url  # เพิ่ม image_url
+
     session.add(new_group)
     await session.commit()
     await session.refresh(new_group)
 
     return new_group
+
+
+async def get_random_sticker():
+    url = "https://api.giphy.com/v1/stickers/random"
+    image = security.image_key
+    params = {
+        "api_key": image,
+        "tag": "lazy corgi"
+    }
+    
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url, params=params)
+        
+        if response.status_code != 200:
+            raise HTTPException(status_code=response.status_code, detail="Failed to fetch sticker")
+        
+        data = response.json()
+        
+        # ดึง URL ของสติกเกอร์จากผลลัพธ์
+        sticker_url = data['data']['url']
+        return sticker_url
+
 
 @router.put("/add_people_to_group")
 
