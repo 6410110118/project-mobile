@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:frontend/repositories/user_repository.dart';
 import 'package:frontend/screen/change_password.dart';
 import 'package:frontend/screen/login.dart';
 import 'package:frontend/screen/register_page.dart';
+import 'package:provider/provider.dart';
 import 'bloc/onboarding/onboarding_bloc.dart'; 
 import 'bloc/onboarding/onboarding_state.dart'; 
 import 'screen/onboarding_screen.dart'; 
@@ -21,6 +24,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (_) => OnboardingBloc(),
         ),
+        
+        Provider<UserRepository>(create: (_) => UserRepository()),
       ],
       child: MaterialApp(
         initialRoute: '/',
