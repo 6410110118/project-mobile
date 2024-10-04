@@ -9,6 +9,8 @@ from .leaders import *
 class BaseGroup(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     name: str
+    start_date: datetime.date = datetime.date.today()
+    end_date: datetime.date = datetime.date.today() + datetime.timedelta(days=5)
 
 
 class CreatedGroup(BaseGroup):
@@ -20,6 +22,7 @@ class UpdatedGroup(BaseGroup):
 class Group(BaseGroup):
     id: int
     leader_id: int
+    image_url: Optional[str] = None
     
     
 
