@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/repositories/trip_repository.dart';
+
+import 'package:frontend/screen/seach_page.dart';
 import 'package:frontend/widgets/detail_page.dart';
 import 'package:intl/intl.dart';
 
@@ -13,13 +15,10 @@ class TripHome extends StatefulWidget {
 }
 
 class _TripHomeState extends State<TripHome> {
-  final TextEditingController _searchController = TextEditingController();
-  List<Trip> _filteredTrips = [];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: null, // ไม่ใช้ AppBar เพื่อให้ layout เหมือนในภาพ
+      appBar: null,
       body: BlocProvider(
         create: (context) =>
             TripBloc(tripRepository: TripRepository())..add(FetchTripEvent()),
@@ -28,16 +27,14 @@ class _TripHomeState extends State<TripHome> {
             if (state is TripLoading) {
               return Center(child: CircularProgressIndicator());
             } else if (state is TripLoaded) {
-              // เริ่มต้นด้วยการตั้งค่า _filteredTrips เป็น trips ทั้งหมด
-              if (_filteredTrips.isEmpty) {
-                _filteredTrips = state.trips.cast<Trip>(); // แปลงที่นี่
-              }
+              // ตรวจสอบให้แน่ใจว่า trips เป็น List<Trip>
+              final List<Trip> trips = state.trips.cast<Trip>();
 
               return SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ส่วนหัว: ทักทายผู้ใช้และปุ่ม Plan new trip
+                    // ส่วนหัว
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20.0, vertical: 20.0),
@@ -61,59 +58,33 @@ class _TripHomeState extends State<TripHome> {
                               ),
                             ],
                           ),
-                          ElevatedButton(
+                          IconButton(
+                            icon: Icon(Icons.search),
                             onPressed: () {
-                              // Action สำหรับปุ่ม Plan new trip
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SearchPage(
+                                    trips: trips,
+                                  ),
+                                ),
+                              );
                             },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.grey[400],
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                            ),
-                            child: Text('Plan new trip'),
                           ),
                         ],
                       ),
                     ),
 
-                    // ช่องค้นหาขั้นสูง
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: TextField(
-                        controller: _searchController,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.search),
-                          hintText: 'Advanced search',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            // ตรวจสอบว่ามีทริปอยู่หรือไม่
-                            if (state.trips.isNotEmpty) {
-                              _filteredTrips = state.trips
-                                  .where((trip) => trip.tripName
-                                      ?.toLowerCase()
-                                      .contains(value.toLowerCase()) ?? false)
-                                  .cast<Trip>() // แปลงที่นี่
-                                  .toList();
-                            } else {
-                              _filteredTrips = []; // หากไม่มีทริปให้แสดงเป็นรายการว่าง
-                            }
-                          });
-                        },
-                      ),
-                    ),
+                    // ปุ่มค้นหา
+                    
 
                     SizedBox(height: 20),
 
-                    // เมนูแบบ Story (เหมือนในภาพ)
+                    // เมนูแบบ Story
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       child: Container(
-                        height: 150, // กำหนดความสูงของ Story list
+                        height: 150,
                         child: ListView(
                           scrollDirection: Axis.horizontal,
                           children: _buildStoryItems(),
@@ -141,8 +112,8 @@ class _TripHomeState extends State<TripHome> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       child: Column(
-                        children: List.generate(_filteredTrips.length, (index) {
-                          final trip = _filteredTrips[index];
+                        children: List.generate(trips.length, (index) {
+                          final trip = trips[index];
                           return _buildTripCard(trip);
                         }),
                       ),
@@ -189,15 +160,14 @@ class _TripHomeState extends State<TripHome> {
 
   // Card สำหรับแสดงทริปแต่ละทริป
   Widget _buildTripCard(Trip trip) {
-    DateTime startTime = trip.starttime!; // แปลงจาก str เป็น DateTime
-    DateTime endTime = trip.endtime!; // แปลงจาก str เป็น DateTime
+    DateTime startTime = trip.starttime!;
+    DateTime endTime = trip.endtime!;
 
     // กำหนดรูปแบบวันที่ที่ต้องการ
     String formattedStartTime = DateFormat('dd MMM yyyy').format(startTime);
     String formattedEndTime = DateFormat('dd MMM yyyy').format(endTime);
     return GestureDetector(
       onTap: () {
-        // Navigate to trip detail page when card is tapped
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -235,7 +205,7 @@ class _TripHomeState extends State<TripHome> {
                   ),
                   SizedBox(height: 5),
                   Text(
-                    '$formattedStartTime - $formattedEndTime', // แสดงวันที่ทริป
+                    '$formattedStartTime - $formattedEndTime',
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey,
