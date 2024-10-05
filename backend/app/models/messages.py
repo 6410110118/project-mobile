@@ -27,6 +27,6 @@ class DBMessage(SQLModel,Message, table=True):
     
     id: int = Field(default=None, primary_key=True)
     group_id: int = Field(default=None, foreign_key="groups.id")
-    people_id: int = Field(default=None, foreign_key="peoples.id")
+    people_id: Optional[int] = Field(default=None, foreign_key="peoples.id")
     group: Optional["DBGroup"] = Relationship(back_populates="messages")
     people: Optional["DBPeople"] = Relationship(back_populates="messages")
