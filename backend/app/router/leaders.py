@@ -42,29 +42,29 @@ from .. import deps
 
 
 
-@router.put("/{leader_id}")
+@router.put("/")
 async def update_leader(
-    leader_id: int,
     leader: UpdatedLeader,
     session: Annotated[AsyncSession, Depends(get_session)],
     current_user: User = Depends(deps.get_current_user),
 ) -> Leader:
     if current_user.role != "Leader":
         raise HTTPException(status_code=403, detail="Only leader can update leader")
+
     result = await session.exec(
-        select(DBLeader).where(DBLeader.id == leader_id)
+        select(DBLeader).where(DBLeader.id == current_user.leader_id)  # หรือ property อื่นที่บ่งบอกถึงผู้นำ
     )
     db_leader = result.one_or_none()
     
-    if  db_leader :
+    if db_leader:
         db_leader.sqlmodel_update(leader)
-        await session.commit()
-        session.add(db_leader)
         await session.commit()
         await session.refresh(db_leader)
 
         return Leader.from_orm(db_leader)
+    
     raise HTTPException(status_code=404, detail="Leader not found")
+
 
 # @router.delete("/{leader_id}")
 

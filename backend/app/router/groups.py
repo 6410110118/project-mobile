@@ -100,50 +100,55 @@ async def get_random_sticker():
         # ดึง URL ของสติกเกอร์จากผลลัพธ์
         sticker_url = data['data']['url']
         return sticker_url
-
-
 @router.put("/add_people_to_group")
-
 async def add_person_to_group(
-    # request: Request,
     group_id: int,
     people_id: int,
     session: Annotated[AsyncSession, Depends(models.get_session)],
     current_user: models.User = Depends(deps.get_current_user),
-) -> models.Group:
+) -> dict:
+    # ค้นหากลุ่ม
     result = await session.exec(
         select(models.DBGroup).where(models.DBGroup.id == group_id)
     )
     db_group = result.one_or_none()
+    
     if not db_group:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Not found this group",
         )
-    if not db_group.id == current_user.id:
+    
+    # ตรวจสอบว่าผู้ใช้ที่ร้องขอเป็นเจ้าของกลุ่มหรือไม่
+    if db_group.leader_id != current_user.id:  # ใช้ leader_id แทน id
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only group owner can add people",
         )
     
+    # ค้นหาผู้คนที่ต้องการเพิ่ม
     result = await session.exec(
         select(models.DBPeople).where(models.DBPeople.id == people_id)
     )
     db_people = result.one_or_none()
     
     if db_people:
-        # db_people.group_id = db_group.id
-        # db_group.people.append(db_people)
+        # เพิ่ม db_people เข้ากลุ่ม
         db_people.group = db_group
         session.add(db_people)
         await session.commit()
-        await session.refresh(db_group)
-        raise HTTPException(status.HTTP_200_OK, detail="New person successfully added")
+        await session.refresh(db_people)  # Refresh เพื่อให้ได้ข้อมูลที่อัปเดต
+        
+        return {"detail": "New person successfully added"}  # เปลี่ยนให้ส่งผลลัพธ์ที่เหมาะสม
+
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
-        detail="Not found this people",
+        detail="Not found this person",
     )
-    
+
+
+
+
 
 @router.delete("/delete_group/{group_id}")
 async def delete_group(
@@ -180,37 +185,29 @@ async def delete_group(
     
     return {"message": "Group deleted successfully"}
 
-@router.delete("/delete_person/{group_id}/{people_id}")
+@router.delete("/delete_person/{people_id}")
 async def delete_person_from_group(
-    group_id: int,
     people_id: int,
     session: Annotated[AsyncSession, Depends(models.get_session)],
     current_user: models.User = Depends(deps.get_current_user),
 ) -> dict:
-    # ตรวจสอบว่ากลุ่มนี้มีอยู่หรือไม่
+    # ค้นหากลุ่มที่เจ้าของเป็น current_user
     result = await session.exec(
-        select(models.DBGroup).where(models.DBGroup.id == group_id)
+        select(models.DBGroup).where(models.DBGroup.leader_id == current_user.id)  # เปลี่ยนให้ตรงกับโครงสร้างของคุณ
     )
     db_group = result.one_or_none()
-    
+
     if not db_group:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Group not found",
-        )
-
-    # ตรวจสอบว่าผู้ใช้ที่ลบเป็นเจ้าของกลุ่มหรือไม่
-    if db_group.leader_id != current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only the group leader can delete people from the group",
+            detail="No group found for this user",
         )
     
-    # ค้นหาว่าสมาชิกที่ต้องการลบอยู่ในกลุ่มนี้หรือไม่
+    # ค้นหาสมาชิกที่ต้องการลบอยู่ในกลุ่มนี้หรือไม่
     result = await session.exec(
         select(models.DBPeople).where(
             (models.DBPeople.id == people_id) &
-            (models.DBPeople.group_id == group_id)
+            (models.DBPeople.group_id == db_group.id)
         )
     )
     db_people = result.one_or_none()
@@ -222,10 +219,11 @@ async def delete_person_from_group(
         )
     
     # ลบสมาชิกออกจากกลุ่ม
-    db_people.group_id = None
+    db_people.group_id = None  # หรือวิธีการลบที่ตรงกับโครงสร้างของคุณ
     session.add(db_people)
     await session.commit()
     await session.refresh(db_people)
 
     return {"message": "Person removed from group successfully"}
+
 
