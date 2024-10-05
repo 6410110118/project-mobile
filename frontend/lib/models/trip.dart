@@ -2,6 +2,7 @@ class Trip {
   int? id;
   String? tripName;
   String? description;
+  String? address;
   String? imageUrl;
   DateTime? starttime;
   DateTime? endtime;
@@ -14,6 +15,7 @@ class Trip {
     this.id,
     this.tripName,
     this.description,
+    this.address,
     this.imageUrl,
     this.starttime,
     this.endtime,
@@ -27,7 +29,8 @@ class Trip {
         id: json['id'],
         tripName: json['name'],
         description: json['description'],
-        // แปลง google_map_id จาก int เป็น String
+        address: json['address'],
+        
         imageUrl: json['photo_reference'],
         starttime: json['start_date'] != null ? DateTime.parse(json['start_date']) : null,
         endtime: json['end_date'] != null ? DateTime.parse(json['end_date']) : null,
@@ -41,6 +44,7 @@ class Trip {
         'id': id,
         'name': tripName,
         'description': description,
+        'address': address,
         'photo_reference': imageUrl,
         'start_date': starttime?.toIso8601String(),
         'end_date': endtime?.toIso8601String(),
