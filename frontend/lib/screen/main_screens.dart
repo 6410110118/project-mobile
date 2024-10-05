@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frontend/repositories/trip_repository.dart';
 import 'package:frontend/screen/group_page.dart';
+import 'package:frontend/screen/new_trip.dart';
 import '../bloc/export_bloc.dart';
 import 'trip_homs.dart';
 
@@ -16,9 +18,9 @@ class MainScreen extends StatelessWidget {
               case 0:
                 return TripHome();
               case 1:
-                return GroupScreen();
+                return NewTripPage(tripRepository: TripRepository(),);
               case 2:
-                return MapScreen();
+                return GroupScreen();
               case 3:
                 return AboutScreen();
               default:
@@ -44,11 +46,11 @@ class MainScreen extends StatelessWidget {
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.add),
-                  label: 'Group',
+                  label: 'Create',
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.location_on),
-                  label: 'Map',
+                  icon: Icon(Icons.group_add),
+                  label: 'Group',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.person),
