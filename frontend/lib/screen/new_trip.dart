@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frontend/screen/main_screens.dart';
+import 'package:frontend/screen/trip_homs.dart';
 import '../bloc/export_bloc.dart';
 import '../models/models.dart';
 import '../repositories/trip_repository.dart';
- // Import TripRepository ที่คุณสร้าง
+// Import TripRepository ที่คุณสร้าง
 
 class NewTripPage extends StatelessWidget {
   final TextEditingController tripNameController = TextEditingController();
-  final TextEditingController tripDescriptionController = TextEditingController();
+  final TextEditingController tripDescriptionController =
+      TextEditingController();
   final TextEditingController tripLocationController = TextEditingController();
   final TripRepository tripRepository;
 
@@ -46,7 +49,10 @@ class NewTripPage extends StatelessWidget {
           child: BlocListener<TripBloc, TripState>(
             listener: (context, state) {
               if (state is TripSubmitted) {
-                Navigator.pop(context);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => MainScreen()),
+                );
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Trip submitted successfully!')),
                 );
@@ -61,7 +67,7 @@ class NewTripPage extends StatelessWidget {
                 if (state is TripSubmitting) {
                   return Center(child: CircularProgressIndicator());
                 }
-                
+
                 return Column(
                   children: [
                     TextField(
@@ -70,7 +76,8 @@ class NewTripPage extends StatelessWidget {
                     ),
                     TextField(
                       controller: tripDescriptionController,
-                      decoration: InputDecoration(labelText: 'Trip Description'),
+                      decoration:
+                          InputDecoration(labelText: 'Trip Description'),
                     ),
                     TextField(
                       controller: tripLocationController,
@@ -78,16 +85,17 @@ class NewTripPage extends StatelessWidget {
                     ),
                     SizedBox(height: 20),
 
-
-
                     // ฟิลด์เลือก start_date
                     Row(
                       children: [
                         Text('Start Date:'),
-                        Text(startDate != null ? startDate!.toLocal().toString().split(' ')[0] : 'No date selected'),
+                        Text(startDate != null
+                            ? startDate!.toLocal().toString().split(' ')[0]
+                            : 'No date selected'),
                         IconButton(
                           icon: Icon(Icons.calendar_today),
-                          onPressed: () => _selectDate(context, true), // เลือก start_date
+                          onPressed: () =>
+                              _selectDate(context, true), // เลือก start_date
                         ),
                       ],
                     ),
@@ -96,10 +104,13 @@ class NewTripPage extends StatelessWidget {
                     Row(
                       children: [
                         Text('End Date:'),
-                        Text(endDate != null ? endDate!.toLocal().toString().split(' ')[0] : 'No date selected'),
+                        Text(endDate != null
+                            ? endDate!.toLocal().toString().split(' ')[0]
+                            : 'No date selected'),
                         IconButton(
                           icon: Icon(Icons.calendar_today),
-                          onPressed: () => _selectDate(context, false), // เลือก end_date
+                          onPressed: () =>
+                              _selectDate(context, false), // เลือก end_date
                         ),
                       ],
                     ),
@@ -114,12 +125,14 @@ class NewTripPage extends StatelessWidget {
                             address: tripLocationController.text,
                             starttime: startDate!,
                             endtime: endDate!,
-      );
+                          );
                           context.read<TripBloc>().add(SubmitTrip(trip));
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Please select both start and end dates.')),
-                          );  
+                            SnackBar(
+                                content: Text(
+                                    'Please select both start and end dates.')),
+                          );
                         }
                       },
                       child: Text('Submit Trip'),
