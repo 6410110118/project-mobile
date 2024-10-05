@@ -41,5 +41,29 @@ class TripRepository {
       throw Exception('Failed to fetch trips: $e');
     }
   }
+  Future<void> postTrip(Trip trip) async{
+
+    try {
+      final token = await tokenStorage.getToken();
+      final response = await dio.post(
+        '/items',
+        data: trip.toJson(),
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+      
+      if(response.statusCode == 200){
+        print('Trip posted successfully: ${response.data}');
+      }else{
+        throw Exception('Failed to post trip: ${response.data}');
+      }
+    }catch(e){
+      print('Error while posting trip: $e');
+    }
+  }
 
 }
