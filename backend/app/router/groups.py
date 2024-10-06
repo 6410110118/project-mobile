@@ -104,43 +104,52 @@ async def get_random_sticker():
 async def add_person_to_group(
     group_id: int,
     people_id: int,
-    session: Annotated[AsyncSession, Depends(models.get_session)],
+    session: AsyncSession = Depends(models.get_session),
     current_user: models.User = Depends(deps.get_current_user),
 ) -> dict:
-    # ค้นหากลุ่ม
     result = await session.exec(
         select(models.DBGroup).where(models.DBGroup.id == group_id)
     )
     db_group = result.one_or_none()
-    
+
     if not db_group:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Not found this group",
         )
     
-    # ตรวจสอบว่าผู้ใช้ที่ร้องขอเป็นเจ้าของกลุ่มหรือไม่
-    if db_group.leader_id != current_user.id:  # ใช้ leader_id แทน id
+    if not db_group.leader_id == current_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only group owner can add people",
         )
     
-    # ค้นหาผู้คนที่ต้องการเพิ่ม
     result = await session.exec(
         select(models.DBPeople).where(models.DBPeople.id == people_id)
     )
     db_people = result.one_or_none()
     
     if db_people:
-        # เพิ่ม db_people เข้ากลุ่ม
-        db_people.group = db_group
-        session.add(db_people)
-        await session.commit()
-        await session.refresh(db_people)  # Refresh เพื่อให้ได้ข้อมูลที่อัปเดต
-        
-        return {"detail": "New person successfully added"}  # เปลี่ยนให้ส่งผลลัพธ์ที่เหมาะสม
+        # เช็คว่าผู้คนอยู่ในกลุ่มแล้วหรือไม่
+        existing_link = await session.exec(
+            select(models.PeopleGroupLink).where(
+                models.PeopleGroupLink.people_id == people_id,
+                models.PeopleGroupLink.group_id == group_id
+            )
+        )
+        if existing_link.one_or_none():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Person is already in this group"
+            )
 
+        # เพิ่มความสัมพันธ์ใหม่ในตารางกลาง
+        new_link = models.PeopleGroupLink(people_id=people_id, group_id=group_id)
+        session.add(new_link)
+        await session.commit()
+
+        return {"detail": "New person successfully added to the group"}
+    
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
         detail="Not found this person",

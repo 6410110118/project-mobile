@@ -4,6 +4,7 @@ from typing import List
 from .messages import DBMessage
 from .users import *
 from .leaders import *
+from .people_group_links import *
 # from .add_user_to_groups import *
 
 class BaseGroup(BaseModel):
@@ -34,7 +35,8 @@ class DBGroup(SQLModel, Group ,table=True):
     # user: DBUser | None = Relationship(back_populates="group")
     leader: Optional["DBLeader"] | None = Relationship(back_populates="groups")
     leader_id: int= Field(default=None, foreign_key="leaders.id")
-    people: list["DBPeople"] = Relationship(back_populates="group", passive_deletes=True)
+    
+    people: list["DBPeople"] = Relationship(back_populates="group", passive_deletes=True,link_model=PeopleGroupLink, sa_relationship_kwargs={"cascade": "all, delete"})
     messages: List[DBMessage] = Relationship(back_populates="group", passive_deletes=True)
 
     
