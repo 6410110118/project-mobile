@@ -6,6 +6,7 @@ from sqlmodel import Field, SQLModel,Relationship
 from .users import *
 from .groups import *
 from .messages import *
+from .people_group_links import *
 
 
 class BasePeople(BaseModel):
@@ -33,8 +34,8 @@ class DBPeople(BasePeople, SQLModel, table=True):
     
     user_id: int = Field(default=None, foreign_key="users.id")
     user: DBUser | None = Relationship(back_populates="people")
-    group_id: int | None = Field(default=None, foreign_key="groups.id" ,nullable=True)
-    group: Optional["DBGroup"] = Relationship(back_populates="people")
+    
+    group: Optional["DBGroup"] = Relationship(back_populates="people",link_model=PeopleGroupLink,sa_relationship_kwargs={"cascade": "all, delete"})
     messages: List["DBMessage"] = Relationship(back_populates="people")
 
  
