@@ -14,6 +14,8 @@ from .leaders import *
 from .peoples import * 
 from .google_maps import *
 from .messages import *
+from .images import *
+from .people_group_links import *
 
 connect_args = {}
 
