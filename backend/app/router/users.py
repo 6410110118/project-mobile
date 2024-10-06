@@ -1,5 +1,5 @@
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status , Response , UploadFile
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import select
 
@@ -8,6 +8,7 @@ from typing import Annotated
 from .. import deps
 from .. import models
 import math
+import base64
 from sqlalchemy import func
 
 
@@ -15,7 +16,9 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 
 @router.get("/me")
-def get_me( session: Annotated[AsyncSession, Depends(models.get_session)],current_user: models.User = Depends(deps.get_current_user)) -> models.User:
+def get_me( current_user: models.User = Depends(deps.get_current_user)) -> models.User:
+        if current_user.imageData:
+            current_user.imageData = base64.b64encode(current_user.imageData).decode('utf-8')
     
         return current_user 
 
@@ -208,35 +211,7 @@ async def update(
         return db_user
 
    
-# @router.put("/{user_id}/update")
-# async def update(
-#     request: Request,
-#     user_id: str,
-#     user_update: models.UpdatedUser,
-#     session: Annotated[AsyncSession, Depends(models.get_session)],
-#     current_user: models.User = Depends(deps.get_current_user),
-# ) -> models.User:
 
-#     user = await session.get(models.DBUser, user_id)
-
-#     if user:
-#         raise HTTPException(
-#             status_code=status.HTTP_404_NOT_FOUND,
-#             detail="Not found this user",
-#         )
-
-#     if not user.verify_password(password_update.current_password):
-#         raise HTTPException(
-#             status_code=status.HTTP_401_UNAUTHORIZED,
-#             detail="Incorrect password",
-#         )
-
-#     user.update(**set_dict)
-#     session.add(user)
-#     await session.commit()
-#     await session.refresh(user)
-
-#     return user
 
 @router.delete("/{user_id}")
 async def delete_user(
@@ -255,3 +230,39 @@ async def delete_user(
 
         return dict(message="delete success")
     raise HTTPException(status_code=404, detail="user not found")
+
+@router.get("/imageProfile")
+async def get_image_profile(
+    session: Annotated[AsyncSession, Depends(models.get_session)],
+    current_user: models.User = Depends(deps.get_current_user)
+    ):
+    if not current_user.imageData:
+        raise HTTPException(status_code=404, detail="No image profile found")
+    
+    return Response(content=current_user.imageData, media_type="image/jpeg")
+
+@router.put("imageProfile")
+async def upload_image(
+    file: UploadFile,
+    session: Annotated[AsyncSession, Depends(models.get_session)],
+    current_user: models.User = Depends(deps.get_current_user),
+):
+    result = await session.exec(
+        select(models.DBUser).where(models.DBUser.id == current_user.id)
+    )
+    user = result.one_or_none()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Not found this user",
+        )
+    user.imageData = await file.read()
+    
+    session.add(user)
+    await session.commit()
+    await session.refresh(user)
+    
+    raise HTTPException(
+        status_code=status.HTTP_200_OK,
+        detail="Upload Image successfully",
+    )

@@ -1,5 +1,5 @@
 
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Optional
 import pydantic
 import bcrypt
 from pydantic import BaseModel , ConfigDict , EmailStr
@@ -30,6 +30,7 @@ class BaseUser(BaseModel):
 class User(BaseUser):
     id: int
     role:UserRole
+    imageData : bytes | None
 
     last_login_date: datetime.datetime | None = pydantic.Field(
         json_schema_extra=dict(example="2023-01-01T00:00:00.000000"), default=None
@@ -99,6 +100,7 @@ class DBUser(BaseUser, SQLModel, table=True):
 
     password: str
     role: UserRole = Field(default=None)
+    imageData: Optional[bytes] = Field(default=None)
 
     register_date: datetime.datetime = Field(default_factory=datetime.datetime.now)
     updated_date: datetime.datetime = Field(default_factory=datetime.datetime.now)
