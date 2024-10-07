@@ -1,11 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:frontend/repositories/user_repository.dart';
-import 'package:frontend/screen/register_page.dart';
 
-import '../bloc/export_bloc.dart';
 
 class SignInPage extends StatelessWidget {
   @override
@@ -63,18 +59,7 @@ class SignInPage extends StatelessWidget {
                 const SizedBox(height: 16),
                 TextButton(
                   onPressed: () {
-                    // เพิ่ม BlocProvider ตรงนี้
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => BlocProvider(
-                          create: (context) => RegisterBloc(
-                            userRepository: RepositoryProvider.of<UserRepository>(context),
-                          ),
-                          child:  RegisterPage(),
-                        ),
-                      ),
-                    );
+                    Navigator.pushReplacementNamed(context, '/register');
                   },
                   child: const Text("Don't have an account? Register now"),
                 ),
