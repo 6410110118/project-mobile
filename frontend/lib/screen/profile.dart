@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/bloc/export_bloc.dart';
 import 'package:frontend/repositories/profile_repository.dart';
+import 'package:frontend/screen/change_password.dart';
 import 'package:frontend/widgets/Logout_popup.dart';
 // นำเข้า LogoutDialog
 
@@ -11,7 +12,8 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => GetMeBloc(_getMeRepository)..add(FetchUserData()), // เพิ่มการเรียก event เพื่อ fetch ข้อมูล
+      create: (context) => GetMeBloc(_getMeRepository)
+        ..add(FetchUserData()), // เพิ่มการเรียก event เพื่อ fetch ข้อมูล
       child: Scaffold(
         appBar: AppBar(
           title: Text('Profile'),
@@ -52,7 +54,8 @@ class ProfilePage extends StatelessWidget {
                               radius: 50,
                               backgroundImage: user.imageData != null
                                   ? MemoryImage(user.imageData!)
-                                  : AssetImage('assets/start.jpg') as ImageProvider, // Fallback to placeholder if no image
+                                  : AssetImage('assets/start.jpg')
+                                      as ImageProvider, // Fallback to placeholder if no image
                             ),
                             SizedBox(height: 20),
                             Text(
@@ -102,25 +105,7 @@ class ProfilePage extends StatelessWidget {
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          child: ElevatedButton.icon(
-                            icon: Icon(Icons.lock),
-                            label: Text('Change Password'),
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  Color.fromARGB(255, 205, 188, 235),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 30,
-                                vertical: 15,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                          ),
-                        ),
+                        
                         // เพิ่มปุ่ม Logout
                         Padding(
                           padding: const EdgeInsets.only(bottom: 10),
