@@ -28,5 +28,14 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         emit(LoginFailure(error.toString()));
       }
     });
+    on<ChangePasswordEvent>((event, emit) async {
+      emit(ChangePasswordLoading());
+      try {
+        await authRepository.changePassword(event.currentPassword, event.newPassword);
+        emit(ChangePasswordSuccess());
+      } catch (error) {
+        emit(ChangePasswordFailure(error.toString()));
+      }
+    });
   }
 }
