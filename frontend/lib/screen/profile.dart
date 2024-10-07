@@ -1,0 +1,154 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frontend/bloc/export_bloc.dart';
+import 'package:frontend/models/user.dart';
+import 'package:frontend/repositories/profile_repository.dart';
+import 'package:frontend/widgets/Logout_popup.dart';
+
+
+class ProfilePage extends StatelessWidget {
+  final ProfileRepository _getMeRepository = ProfileRepository();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => GetMeBloc(_getMeRepository)..add(FetchUserData()),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Profile'),
+          centerTitle: true,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.logout),
+              onPressed: () => _showLogoutDialog(context),
+            ),
+          ],
+        ),
+        body: BlocBuilder<GetMeBloc, GetMeState>(
+          builder: (context, state) {
+            if (state is GetMeLoading) {
+              return Center(child: CircularProgressIndicator());
+            } else if (state is GetMeError) {
+              return Center(child: Text('Error: ${state.message}'));
+            } else if (state is GetMeLoaded) {
+              final user = state.user;
+              return _buildProfileContent(user);
+            } else {
+              return Center(child: Text('No data available'));
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  // Method to build profile content
+  Widget _buildProfileContent(UserModel user) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.all(7),
+            child: Container(
+              padding: EdgeInsets.all(50.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: Offset(2, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundImage: user.imageData != null
+                        ? MemoryImage(user.imageData!)
+                        : AssetImage('assets/start.jpg') as ImageProvider,
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    '${user.firstName} ${user.lastName}',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepPurple,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    'Role: ${user.role}',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    'Email: ${user.email}',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  SizedBox(height: 20),
+                ],
+              ),
+            ),
+          ),
+          Spacer(),
+          _buildActionButtons(),
+        ],
+      ),
+    );
+  }
+
+  // Method to build action buttons
+  Widget _buildActionButtons() {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: ElevatedButton.icon(
+            icon: Icon(Icons.edit),
+            label: Text('Edit Profile'),
+            onPressed: () {},
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color.fromARGB(255, 205, 188, 235),
+              padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: ElevatedButton.icon(
+            icon: Icon(Icons.lock),
+            label: Text('Change Password'),
+            onPressed: () {},
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color.fromARGB(255, 205, 188, 235),
+              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Method to show the logout confirmation dialog
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return LogoutDialog();
+      },
+    );
+  }
+}
