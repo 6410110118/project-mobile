@@ -3,10 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/repositories/trip_repository.dart';
 import 'package:frontend/screen/group_page.dart';
 import 'package:frontend/screen/new_trip.dart';
+import 'package:frontend/screen/profile.dart';
 import '../bloc/export_bloc.dart';
 import 'trip_homs.dart';
 
 class MainScreen extends StatelessWidget {
+  const MainScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -22,7 +25,7 @@ class MainScreen extends StatelessWidget {
               case 2:
                 return GroupScreen();
               case 3:
-                return AboutScreen();
+                return ProfilePage();
               default:
                 return TripHome();
             }
@@ -72,16 +75,4 @@ class MainScreen extends StatelessWidget {
 
 
 
-class MapScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('Map Screen'));
-  }
-}
 
-class AboutScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('About Screen'));
-  }
-}
