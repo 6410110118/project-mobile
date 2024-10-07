@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frontend/repositories/profile_repository.dart';
 import 'package:frontend/repositories/trip_repository.dart';
-
 import 'package:frontend/screen/seach_page.dart';
 import 'package:frontend/widgets/detail_page.dart';
 import 'package:intl/intl.dart';
@@ -19,114 +19,138 @@ class _TripHomeState extends State<TripHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: null,
-      body: BlocProvider(
-        create: (context) =>
-            TripBloc(tripRepository: TripRepository())..add(FetchTripEvent()),
-        child: BlocBuilder<TripBloc, TripState>(
-          builder: (context, state) {
-            if (state is TripLoading) {
-              return Center(child: CircularProgressIndicator());
-            } else if (state is TripLoaded) {
-              // ตรวจสอบให้แน่ใจว่า trips เป็น List<Trip>
-              final List<Trip> trips = state.trips.cast<Trip>();
+      body: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => TripBloc(tripRepository: TripRepository())
+              ..add(FetchTripEvent()),
+          ),
+          BlocProvider(
+            create: (context) =>
+                GetMeBloc(ProfileRepository())..add(FetchUserData()),
+          ),
+        ],
+        child: BlocBuilder<TripBloc, TripState>(builder: (context, tripState) {
+          if (tripState is TripLoading) {
+            return Center(child: CircularProgressIndicator());
+          } else if (tripState is TripLoaded) {
+            final List<Trip> trips = tripState.trips.cast<Trip>();
 
-              return SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // ส่วนหัว
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20.0, vertical: 20.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              CircleAvatar(
-                                radius: 20,
-                                backgroundColor: Colors.grey,
-                                child: Icon(Icons.person),
-                              ),
-                              SizedBox(width: 10),
-                              Text(
-                                'Hello Shani!',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.search),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => SearchPage(
-                                    trips: trips,
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header Section
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 25.0, vertical: 25.0 ),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // User Profile with Username
+                            BlocBuilder<GetMeBloc, GetMeState>(
+                              builder: (context, userState) {
+                                if (userState is GetMeLoaded) {
+                                  return Row(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 20,
+                                        backgroundImage:
+                                            userState.user.imageData != null
+                                                ? MemoryImage(
+                                                    userState.user.imageData!)
+                                                : AssetImage('assets/start.jpg')
+                                                    as ImageProvider,
+                                      ),
+                                      SizedBox(width: 20),
+                                      Text(
+                                        'Hello ${userState.user.username}!', // Display username
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  );
+                                } else if (userState is GetMeLoading) {
+                                  return CircularProgressIndicator();
+                                } else {
+                                  return CircleAvatar(
+                                    radius: 20,
+                                    backgroundColor: Colors.grey,
+                                    child: Icon(Icons.person),
+                                  );
+                                }
+                              },
+                            ),
+
+                            IconButton(
+                              icon: Icon(Icons.search),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        SearchPage(trips: trips),
                                   ),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // ปุ่มค้นหา
-                    
-
-                    SizedBox(height: 20),
-
-                    // เมนูแบบ Story
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Container(
-                        height: 150,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: _buildStoryItems(),
+                                );
+                              },
+                            ),
+                          ],
                         ),
+                        // เพิ่ม SizedBox เพื่อขยับลงด้านล่าง
+                        SizedBox(height: 10), // ปรับค่าตามที่ต้องการ
+                      ],
+                    ),
+                  ),
+
+                
+
+                  // Story Menu
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Container(
+                      height: 150,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: _buildStoryItems(),
                       ),
                     ),
+                  ),
 
-                    SizedBox(height: 20),
+                  SizedBox(height: 20),
 
-                    // หัวข้อ Recommend trips
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Text(
-                        'Recommend trips',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                  // Recommend Trips Header
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Text(
+                      'Recommend trips',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
+                  ),
 
-                    SizedBox(height: 10),
+                  SizedBox(height: 10),
 
-                    // รายการทริปที่แนะนำ
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Column(
-                        children: List.generate(trips.length, (index) {
-                          final trip = trips[index];
-                          return _buildTripCard(trip);
-                        }),
-                      ),
+                  // Recommended Trips List
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Column(
+                      children: List.generate(trips.length, (index) {
+                        final trip = trips[index];
+                        return _buildTripCard(trip);
+                      }),
                     ),
-                  ],
-                ),
-              );
-            } else if (state is TripError) {
-              return Center(child: Text(state.message));
-            }
-            return Center(child: Text('No trips found'));
-          },
-        ),
+                  ),
+                ],
+              ),
+            );
+          } else if (tripState is TripError) {
+            return Center(child: Text(tripState.message));
+          }
+          return Center(child: Text('No trips found'));
+        }),
       ),
     );
   }
@@ -158,14 +182,15 @@ class _TripHomeState extends State<TripHome> {
     }).toList();
   }
 
-  // Card สำหรับแสดงทริปแต่ละทริป
+  // Card for displaying each trip
   Widget _buildTripCard(Trip trip) {
     DateTime startTime = trip.starttime!;
     DateTime endTime = trip.endtime!;
 
-    // กำหนดรูปแบบวันที่ที่ต้องการ
+    // Format date as needed
     String formattedStartTime = DateFormat('dd MMM yyyy').format(startTime);
     String formattedEndTime = DateFormat('dd MMM yyyy').format(endTime);
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -181,7 +206,7 @@ class _TripHomeState extends State<TripHome> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // รูปภาพของทริป
+            // Trip Image
             ClipRRect(
               borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
               child: Image.network(
@@ -198,18 +223,12 @@ class _TripHomeState extends State<TripHome> {
                 children: [
                   Text(
                     trip.tripName ?? 'No Name',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 5),
                   Text(
                     '$formattedStartTime - $formattedEndTime',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey,
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.grey),
                   ),
                 ],
               ),
