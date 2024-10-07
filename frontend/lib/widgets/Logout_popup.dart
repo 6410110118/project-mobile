@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/screen/sign_in_page.dart';
+
 
 class LogoutDialog extends StatelessWidget {
   @override
@@ -19,7 +19,7 @@ class LogoutDialog extends StatelessWidget {
             // Perform logout action
             // For example, clear the user session, navigate to login page, etc.
             // You might call a logout method here.
-             Navigator.pushReplacementNamed(context, '/signin'); // Close the dialog
+             Navigator.pushReplacementNamed(context, '/login'); // Close the dialog
           },
           child: Text('Logout'),
         ),
