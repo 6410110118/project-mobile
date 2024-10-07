@@ -69,4 +69,29 @@ class AuthRepository {
     await tokenStorage.deleteRefreshToken(); // ลบ refresh token ด้วย
     // Add any additional logout logic here
   }
+   Future<void> changePassword(String currentPassword, String newPassword) async {
+    try{
+      final response = await dio.put(
+        '/users/change_password',
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        ),
+        data: {
+          'current_password': currentPassword,
+          'new_password': newPassword,
+        },
+        
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to change password: ${response.data}');
+      }else{
+        print('Password changed successfully');
+      }
+    }catch(e){
+      throw Exception('Failed to change password: $e');
+    }
+   }  
 }

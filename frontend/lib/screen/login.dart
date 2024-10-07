@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:frontend/screen/main_screens.dart';
+import 'package:frontend/widgets/change_password_popup.dart';
 import 'package:frontend/widgets/login_popup.dart';
 import '../bloc/export_bloc.dart';
 import '../repositories/auth_repository.dart';
- // Import the SuccessPopup widget
+
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -104,8 +105,13 @@ class _LoginState extends State<Login> {
                           alignment: Alignment.centerRight,
                           child: TextButton(
                             onPressed: () {
-                              Navigator.pushReplacementNamed(
-                                  context, '/changepassword');
+                              // Show Change Password Dialog
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return ChangePasswordDialog(); // Open Change Password Dialog
+                                },
+                              );
                             },
                             child: const Text('Forgot Password?'),
                           ),
