@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend/screen/login.dart';
 
 class LogoutDialog extends StatelessWidget {
+  final FlutterSecureStorage storage = FlutterSecureStorage(); // Initialize storage
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -15,11 +18,15 @@ class LogoutDialog extends StatelessWidget {
           child: Text('Cancel'),
         ),
         TextButton(
-          onPressed: () {
+          onPressed: () async {
             // Perform logout action
-            // For example, clear the user session, navigate to login page, etc.
-            // You might call a logout method here.
-             Navigator.pushReplacementNamed(context, '/login'); // Close the dialog
+            await storage.delete(key: 'userToken'); // Clear user session
+
+            // Navigate to login page and remove all previous routes
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => Login()), 
+              (Route<dynamic> route) => false,
+            );
           },
           child: Text('Logout'),
         ),
