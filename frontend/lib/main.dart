@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:frontend/repositories/user_repository.dart';
 import 'package:frontend/screen/change_password.dart';
 import 'package:frontend/screen/login.dart';
+import 'package:frontend/screen/profile.dart';
 import 'package:frontend/screen/register_page.dart';
-import 'package:provider/provider.dart';
-import 'bloc/onboarding/onboarding_bloc.dart'; 
-import 'bloc/onboarding/onboarding_state.dart'; 
-import 'screen/onboarding_screen.dart'; 
+import 'bloc/onboarding/onboarding_bloc.dart';
+import 'bloc/onboarding/onboarding_state.dart';
+import 'bloc/register/register_bloc.dart'; // import RegisterBloc
+import 'screen/onboarding_screen.dart';
 import 'screen/sign_in_page.dart';
-import 'screen/welcome_screens.dart'; 
+import 'screen/welcome_screens.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(PlanTravel());
 }
 
-class MyApp extends StatelessWidget {
+class PlanTravel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -24,8 +24,9 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (_) => OnboardingBloc(),
         ),
-        
-        Provider<UserRepository>(create: (_) => UserRepository()),
+        BlocProvider(
+          create: (_) => RegisterBloc(userRepository: UserRepository()), // เพิ่ม RegisterBloc ที่นี่
+        ),
       ],
       child: MaterialApp(
         initialRoute: '/',
@@ -46,8 +47,9 @@ class MyApp extends StatelessWidget {
           '/onboarding': (context) => const OnboardingScreen(),
           '/signin': (context) => SignInPage(),
           '/login': (context) => const Login(),
-          '/register': (context) =>  RegisterPage(),
+          '/register': (context) => RegisterPage(), // ตอนนี้ RegisterBloc ใช้ได้ทั่วแอป
           '/changepassword': (context) => const ChangePasswordPage(),
+          '/profile': (context) => ProfilePage(),
         },
         title: 'Plan For Travel',
         theme: ThemeData(
