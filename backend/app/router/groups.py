@@ -22,7 +22,7 @@ async def read_group(
 ) -> models.GroupList:
     dbleader = (await session.exec(
         select(models.DBLeader).where(models.DBLeader.user_id == current_user.id)
-    )).one_or_none()
+    )).first()
 
     query = select(models.DBGroup).where(models.DBGroup.leader_id == current_user.id)
     result = await session.exec(
