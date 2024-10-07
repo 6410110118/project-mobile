@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:frontend/screen/main_screens.dart';
 
+import 'package:frontend/screen/main_screens.dart';
+import 'package:frontend/widgets/login_popup.dart';
 import '../bloc/export_bloc.dart';
 import '../repositories/auth_repository.dart';
+ // Import the SuccessPopup widget
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -31,13 +33,20 @@ class _LoginState extends State<Login> {
         body: BlocListener<LoginBloc, LoginState>(
           listener: (context, state) {
             if (state is LoginSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text('Login Success!'),
-              ));
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => MainScreen()),
+              // Show the success popup here
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return SuccessPopup(message: 'Login Success!');
+                },
               );
+              // Navigate to MainScreen after closing the dialog
+              Future.delayed(const Duration(seconds: 1), () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => MainScreen()),
+                );
+              });
             } else if (state is LoginFailure) {
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Text('Login Failed'),
@@ -112,8 +121,7 @@ class _LoginState extends State<Login> {
                               if (username.isEmpty || password.isEmpty) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content:
-                                        Text('Please enter email and password'),
+                                    content: Text('Please enter email and password'),
                                   ),
                                 );
                                 return;
@@ -123,7 +131,6 @@ class _LoginState extends State<Login> {
                                     LoginButtonPressed(
                                       username: username,
                                       password: password,
-                                      
                                     ),
                                   );
                             },
@@ -137,7 +144,6 @@ class _LoginState extends State<Login> {
                                     color: Color.fromARGB(255, 255, 255, 255))),
                           ),
                         ),
-                        const SizedBox(height: 20),
                         const SizedBox(height: 20),
                         TextButton(
                           onPressed: () {
