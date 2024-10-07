@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frontend/bloc/export_bloc.dart';
+import 'package:frontend/repositories/auth_repository.dart';
 import 'package:frontend/repositories/user_repository.dart';
 import 'package:frontend/screen/change_password.dart';
 import 'package:frontend/screen/login.dart';
@@ -27,6 +29,7 @@ class PlanTravel extends StatelessWidget {
         BlocProvider(
           create: (_) => RegisterBloc(userRepository: UserRepository()), // เพิ่ม RegisterBloc ที่นี่
         ),
+        BlocProvider(create: (context) => LoginBloc(authRepository: AuthRepository())),
       ],
       child: MaterialApp(
         initialRoute: '/',
