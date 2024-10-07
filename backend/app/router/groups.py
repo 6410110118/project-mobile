@@ -24,7 +24,7 @@ async def read_group(
         select(models.DBLeader).where(models.DBLeader.user_id == current_user.id)
     )).one_or_none()
 
-    query = select(models.DBGroup).where(models.DBGroup.leader_id == dbleader.id)
+    query = select(models.DBGroup).where(models.DBGroup.leader_id == current_user.id)
     result = await session.exec(
         query.offset((page - 1) * SIZE_PER_PAGE).limit(SIZE_PER_PAGE)
     )
