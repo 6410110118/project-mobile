@@ -7,9 +7,9 @@ export 'navigation/bloc_event.dart';
 export 'navigation/bloc_state.dart';
 
 
-export 'changepassword/change_password_event.dart';
-export 'changepassword/change_password_bloc.dart';
-export 'changepassword/change_password_state.dart';
+// export 'changepassword/change_password_event.dart';
+// export 'changepassword/change_password_bloc.dart';
+// export 'changepassword/change_password_state.dart';
 
 export 'register/register_bloc.dart';
 export 'register/register_event.dart';
