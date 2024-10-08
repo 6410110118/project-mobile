@@ -39,11 +39,11 @@ class User(BaseUser):
         json_schema_extra=dict(example="2023-01-01T00:00:00.000000"), default=None
     )
 
-class ReferenceUser(BaseModel):
-    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
-    username: str 
-    first_name: str 
-    last_name: str
+# class ReferenceUser(BaseModel):
+#     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+#     username: str 
+#     first_name: str 
+#     last_name: str
 
 class UserList(BaseModel):
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
@@ -62,17 +62,18 @@ class ChangedPassword(BaseModel):
 
 class ResetedPassword(BaseModel):
     email: EmailStr
-    citizen_id: str
+    
+    new_password: str
 
 
 class RegisteredUser(BaseUser):
     password: str = pydantic.Field(json_schema_extra=dict(example="password"))
 
 
-class UpdatedUser(BaseUser):
+class UpdatedUser(BaseModel):
     role: UserRole
     email: EmailStr | None = pydantic.Field(json_schema_extra=dict(example="admin@email.local"))
-    username: str | None= pydantic.Field(json_schema_extra=dict(example="admin"))
+    
     first_name: str | None= pydantic.Field(json_schema_extra=dict(example="Firstname"))
     last_name: str| None = pydantic.Field(json_schema_extra=dict(example="Lastname"))
  

@@ -210,7 +210,33 @@ async def update(
 
         return db_user
 
-   
+@router.put("/reset-password")
+async def reset_password(
+    request: Request,
+    password_reset: models.ResetedPassword,
+    session: Annotated[AsyncSession, Depends(models.get_session)],
+    current_user: models.User = Depends(deps.get_current_user),
+) -> models.User:
+    
+    # ค้นหาผู้ใช้ตามอีเมลและรหัสประจำตัวประชาชน
+    result = await session.exec(
+        select(models.DBUser).where(models.DBUser.email == password_reset.email)
+    )
+    db_user = result.one_or_none()
+
+    if not db_user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found with provided email",
+        )
+
+    # ตั้งค่ารหัสผ่านใหม่
+    await db_user.set_password(password_reset.new_password)  # หรือใช้ฟังก์ชันการเข้ารหัสรหัสผ่านที่คุณมี
+    session.add(db_user)
+    await session.commit()
+    await session.refresh(db_user)
+
+    return db_user
 
 
 @router.delete("/{user_id}")
