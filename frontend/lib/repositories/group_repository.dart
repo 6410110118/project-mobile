@@ -1,8 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:frontend/models/groups.dart';
 import 'package:frontend/services/dio_client.dart';
-
-
 import '../services/token_storage.dart';
 
 class GroupRepository {
@@ -25,13 +23,16 @@ class GroupRepository {
 
       if (response.statusCode == 200) {
         print('Response data: ${response.data}');
-        
-        // ตรวจสอบว่าข้อมูลเป็น List หรือ Map
+
         if (response.data is Map<String, dynamic>) {
-          final List<dynamic> groupsJson = response.data['groups']; // ใช้ชื่อคีย์ที่ถูกต้อง
-          return groupsJson.map((groupJson) => Group.fromJson(groupJson)).toList();
+          final List<dynamic> groupsJson = response.data['groups'];
+          return groupsJson
+              .map((groupJson) => Group.fromJson(groupJson))
+              .toList();
         } else if (response.data is List<dynamic>) {
-          return (response.data as List<dynamic>).map((groupJson) => Group.fromJson(groupJson)).toList();
+          return (response.data as List<dynamic>)
+              .map((groupJson) => Group.fromJson(groupJson))
+              .toList();
         } else {
           throw Exception('Unexpected data format');
         }
@@ -42,5 +43,4 @@ class GroupRepository {
       throw Exception('Failed to fetch groups: $e');
     }
   }
-
 }
