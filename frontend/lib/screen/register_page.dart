@@ -5,106 +5,294 @@ import '../repositories/user_repository.dart';
 
 class RegisterPage extends StatelessWidget {
   final _emailController = TextEditingController();
-  final _usernameController = TextEditingController();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
+  final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  
+  final _confirmPasswordController = TextEditingController();
+  String role = 'Leader';
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
+
   RegisterPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Register'),
+    return BlocProvider(
+      create: (context) => RegisterBloc(
+        userRepository: RepositoryProvider.of<UserRepository>(context),
       ),
-      body: BlocListener<RegisterBloc, RegisterState>(
-        listener: (context, state) {
-          if (state is RegisterSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Registration successful')),
-            );
-            // Navigate to the Travel Page after successful registration
-            Navigator.pushReplacementNamed(context, '/login');
-          } else if (state is RegisterFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Registration failed: ${state.error}')),
-            );
-          }
-        },
-        child: BlocBuilder<RegisterBloc, RegisterState>(
-          builder: (context, state) {
-            if (state is RegisterLoading) {
-              return const Center(child: CircularProgressIndicator());
+      child: Scaffold(
+        appBar: AppBar(
+          // Add a back button using IconButton
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pushReplacementNamed(
+                  context, '/signin'); // Navigate back to the previous page
+            },
+          ),
+          title: const Text(
+            'Register',
+            style: TextStyle(
+              fontSize: 24, // Make the title larger
+              fontWeight: FontWeight.bold, // Make the title bold
+            ),
+          ),
+          centerTitle: true, // Center the title
+        ),
+        body: BlocListener<RegisterBloc, RegisterState>(
+          listener: (context, state) {
+            if (state is RegisterSuccess) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Registration successful')),
+              );
+              Navigator.pushReplacementNamed(context, '/login');
+            } else if (state is RegisterFailure) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Registration failed: ${state.error}')),
+              );
             }
-
-            String role = 'Leader'; // Move role declaration inside the builder
-
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  TextField(
-                    controller: _emailController,
-                    decoration: const InputDecoration(labelText: 'Email'),
-                  ),
-                  TextField(
-                    controller: _usernameController,
-                    decoration: const InputDecoration(labelText: 'Username'),
-                  ),
-                  TextField(
-                    controller: _firstNameController,
-                    decoration: const InputDecoration(labelText: 'First Name'),
-                  ),
-                  TextField(
-                    controller: _lastNameController,
-                    decoration: const InputDecoration(labelText: 'Last Name'),
-                  ),
-                  TextField(
-                    controller: _passwordController,
-                    obscureText: true,
-                    decoration: const InputDecoration(labelText: 'Password'),
-                  ),
-                  DropdownButton<String>(
-                    value: role,
-                    items: <String>['Leader', 'People'].map((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    onChanged: (newRole) {
-                      if (newRole != null) {
-                        role = newRole; // Update role using local variable
-                      }
-                    },
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      BlocProvider.of<RegisterBloc>(context).add(
-                        RegisterButtonPressed(
-                          email: _emailController.text,
-                          username: _usernameController.text,
-                          firstName: _firstNameController.text,
-                          lastName: _lastNameController.text,
-                          password: _passwordController.text,
-                          role: role,
-                        ),
-                      );
-                    },
-                    child: const Text('Register'),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/login');
-                    },
-                    child: const Text('Already have an account? Login'),
-                  ),
-                ],
-              ),
-            );
           },
+          child: BlocBuilder<RegisterBloc, RegisterState>(
+            builder: (context, state) {
+              if (state is RegisterLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ListView(
+                  children: [
+                    // Row with First Name and Last Name Labels and Fields
+                    Row(
+                      children: [
+                        // First Name Label and Field
+                        Flexible(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'First Name',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              TextField(
+                                controller: _firstNameController,
+                                decoration: InputDecoration(
+                                  hintText:
+                                      'John', // Placeholder inside the box
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 16), // Space between fields
+                        // Last Name Label and Field
+                        Flexible(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Last Name',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              TextField(
+                                controller: _lastNameController,
+                                decoration: InputDecoration(
+                                  hintText: 'Doe', // Placeholder inside the box
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Username Label and Field
+                    const Text(
+                      'Username',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: _usernameController,
+                      decoration: InputDecoration(
+                        hintText: 'Enter your Username', // Placeholder inside
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Email Label and Field
+                    const Text(
+                      'E-mail',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: _emailController,
+                      decoration: InputDecoration(
+                        hintText: 'Enter your email', // Placeholder inside
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Password Label and Field with Visibility Toggle
+                    const Text(
+                      'Password',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: _passwordController,
+                      obscureText: !_isPasswordVisible,
+                      decoration: InputDecoration(
+                        hintText: '********', // Placeholder inside
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _isPasswordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            _isPasswordVisible = !_isPasswordVisible;
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Confirm Password Label and Field with Visibility Toggle
+                    const Text(
+                      'Confirm Password',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: _confirmPasswordController,
+                      obscureText: !_isConfirmPasswordVisible,
+                      decoration: InputDecoration(
+                        hintText: '********', // Placeholder inside
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _isConfirmPasswordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            _isConfirmPasswordVisible =
+                                !_isConfirmPasswordVisible;
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Role Dropdown Label and Field
+                    const Text(
+                      'Role',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    DropdownButtonFormField<String>(
+                      value: role,
+                      items: <String>['Leader', 'People'].map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (newRole) {
+                        role = newRole!;
+                      },
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Register Button
+                    ElevatedButton(
+                      onPressed: () {
+                        BlocProvider.of<RegisterBloc>(context).add(
+                          RegisterButtonPressed(
+                            username: _usernameController.text,
+                            email: _emailController.text,
+                            firstName: _firstNameController.text,
+                            lastName: _lastNameController.text,
+                            password: _passwordController.text,
+                            confirmPassword: _confirmPasswordController.text,
+                            role: role,
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 50),
+                        backgroundColor: Color.fromARGB(255, 87, 181, 49),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                      child: const Text('Create Account',
+                          style: TextStyle(color: Colors.white)),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Already have an account? Login Button
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(context, '/login');
+                      },
+                      child: const Text('Already have an account? Login'),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
