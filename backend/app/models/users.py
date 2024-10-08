@@ -70,7 +70,7 @@ class RegisteredUser(BaseUser):
 
 
 class UpdatedUser(BaseUser):
-    roles: list[str]
+    role: UserRole 
 
 
 class Token(BaseModel):

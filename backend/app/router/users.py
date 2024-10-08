@@ -138,7 +138,7 @@ async def register_people(
     return models.People.from_orm(dbpeople)
 
 
-@router.put("/{user_id}/change_password")
+@router.put("/change_password")
 async def change_password(
     # request: Request,
     
@@ -178,7 +178,7 @@ async def change_password(
 async def update(
     request: Request,
     user_update: models.UpdatedUser,
-    # password_update: models.ChangedPassword,
+    
     session: Annotated[AsyncSession, Depends(models.get_session)],
     current_user: models.User = Depends(deps.get_current_user),
 ) -> models.User:
