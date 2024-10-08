@@ -70,7 +70,12 @@ class RegisteredUser(BaseUser):
 
 
 class UpdatedUser(BaseUser):
-    role: UserRole 
+    role: UserRole
+    email: EmailStr | None = pydantic.Field(json_schema_extra=dict(example="admin@email.local"))
+    username: str | None= pydantic.Field(json_schema_extra=dict(example="admin"))
+    first_name: str | None= pydantic.Field(json_schema_extra=dict(example="Firstname"))
+    last_name: str| None = pydantic.Field(json_schema_extra=dict(example="Lastname"))
+ 
 
 
 class Token(BaseModel):
