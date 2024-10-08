@@ -13,6 +13,7 @@ class UserRepository {
     required String lastName,
     required String password,
     required String role,
+    required String confirmPassword,
   }) async {
     final String endpoint = role == 'Leader'
         ? '/users/register_leader'
