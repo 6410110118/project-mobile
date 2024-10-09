@@ -16,6 +16,7 @@ asyncpg = "^0.29.0"
 fastapi = "^0.112.3"
 googlemaps = "^4.10.0"
 pydantic = "^2.8.2"
+broadcast = "^1.1.2"
 
 
 [build-system]

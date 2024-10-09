@@ -3,6 +3,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import select
 from typing import Annotated
 from app import models
+from app import deps
 
 
 router = APIRouter(prefix="/images", tags=["images"])
@@ -10,12 +11,14 @@ router = APIRouter(prefix="/images", tags=["images"])
 async def create_image(
     file: UploadFile,
     session: Annotated[AsyncSession, Depends(models.get_session)],
+    current_user: models.User = Depends(deps.get_current_user),
 ):
     file_data = await file.read()
     
     db_image = models.DBImages(
         filename=file.filename,
-        data=file_data 
+        data=file_data,
+        user_id=current_user.id  # Assuming there is a user_id field in DBImages
     )
     
     session.add(db_image)

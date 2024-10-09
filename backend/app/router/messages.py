@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, status , WebSocket
+import json
+from fastapi import APIRouter, Depends, HTTPException, Request, WebSocketDisconnect, status , WebSocket
 from sqlalchemy import func
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import select
@@ -6,22 +7,46 @@ from sqlmodel import select
 from typing import Annotated
 from .. import deps
 from .. import models
-
+from broadcaster import Broadcast
 
 router = APIRouter(prefix="/groups", tags=["message"])
 
-@router.post("/groups/messages/")
+broadcast = Broadcast("memory://")
+
+@router.websocket("/ws/groups/{group_id}/messages/")
+async def websocket_endpoint(websocket: WebSocket, group_id: int):
+    await websocket.accept()
+
+    async def receive_messages():
+        # Subscribe ไปที่ channel ของกลุ่มตาม group_id
+        async with broadcast.subscribe(channel=f"group_{group_id}_messages") as subscriber:
+            async for event in subscriber:
+                # ส่งข้อความไปยัง client ที่เชื่อมต่อ
+                await websocket.send_text(event.message)
+
+    try:
+        # เรียกใช้ฟังก์ชันที่รอรับข้อความจาก broadcast
+        await receive_messages()
+    except WebSocketDisconnect:
+        print(f"WebSocket disconnected")
+    except Exception as e:
+        await websocket.send_text(f"Error: {str(e)}")
+
+# POST Endpoint เพื่อส่งข้อความ
+@router.post("/messages/")
 async def send_message(
     message: models.CreatedMessage,
-    session: Annotated[AsyncSession, Depends(models.get_session)],
+    session: AsyncSession = Depends(models.get_session),
     current_user: models.User = Depends(deps.get_current_user),
 ) -> models.Message:
-    
-    # Fetch the group where the user is either the creator (leader) or a member
+
+    # Fetch the group ที่ user เป็น leader หรือเป็น member
     result = await session.exec(
-        select(models.DBGroup).where(
-            (models.DBGroup.leader_id == current_user.id)  # Check if the user is the leader
-            | (models.DBGroup.id == select(models.DBPeople.group_id).where(models.DBPeople.user_id == current_user.id))  # Or a member of the group
+        select(models.DBGroup)
+        .join(models.PeopleGroupLink, models.DBGroup.id == models.PeopleGroupLink.group_id)
+        .where(
+            (models.DBGroup.leader_id == current_user.id)  # ตรวจสอบว่า user เป็น leader หรือไม่
+            | (models.PeopleGroupLink.people_id == select(models.DBPeople.id).where(models.DBPeople.user_id == current_user.id))  # ตรวจสอบว่า user เป็น member หรือไม่
         )
     )
     db_group = result.one_or_none()
@@ -34,40 +59,72 @@ async def send_message(
 
     group_id = db_group.id
 
-    # If the user is a member (People), get their people_id
+    # ตรวจสอบว่า user เป็น leader หรือ member ในกลุ่มนี้
     result = await session.exec(
-        select(models.DBPeople).where(
+        select(models.DBPeople)
+        .join(models.PeopleGroupLink, models.DBPeople.id == models.PeopleGroupLink.people_id)
+        .where(
             (models.DBPeople.user_id == current_user.id)
-            & (models.DBPeople.group_id == group_id)
+            & (models.PeopleGroupLink.group_id == group_id)
         )
     )
     db_people = result.one_or_none()
 
-    # Determine if the user is the leader or a member
     if db_people:
         people_id = db_people.id
     elif db_group.leader_id == current_user.id:
-        # If the user is the leader, they can still send messages
-        people_id = None
+        people_id = None  # ถ้าเป็น leader ก็ให้ people_id เป็น None
     else:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You are not authorized to send messages in this group",
         )
 
-    # Create and save the message
+    # สร้างและบันทึกข้อความลงฐานข้อมูล
     db_message = models.DBMessage(
         **message.dict(), group_id=group_id, people_id=people_id
     )
     session.add(db_message)
     await session.commit()
     await session.refresh(db_message)
-    
+
+    # ส่งข้อความไปที่ WebSocket ผ่าน broadcast
+    await broadcast.publish(channel=f"group_{group_id}_messages", message=db_message.content)
+
     return models.Message.from_orm(db_message)
 
+# เปิดการเชื่อมต่อกับ Broadcast
+@router.on_event("startup")
+async def startup():
+    await broadcast.connect()
+
+@router.on_event("shutdown")
+async def shutdown():
+    await broadcast.disconnect()
+@router.get("/user/{people_id}")
+async def get_group_id(
+    people_id: int, 
+    session: Annotated[AsyncSession, Depends(models.get_session)],
+    current_user: models.User = Depends(deps.get_current_user),
+    
+    ):
+    result = await session.exec(
+        select(models.DBGroup)
+        .join(models.PeopleGroupLink, models.DBGroup.id == models.PeopleGroupLink.group_id)
+        .where(models.PeopleGroupLink.people_id == people_id)
+    )
+    db_group = result.one_or_none()
+
+    if db_group:
+        return {"group_id": db_group.id}
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Group not found for this user"
+        )
 
 
-@router.get("/groups/messages/")
+@router.get("/messages/")
 async def get_messages(
     session: Annotated[AsyncSession, Depends(models.get_session)],
     current_user: models.User = Depends(deps.get_current_user),
@@ -101,22 +158,8 @@ async def get_messages(
 
 
 
-# @router.websocket("/ws/groups/{group_id}/messages/")
-# async def websocket_endpoint(
-#     websocket: WebSocket, 
-#     group_id: int,
-#     session: Annotated[AsyncSession, Depends(models.get_session)],
-#     current_user: models.User = Depends(deps.get_current_user),
-#     ):
-#     await websocket.accept()
-#     while True:
-#         data = await websocket.receive_text()
-#         # บันทึกข้อความใหม่ลงฐานข้อมูล
-#         db_message = models.DBMessage(group_id=group_id , people_id=current_user.id ,content=data)
-#         session.add(db_message)
-#         await session.commit()
-#         await session.refresh(db_message)
-#         await websocket.send_text(f"Message received: {data}")
+
+
 
 
 
