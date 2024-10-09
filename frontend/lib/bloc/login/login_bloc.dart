@@ -23,19 +23,19 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       emit(LoginLoading());
       try {
         await authRepository.logout();
-        emit(LoginInitial());
+        emit(LogoutSuccess());
       } catch (error) {
-        emit(LoginFailure(error.toString()));
+        emit(LogoutFailure(error.toString()));
       }
     });
-    on<ChangePasswordEvent>((event, emit) async {
-      emit(ChangePasswordLoading());
-      try {
-        await authRepository.changePassword(event.currentPassword, event.newPassword);
-        emit(ChangePasswordSuccess());
-      } catch (error) {
-        emit(ChangePasswordFailure(error.toString()));
-      }
-    });
+      on<ResetPasswordButtonPressed>((event, emit) async {
+        emit(ResetPasswordLoading());
+        try {
+          await authRepository.resetPassword(event.email, event.newpassword);
+          emit(ResetPasswordSuccess());
+        } catch (message) {
+          emit(ResetPasswordFailure(error: message.toString()));
+        }
+      });
   }
 }

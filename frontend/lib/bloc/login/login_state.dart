@@ -9,17 +9,24 @@ class LoginSuccess extends LoginState {
 
   LoginSuccess(this.token);
 }
-class ChangePasswordLoading extends LoginState {}
+class ResetPasswordInitial extends LoginState {}
 
-class ChangePasswordSuccess extends LoginState {}
+class ResetPasswordLoading extends LoginState {}
 
-class ChangePasswordFailure extends LoginState {
+class ResetPasswordSuccess extends LoginState {}
+
+class ResetPasswordFailure extends LoginState {
   final String error;
 
-  ChangePasswordFailure(this.error);
+  ResetPasswordFailure({required this.error});
 }
 class LoginFailure extends LoginState {
-  final String error;
+  final String message;
 
-  LoginFailure(this.error);
+  LoginFailure(this.message);
+}
+class LogoutSuccess extends LoginState {}
+class LogoutFailure extends LoginState {
+  final String error;
+  LogoutFailure(this.error);
 }

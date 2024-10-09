@@ -7,13 +7,10 @@ class LoginButtonPressed extends LoginEvent {
   LoginButtonPressed({required this.username, required this.password});
 }
 
-class ChangePasswordEvent extends LoginEvent {
-  final String currentPassword;
-  final String newPassword;
+class ResetPasswordButtonPressed extends LoginEvent {
+  final String email;
+  final String newpassword;
 
-  ChangePasswordEvent({
-    required this.currentPassword,
-    required this.newPassword,
-  });
+  ResetPasswordButtonPressed({required this.email , required this.newpassword});  
 }
 class LogoutRequested extends LoginEvent {}

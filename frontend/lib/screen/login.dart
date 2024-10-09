@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:frontend/screen/main_screens.dart';
-import 'package:frontend/widgets/change_password_popup.dart';
 import 'package:frontend/widgets/login_popup.dart';
 import '../bloc/export_bloc.dart';
 import '../repositories/auth_repository.dart';
+import 'reset_password_page.dart'; // เพิ่มการ import หน้านี้เข้ามา
 
 
 class Login extends StatefulWidget {
@@ -105,12 +105,10 @@ class _LoginState extends State<Login> {
                           alignment: Alignment.centerRight,
                           child: TextButton(
                             onPressed: () {
-                              // Show Change Password Dialog
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return ChangePasswordDialog(); // Open Change Password Dialog
-                                },
+                              // เปลี่ยนจาก showDialog ไปเป็น Navigator.push เพื่อเปิดหน้า ResetPasswordPage
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const ResetPasswordPage()),
                               );
                             },
                             child: const Text('Forgot Password?'),
@@ -163,7 +161,7 @@ class _LoginState extends State<Login> {
                           Padding(
                             padding: const EdgeInsets.only(top: 10),
                             child: Text(
-                              state.error,
+                              state.message,
                               style: const TextStyle(color: Colors.red),
                             ),
                           ),
