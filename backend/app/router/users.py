@@ -215,7 +215,7 @@ async def reset_password(
     request: Request,
     password_reset: models.ResetedPassword,
     session: Annotated[AsyncSession, Depends(models.get_session)],
-    current_user: models.User = Depends(deps.get_current_user),
+    
 ) -> models.User:
     
     # ค้นหาผู้ใช้ตามอีเมลและรหัสประจำตัวประชาชน
@@ -267,7 +267,7 @@ async def get_image_profile(
     
     return Response(content=current_user.imageData, media_type="image/jpeg")
 
-@router.put("imageProfile")
+@router.put("/imageProfile")
 async def upload_image(
     file: UploadFile,
     session: Annotated[AsyncSession, Depends(models.get_session)],
