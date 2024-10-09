@@ -6,7 +6,7 @@ class UserModel {
   final String? firstName;
   final String? lastName;
   final String? role;
-  final String? phoneNumber;
+  
   final String? email;
   
   final int? id;
@@ -21,7 +21,7 @@ class UserModel {
     this.firstName,
     this.lastName,
     this.role,
-    this.phoneNumber,
+    
     this.email,
     
     this.id,
