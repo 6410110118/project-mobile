@@ -43,7 +43,8 @@ class NewTripPage extends StatelessWidget {
           backgroundColor: const Color(0xFFD7A976), // สีเบจ
           centerTitle: true, // จัดตำแหน่งตรงกลาง
           elevation: 0,
-          automaticallyImplyLeading: true, // เพิ่ม back button
+          automaticallyImplyLeading: false,
+           // เพิ่ม back button
         ),
         backgroundColor: const Color(0xFFF5E5D7), // พื้นหลังสีเบจอ่อน
         body: SingleChildScrollView(

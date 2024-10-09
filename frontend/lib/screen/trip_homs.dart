@@ -25,10 +25,7 @@ class _TripHomeState extends State<TripHome> {
             create: (context) => TripBloc(tripRepository: TripRepository())
               ..add(FetchTripEvent()),
           ),
-          BlocProvider(
-            create: (context) =>
-                GetMeBloc(ProfileRepository())..add(FetchUserData()),
-          ),
+          
         ],
         child: BlocBuilder<TripBloc, TripState>(builder: (context, tripState) {
           if (tripState is TripLoading) {
