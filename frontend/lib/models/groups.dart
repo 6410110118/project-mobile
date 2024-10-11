@@ -1,7 +1,7 @@
 class Group {
-  final String name;
-  final DateTime startDate;
-  final DateTime endDate;
+  final String? name;
+  final DateTime? startDate;
+  final DateTime? endDate;
   final String? imageUrl; // Nullable เนื่องจากอาจไม่มีรูป
 
   Group({
@@ -19,4 +19,13 @@ class Group {
       imageUrl: json['image_url'],
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    
+      'name': name,
+     'start_date': startDate?.toIso8601String(),
+      'end_date': endDate?.toIso8601String(),
+      'image_url': imageUrl,
+    
+  };
 }

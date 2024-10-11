@@ -12,11 +12,12 @@ class GroupStateLoaded extends GroupState {
 
 class GroupCreated extends GroupState {
   final String message;
+
   GroupCreated(this.message);
 }
-
 
 class GroupError extends GroupState {
   final String message;
   GroupError(this.message);
 }
+

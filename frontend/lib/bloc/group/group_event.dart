@@ -1,4 +1,4 @@
-import 'package:frontend/models/groups.dart';
+
 
 abstract class GroupEvent {}
 
@@ -7,10 +7,18 @@ class FetchGroupEvent extends GroupEvent {
   FetchGroupEvent();
 }
 // Event สำหรับสร้างกลุ่ม
-class CreateGroupEvent extends GroupEvent {
-  final Group newGroup;
+class AddGroupEvent extends GroupEvent {
+  final String name;
+  
+  final DateTime? startDate;
+  final DateTime? endDate;
 
-  CreateGroupEvent({required this.newGroup});
+  AddGroupEvent({
+    required this.name,
+    
+    this.startDate,
+    this.endDate,
+  });
 }
 
 

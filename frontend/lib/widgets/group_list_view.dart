@@ -1,9 +1,7 @@
-// group_list_view.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/export_bloc.dart';
 import '../models/groups.dart';
-
 
 class GroupListView extends StatelessWidget {
   final String searchQuery;
@@ -14,12 +12,23 @@ class GroupListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<GroupBloc, GroupState>(
       builder: (context, state) {
+        print("Current State: $state");
         if (state is GroupStateLoading) {
           return Center(child: CircularProgressIndicator());
         } else if (state is GroupStateLoaded) {
-          final List filteredGroups = state.groups.where((group) {
-            return group.name.toLowerCase().contains(searchQuery.toLowerCase());
+          
+          // กรองกลุ่มตาม searchQuery
+          final List<Group> filteredGroups = state.groups
+              .cast<Group>() // ทำการแปลงเป็น List<Group>
+              .where((group) {
+            return group.name != null &&
+                group.name!.toLowerCase().contains(searchQuery.toLowerCase());
           }).toList();
+
+          // ตรวจสอบว่ามีกลุ่มที่ตรงกับการค้นหาหรือไม่
+          if (filteredGroups.isEmpty) {
+            return Center(child: Text('No results found for your search'));
+          }
 
           return Column(
             children: [
@@ -63,13 +72,13 @@ class GroupListView extends StatelessWidget {
                                   )
                                 : Icon(Icons.broken_image, size: 60),
                           ),
-                          title: Text(group.name),
+                          title: Text(group.name ?? 'Unnamed Group'), // แสดงชื่อกลุ่มหรือ 'Unnamed Group'
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SizedBox(height: 4),
-                              Text('Start date: ${group.startDate}'),
-                              Text('End date: ${group.endDate}'),
+                              Text('Start date: ${group.startDate ?? 'N/A'}'), // ปรับให้แสดง 'N/A' หากไม่มีวันที่
+                              Text('End date: ${group.endDate ?? 'N/A'}'), // ปรับให้แสดง 'N/A' หากไม่มีวันที่
                             ],
                           ),
                           onTap: () {
@@ -84,7 +93,7 @@ class GroupListView extends StatelessWidget {
             ],
           );
         } else if (state is GroupError) {
-          return Center(child: Text(state.message));
+          return Center(child: Text('Error: ${state.message}'));
         } else {
           return Center(child: Text('No groups available'));
         }
@@ -94,8 +103,7 @@ class GroupListView extends StatelessWidget {
 }
 
 String convertGiphyUrl(String? url) {
-  if (url == null ||
-      !(url.contains('giphy.com/stickers/') || url.contains('giphy.com/media/'))) {
+  if (url == null || !(url.contains('giphy.com/stickers/') || url.contains('giphy.com/media/'))) {
     return '';
   }
 

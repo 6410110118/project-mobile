@@ -26,7 +26,7 @@ class GroupRepository {
         print('Response data: ${response.data}');
 
         if (response.data is Map<String, dynamic>) {
-          final List<dynamic> groupsJson = response.data['groups'];
+          final List<dynamic> groupsJson = response.data['groups'] ?? [];
           return groupsJson
               .map((groupJson) => Group.fromJson(groupJson))
               .toList();
@@ -46,32 +46,38 @@ class GroupRepository {
   }
 
   // ฟังก์ชันสำหรับสร้างกลุ่มใหม่
-  Future<Group> createGroup({
-    required String name,
-    required DateTime startDate,
-    required DateTime endDate,
+
+  Future<void> createGroup({
+    String? name,
+    DateTime? startDate,
+    DateTime? endDate,
   }) async {
     try {
       final token = await tokenStorage.getToken();
 
+      // สร้างข้อมูลกลุ่มในรูปแบบ Map
+      final groupData = {
+        'name': name,
+        'start_date':
+            startDate?.toIso8601String(), // แปลง DateTime เป็น ISO 8601 String
+        'end_date':
+            endDate?.toIso8601String() // แปลง DateTime เป็น ISO 8601 String
+      };
+
       final response = await dio.post(
-        '/groups',  // ส่งคำขอไปยัง endpoint สำหรับการสร้างกลุ่ม
+        '/groups',
+        data: groupData, // ส่งข้อมูลกลุ่มในรูปแบบ Map
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
             'Content-Type': 'application/json',
           },
         ),
-        data: {
-          'name': name,
-          'start_date': startDate.toIso8601String(),
-          'end_date': endDate.toIso8601String(),
-        },
       );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        // สร้างกลุ่มสำเร็จ
-        return Group.fromJson(response.data);
+      if (response.statusCode == 200) {
+        // เปลี่ยนเป็น 201 สำหรับการสร้างที่สำเร็จ
+        print('Group Created successfully: ${response.data}');
       } else {
         throw Exception('Failed to create group: ${response.data}');
       }

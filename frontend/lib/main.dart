@@ -5,6 +5,7 @@ import 'package:frontend/repositories/auth_repository.dart';
 import 'package:frontend/repositories/profile_repository.dart';
 import 'package:frontend/repositories/trip_repository.dart';
 import 'package:frontend/repositories/user_repository.dart';
+import 'package:frontend/screen/group_page.dart';
 import 'package:frontend/screen/login.dart';
 import 'package:frontend/screen/profile.dart';
 import 'package:frontend/screen/register_page.dart';
@@ -39,12 +40,15 @@ class PlanTravel extends StatelessWidget {
           create: (context) => GetMeBloc( ProfileRepository())
             ..add(FetchUserData()),
         ),
-                BlocProvider(
-          create: (context) => GroupBloc(groupRepository: GroupRepository()), 
-        ),
+          
         BlocProvider<TripBloc>(
           create: (context) => TripBloc(tripRepository: TripRepository())..add(FetchTripEvent()),
+        ),
+        BlocProvider(
+          create: (context) => GroupBloc(groupRepository: GroupRepository()),
+          child: GroupScreen(),
         )
+
       ],
       child: MaterialApp(
         initialRoute: '/',
