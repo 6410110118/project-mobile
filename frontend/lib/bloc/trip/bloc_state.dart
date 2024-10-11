@@ -22,3 +22,6 @@ class TripError extends TripState {
   final String message;
   TripError(this.message);
 }
+
+class TripJoining extends TripState {}
+class TripJoined extends TripState {}  

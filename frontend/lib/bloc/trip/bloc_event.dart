@@ -17,3 +17,9 @@ class SearchTripEvent extends TripEvent {
 
   SearchTripEvent({required this.query});
 }
+
+class JoinTripEvent extends TripEvent {
+  final Trip trip;
+
+  JoinTripEvent({required this.trip});
+}

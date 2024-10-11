@@ -12,7 +12,8 @@ class TripBloc extends Bloc<TripEvent, TripState> {
 
       try {
         // เรียกข้อมูลจาก TripRepository
-        final List<Trip> tripList = await tripRepository.fetchTrips(); // ดึงข้อมูล trips
+        final List<Trip> tripList =
+            await tripRepository.fetchTrips(); // ดึงข้อมูล trips
         emit(TripLoaded(tripList));
       } catch (error) {
         // ถ้ามีข้อผิดพลาดขณะดึงข้อมูล
@@ -25,12 +26,14 @@ class TripBloc extends Bloc<TripEvent, TripState> {
       emit(TripSubmitting());
 
       try {
-        await tripRepository.postTrip(event.trips); // เปลี่ยน event.trips เป็น event.trip
+        await tripRepository
+            .postTrip(event.trips); // เปลี่ยน event.trips เป็น event.trip
         emit(TripSubmitted());
 
         // หลังจากส่งทริปสำเร็จ ให้ดึงข้อมูลใหม่
         emit(TripLoading()); // Optional: Emit loading state while fetching
-        final List<Trip> tripList = await tripRepository.fetchTrips(); // ดึงข้อมูล trips ใหม่
+        final List<Trip> tripList =
+            await tripRepository.fetchTrips(); // ดึงข้อมูล trips ใหม่
         emit(TripLoaded(tripList)); // ส่ง trips ที่ถูกโหลด
       } catch (e) {
         emit(TripError('Failed to submit data. Error: $e'));
@@ -43,15 +46,43 @@ class TripBloc extends Bloc<TripEvent, TripState> {
 
       if (currentState is TripLoaded) {
         // กรองทริปตามคำค้นหา
-        final filteredTrips = currentState.trips.where((trip) {
-          return trip.tripName?.toLowerCase().contains(event.query.toLowerCase()) ?? false;
-        }).cast<Trip>().toList();
+        final filteredTrips = currentState.trips
+            .where((trip) {
+              return trip.tripName
+                      ?.toLowerCase()
+                      .contains(event.query.toLowerCase()) ??
+                  false;
+            })
+            .cast<Trip>()
+            .toList();
 
-        // ส่งผลลัพธ์การค้นหาหากมีทริป
-        emit(TripSearchResult(filteredTrips)); // ไม่ต้องแปลง List
+        emit(TripSearchResult(filteredTrips));
       } else {
-        // หาก currentState ไม่เป็น TripLoaded
-        emit(TripSearchResult([])); // ส่งรายการว่าง
+        emit(TripSearchResult([]));
+      }
+    });
+    on<JoinTripEvent>((event, emit) async {
+      emit(TripJoining()); // แสดงสถานะว่ากำลัง join trip
+
+      try {
+        // แปลง trip ID เป็น string สำหรับการส่งไปยัง API
+        final String tripIdString = event.trip.id?.toString() ?? '';
+
+        // เรียก repository เพื่อ join trip
+        await tripRepository.joinTrip(tripIdString);
+
+        // แสดงสถานะว่าการ join trip สำเร็จ
+        emit(TripJoined());
+
+        // หลังจาก join สำเร็จ โหลดข้อมูล trips ใหม่
+        final List<Trip> tripList = await tripRepository.fetchTrips();
+
+        // อัปเดต state เป็น TripLoaded พร้อม trips ใหม่
+        emit(TripLoaded(tripList));
+      } catch (e) {
+        // จัดการกรณีเกิด error
+        emit(TripError('Failed to join trip. Error: $e'));
+        print(e);
       }
     });
   }

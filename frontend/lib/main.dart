@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/bloc/export_bloc.dart';
 import 'package:frontend/repositories/auth_repository.dart';
 import 'package:frontend/repositories/profile_repository.dart';
+import 'package:frontend/repositories/trip_repository.dart';
 import 'package:frontend/repositories/user_repository.dart';
 import 'package:frontend/screen/login.dart';
 import 'package:frontend/screen/profile.dart';
@@ -41,6 +42,9 @@ class PlanTravel extends StatelessWidget {
                 BlocProvider(
           create: (context) => GroupBloc(groupRepository: GroupRepository()), 
         ),
+        BlocProvider<TripBloc>(
+          create: (context) => TripBloc(tripRepository: TripRepository())..add(FetchTripEvent()),
+        )
       ],
       child: MaterialApp(
         initialRoute: '/',

@@ -65,5 +65,28 @@ class TripRepository {
       print('Error while posting trip: $e');
     }
   }
+   Future<void> joinTrip(String tripId) async {
+    try {
+      final token = await tokenStorage.getToken();
+      final response = await dio.post(
+        '/items/$tripId/join',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        print('Successfully joined trip: ${response.data}');
+      } else {
+        throw Exception('Failed to join trip: ${response.data}');
+      }
+    } catch (e) {
+      print('Error while joining trip: $e');
+      throw Exception('Error while joining trip: $e');
+    }
+  }
 
 }
