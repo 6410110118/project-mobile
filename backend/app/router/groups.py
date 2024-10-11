@@ -144,7 +144,7 @@ async def add_person_to_group(
             )
 
         # เพิ่มความสัมพันธ์ใหม่ในตารางกลาง
-        new_link = models.PeopleGroupLink(people_id=people_id, group_id=group_id)
+        new_link = models.PeopleGroupLink(people_id=people_id, group_id=group_id , user_id=current_user.id)
         session.add(new_link)
         await session.commit()
 

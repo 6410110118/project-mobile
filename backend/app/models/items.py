@@ -7,6 +7,7 @@ from .users import DBUser, UserRole
 from .leaders import DBLeader
 from .google_maps import DBGoogleMap
 
+
 class BaseItem(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     name: str
@@ -44,6 +45,7 @@ class DBItem(SQLModel, Item, table=True):
     user_id: int = Field(default=None, foreign_key="users.id")
     user: DBUser | None = Relationship(back_populates="item")
     role: UserRole = Field(default=None)
+    join_requests: List["JoinRequest"] = Relationship(back_populates="item")
     # leader_id: int = Field(default=None, primary_key=True)
     # leader: DBLeader | None = Relationship(back_populates="items")
     # google_map_id:int = Field(default=None, foreign_key="google_maps.id")

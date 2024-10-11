@@ -16,6 +16,7 @@ from .google_maps import *
 from .messages import *
 from .images import *
 from .people_group_links import *
+from .request_people import *
 
 connect_args = {}
 

@@ -103,15 +103,14 @@ async def shutdown():
     await broadcast.disconnect()
 @router.get("/user/{people_id}")
 async def get_group_id(
-    people_id: int, 
+    people_id: int,
     session: Annotated[AsyncSession, Depends(models.get_session)],
     current_user: models.User = Depends(deps.get_current_user),
-    
-    ):
+):
     result = await session.exec(
         select(models.DBGroup)
         .join(models.PeopleGroupLink, models.DBGroup.id == models.PeopleGroupLink.group_id)
-        .where(models.PeopleGroupLink.people_id == people_id)
+        .where(models.PeopleGroupLink.people_id == people_id) # ใช้ current_user แทน
     )
     db_group = result.one_or_none()
 
@@ -122,6 +121,7 @@ async def get_group_id(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Group not found for this user"
         )
+
 
 
 @router.get("/messages/")
