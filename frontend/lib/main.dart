@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 import 'bloc/onboarding/onboarding_bloc.dart';
 import 'bloc/onboarding/onboarding_state.dart';
 
+import 'repositories/group_repository.dart';
 import 'screen/onboarding_screen.dart';
 import 'screen/sign_in_page.dart';
 import 'screen/welcome_screens.dart';
@@ -36,6 +37,9 @@ class PlanTravel extends StatelessWidget {
          BlocProvider(
           create: (context) => GetMeBloc( ProfileRepository())
             ..add(FetchUserData()),
+        ),
+                BlocProvider(
+          create: (context) => GroupBloc(groupRepository: GroupRepository()), 
         ),
       ],
       child: MaterialApp(
