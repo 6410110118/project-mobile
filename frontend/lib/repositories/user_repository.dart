@@ -5,7 +5,7 @@ import '../services/token_storage.dart';
 class UserRepository {
   final Dio dio = DioClient.createDio(); // Create DioClient instance
   final TokenStorage tokenStorage = TokenStorage();
-
+  
   Future<void> register({
     required String email,
     required String username,
