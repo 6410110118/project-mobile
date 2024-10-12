@@ -49,7 +49,7 @@ async def send_message(
             | (models.PeopleGroupLink.people_id == select(models.DBPeople.id).where(models.DBPeople.user_id == current_user.id))  # ตรวจสอบว่า user เป็น member หรือไม่
         )
     )
-    db_group = result.one_or_none()
+    db_group = result.first()
 
     if not db_group:
         raise HTTPException(
@@ -112,7 +112,7 @@ async def get_group_id(
         .join(models.PeopleGroupLink, models.DBGroup.id == models.PeopleGroupLink.group_id)
         .where(models.PeopleGroupLink.people_id == people_id) # ใช้ current_user แทน
     )
-    db_group = result.one_or_none()
+    db_group = result.first()
 
     if db_group:
         return {"group_id": db_group.id}
