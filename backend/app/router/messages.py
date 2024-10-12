@@ -36,17 +36,21 @@ async def websocket_endpoint(websocket: WebSocket, group_id: int):
 @router.post("/messages/")
 async def send_message(
     message: models.CreatedMessage,
+    group_id: int,  # เพิ่มพารามิเตอร์ group_id
     session: AsyncSession = Depends(models.get_session),
     current_user: models.User = Depends(deps.get_current_user),
 ) -> models.Message:
 
-    # Fetch the group ที่ user เป็น leader หรือเป็น member
+    # ตรวจสอบว่า user เป็น leader หรือ member ในกลุ่มที่กำหนด group_id
     result = await session.exec(
         select(models.DBGroup)
         .join(models.PeopleGroupLink, models.DBGroup.id == models.PeopleGroupLink.group_id)
         .where(
-            (models.DBGroup.leader_id == current_user.id)  # ตรวจสอบว่า user เป็น leader หรือไม่
-            | (models.PeopleGroupLink.people_id == select(models.DBPeople.id).where(models.DBPeople.user_id == current_user.id))  # ตรวจสอบว่า user เป็น member หรือไม่
+            (models.DBGroup.id == group_id)  # ใช้ group_id ที่ส่งเข้ามา
+            & (
+                (models.DBGroup.leader_id == current_user.id)  # ตรวจสอบว่า user เป็น leader หรือไม่
+                | (models.PeopleGroupLink.people_id == select(models.DBPeople.id).where(models.DBPeople.user_id == current_user.id))  # ตรวจสอบว่า user เป็น member หรือไม่
+            )
         )
     )
     db_group = result.first()
@@ -56,8 +60,6 @@ async def send_message(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="You are not part of this group or the group does not exist",
         )
-
-    group_id = db_group.id
 
     # ตรวจสอบว่า user เป็น leader หรือ member ในกลุ่มนี้
     result = await session.exec(
@@ -92,6 +94,7 @@ async def send_message(
     await broadcast.publish(channel=f"group_{group_id}_messages", message=db_message.content)
 
     return models.Message.from_orm(db_message)
+
 
 # เปิดการเชื่อมต่อกับ Broadcast
 @router.on_event("startup")
