@@ -12,6 +12,7 @@ class GroupScreen extends StatefulWidget {
 
 class _GroupScreenState extends State<GroupScreen> {
   String searchQuery = '';
+  String token = '';
 
   @override
   void initState() {
@@ -46,7 +47,7 @@ class _GroupScreenState extends State<GroupScreen> {
                 }
               },
               child: GroupListView(
-                  searchQuery: searchQuery), // ส่ง searchQuery ไปกรองข้อมูล
+                  searchQuery: searchQuery, token: token,), // ส่ง searchQuery ไปกรองข้อมูล
             ),
           ),
           _buildAddGroupButton(context),
@@ -100,4 +101,5 @@ class _GroupScreenState extends State<GroupScreen> {
       ),
     );
   }
+  
 }

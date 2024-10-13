@@ -22,3 +22,17 @@ class AddGroupEvent extends GroupEvent {
 }
 
 
+
+
+class AddPersonToGroupEvent extends GroupEvent {
+  final int groupId;
+  final int peopleId;
+
+  AddPersonToGroupEvent({required this.groupId, required this.peopleId});
+}
+
+class FetchGroupPeople extends GroupEvent {
+  final int groupId;
+
+  FetchGroupPeople(this.groupId);
+}
