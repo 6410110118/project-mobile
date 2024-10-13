@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frontend/screen/message_page.dart';
 import '../bloc/export_bloc.dart';
 import '../models/groups.dart';
 
 class GroupListView extends StatelessWidget {
   final String searchQuery;
+  final String token; // เพิ่มตัวแปร token
 
-  GroupListView({required this.searchQuery});
+  GroupListView({required this.searchQuery, required this.token}); // เพิ่ม token ในคอนสตรัคเตอร์
 
   @override
   Widget build(BuildContext context) {
@@ -81,8 +83,14 @@ class GroupListView extends StatelessWidget {
                               Text('End date: ${group.endDate ?? 'N/A'}'), // ปรับให้แสดง 'N/A' หากไม่มีวันที่
                             ],
                           ),
-                          onTap: () {
-                            // ทำงานเมื่อกดเลือกกรุ๊ป
+                           onTap: () {
+                            final int groupId = group.id; // ใช้ค่า id ของกลุ่ม
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MessagePage(groupId: groupId, token: token), // ส่ง token ไปด้วย
+                              ),
+                            );
                           },
                         ),
                       ),
