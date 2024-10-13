@@ -1,14 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frontend/repositories/people_repository.dart';
 import 'package:frontend/screen/message_page.dart';
+import 'package:frontend/widgets/add_new_people_to_group.dart';
 import '../bloc/export_bloc.dart';
 import '../models/groups.dart';
 
-class GroupListView extends StatelessWidget {
+class GroupListView extends StatefulWidget {
   final String searchQuery;
-  final String token; // เพิ่มตัวแปร token
+  final String token;
 
-  GroupListView({required this.searchQuery, required this.token}); // เพิ่ม token ในคอนสตรัคเตอร์
+  GroupListView({required this.searchQuery, required this.token});
+
+  @override
+  _GroupListViewState createState() => _GroupListViewState();
+}
+
+class _GroupListViewState extends State<GroupListView> {
+  @override
+  void initState() {
+    super.initState();
+    // เรียก FetchGroupEvent เพื่อโหลดข้อมูลกลุ่มเมื่อเริ่มต้น
+    context.read<GroupBloc>().add(FetchGroupEvent());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,14 +32,12 @@ class GroupListView extends StatelessWidget {
         if (state is GroupStateLoading) {
           return Center(child: CircularProgressIndicator());
         } else if (state is GroupStateLoaded) {
-          
           // กรองกลุ่มตาม searchQuery
-          final List<Group> filteredGroups = state.groups
-              .cast<Group>() // ทำการแปลงเป็น List<Group>
-              .where((group) {
-            return group.name != null &&
-                group.name!.toLowerCase().contains(searchQuery.toLowerCase());
-          }).toList();
+          final filteredGroups = state.groups
+              .where((group) =>
+                  group.name != null &&
+                  group.name!.toLowerCase().contains(widget.searchQuery.toLowerCase()))
+              .toList();
 
           // ตรวจสอบว่ามีกลุ่มที่ตรงกับการค้นหาหรือไม่
           if (filteredGroups.isEmpty) {
@@ -52,7 +64,8 @@ class GroupListView extends StatelessWidget {
                     final String imageUrl = convertGiphyUrl(group.imageUrl);
 
                     return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 16.0),
                       child: Card(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16.0),
@@ -74,24 +87,38 @@ class GroupListView extends StatelessWidget {
                                   )
                                 : Icon(Icons.broken_image, size: 60),
                           ),
-                          title: Text(group.name ?? 'Unnamed Group'), // แสดงชื่อกลุ่มหรือ 'Unnamed Group'
+                          title: Text(group.name ?? 'Unnamed Group'),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SizedBox(height: 4),
-                              Text('Start date: ${group.startDate ?? 'N/A'}'), // ปรับให้แสดง 'N/A' หากไม่มีวันที่
-                              Text('End date: ${group.endDate ?? 'N/A'}'), // ปรับให้แสดง 'N/A' หากไม่มีวันที่
+                              Text('Start date: ${group.startDate ?? 'N/A'}'),
+                              Text('End date: ${group.endDate ?? 'N/A'}'),
                             ],
                           ),
-                           onTap: () {
-                            final int groupId = group.id; // ใช้ค่า id ของกลุ่ม
+                          onTap: () {
+                            final int groupId = group.id;
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => MessagePage(groupId: groupId, token: token), // ส่ง token ไปด้วย
+                                builder: (context) =>
+                                    MessagePage(groupId: groupId, token: widget.token),
                               ),
                             );
                           },
+                          trailing: IconButton(
+                            icon: Icon(Icons.add),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AddPeopleDialog(
+                                  groupId: group.id, // ส่งค่า groupId
+                                  peopleRepository:
+                                      PeopleRepository(), // ส่ง PeopleRepository
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     );
@@ -111,7 +138,9 @@ class GroupListView extends StatelessWidget {
 }
 
 String convertGiphyUrl(String? url) {
-  if (url == null || !(url.contains('giphy.com/stickers/') || url.contains('giphy.com/media/'))) {
+  if (url == null ||
+      !(url.contains('giphy.com/stickers/') ||
+          url.contains('giphy.com/media/'))) {
     return '';
   }
 
