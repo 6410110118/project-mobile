@@ -14,6 +14,7 @@ if TYPE_CHECKING:
     # from .add_user_to_groups import DBAddUserToGroup
     from .leaders import DBLeader
     from .peoples import DBPeople
+    from.people_group_links import PeopleGroupLink
 
 class UserRole(str, Enum):
     leader = "Leader"
@@ -29,7 +30,7 @@ class BaseUser(BaseModel):
 
 class User(BaseUser):
     id: int
-    role:UserRole
+    
     imageData : bytes | None
 
     last_login_date: datetime.datetime | None = pydantic.Field(
@@ -71,7 +72,7 @@ class RegisteredUser(BaseUser):
 
 
 class UpdatedUser(BaseModel):
-    role: UserRole
+    
     email: EmailStr | None = pydantic.Field(json_schema_extra=dict(example="admin@email.local"))
     
     first_name: str | None= pydantic.Field(json_schema_extra=dict(example="Firstname"))
@@ -106,7 +107,7 @@ class DBUser(BaseUser, SQLModel, table=True):
 
     password: str
     role: UserRole = Field(default=None)
-    imageData: Optional[bytes] = Field(default=None)
+    imageData: Optional[bytes] | None = Field(default=None)
 
     register_date: datetime.datetime = Field(default_factory=datetime.datetime.now)
     updated_date: datetime.datetime = Field(default_factory=datetime.datetime.now)
@@ -116,6 +117,7 @@ class DBUser(BaseUser, SQLModel, table=True):
     # add_user_to_group: List["DBAddUserToGroup"] = Relationship(back_populates="user", cascade_delete=True)
     leader: List["DBLeader"] = Relationship(back_populates="user", cascade_delete=True)
     people: List["DBPeople"] = Relationship(back_populates="user", cascade_delete=True)
+    people_group_links: List["PeopleGroupLink"] = Relationship(back_populates="user", cascade_delete=True)
     
 
 

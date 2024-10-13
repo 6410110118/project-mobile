@@ -16,7 +16,7 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 
 @router.get("/me")
-def get_me( current_user: models.User = Depends(deps.get_current_user)) -> models.User:
+def get_me( current_user: models.User = Depends(deps.get_current_user)) -> models.DBUser:
         if current_user.imageData:
             current_user.imageData = base64.b64encode(current_user.imageData).decode('utf-8')
     
@@ -28,30 +28,34 @@ SIZE_PER_PAGE = 50
 async def read_user(
     session: Annotated[AsyncSession, Depends(models.get_session)],
     current_user: models.User = Depends(deps.get_current_user),
-    page: int = 1,
-    
-) -> models.UserList:
-    query = select(models.DBUser).where(models.DBUser.id != current_user.id)
-    result = await session.exec(
-        query.offset((page - 1) * SIZE_PER_PAGE).limit(SIZE_PER_PAGE)
-    )
-    users = result.all() or []
-    
-    
-    
+    username: str = None,  # เพิ่ม parameter username
+) :
+    if username == f'{current_user.username}':
+        raise HTTPException(status_code=400, detail="You cannot view your own profile")
 
-    page_count = int(
-        math.ceil(
-            (await session.exec(select(func.count(models.DBUser.id)))).first()
-            / SIZE_PER_PAGE
-        )
+    user_result = await session.execute(
+        select(models.DBUser).where(models.DBUser.username == username)
     )
+    user = user_result.scalar_one_or_none()
 
-    print("page_count", page_count)
-    print("users", users)
-    return models.UserList.from_orm(
-        dict(users=users, page_count=page_count, page=page, size_per_page=SIZE_PER_PAGE)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    user = models.User.from_orm(user)
+    people_result = await session.execute(
+        select(models.DBPeople).where(models.DBPeople.user_id == user.id)
     )
+    people = people_result.scalar_one_or_none()
+
+    if not people:
+        raise HTTPException(status_code=404, detail="People not found")
+    
+    people = models.People.from_orm(people)
+
+
+    # คืนค่า UserList ที่มีข้อมูล users, page, page_count และ size_per_page
+    return people.id
+
 
 
 @router.post("/register_leader")
@@ -178,7 +182,7 @@ async def change_password(
 async def update(
     request: Request,
     user_update: models.UpdatedUser,
-    
+    # password_update: models.ChangedPassword,
     session: Annotated[AsyncSession, Depends(models.get_session)],
     current_user: models.User = Depends(deps.get_current_user),
 ) -> models.User:
@@ -209,6 +213,7 @@ async def update(
 
 
         return db_user
+
 
 @router.put("/reset-password")
 async def reset_password(

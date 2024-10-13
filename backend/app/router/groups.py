@@ -3,7 +3,7 @@ from sqlalchemy import func
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import select
 import httpx
-from typing import Annotated
+from typing import Annotated, List
 from .. import deps
 from .. import models
 from .. import security
@@ -100,7 +100,9 @@ async def get_random_sticker():
         # ดึง URL ของสติกเกอร์จากผลลัพธ์
         sticker_url = data['data']['url']
         return sticker_url
-@router.put("/add_people_to_group")
+    
+
+@router.put("/add_people_to_group/{group_id}/{people_id}/")
 async def add_person_to_group(
     group_id: int,
     people_id: int,
@@ -137,14 +139,20 @@ async def add_person_to_group(
                 models.PeopleGroupLink.group_id == group_id
             )
         )
-        if existing_link.one_or_none():
+        existing_link = existing_link.one_or_none()
+
+        if existing_link:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Person is already in this group"
             )
+        
+        db_user = await session.exec(
+            select(models.DBUser).where(models.DBUser.id == db_people.user_id)
+            )
 
         # เพิ่มความสัมพันธ์ใหม่ในตารางกลาง
-        new_link = models.PeopleGroupLink(people_id=people_id, group_id=group_id , user_id=current_user.id)
+        new_link = models.PeopleGroupLink(people_id=people_id, group_id=group_id ,user_id = db_people.user_id)
         session.add(new_link)
         await session.commit()
 
@@ -235,4 +243,38 @@ async def delete_person_from_group(
 
     return {"message": "Person removed from group successfully"}
 
+
+@router.get("/{group_id}/people")
+async def read_people_in_group(
+    group_id: int, 
+    session: AsyncSession = Depends(models.get_session),
+    current_user: models.User = Depends(deps.get_current_user)
+):
+    # ตรวจสอบว่ากลุ่มมีอยู่ในฐานข้อมูลหรือไม่
+    group_result = await session.exec(
+        select(models.DBPeople).distinct().where(models.PeopleGroupLink.group_id == group_id)
+    )
+    group = group_result.all()
+
+    if not group:  # เปลี่ยนจาก group is None เป็น not group
+        raise HTTPException(status_code=404, detail="Group not found")
+    
+    # ตรวจสอบว่า current_user เป็นผู้สร้างกลุ่มหรือไม่
+    return group
+
+async def get_people_in_group(session: AsyncSession, group_id: int) -> List[models.DBUser]:
+    # สร้าง query เพื่อดึงข้อมูลคนในกลุ่ม
+    statement = select(models.PeopleGroupLink).where(models.PeopleGroupLink.group_id == group_id,)
+
+    results = await session.exec(statement)
+
+    # สร้างรายชื่อคนจากผลลัพธ์
+    people = []
+    links = results.all()
+    for link in links:
+        user = await session.get(models.DBUser, link.people_id)  # แทนที่ด้วย ID ของคนที่คุณต้องการ
+        if user:
+            people.append(user)
+
+    return people
 

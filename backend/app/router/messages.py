@@ -14,14 +14,13 @@ router = APIRouter(prefix="/groups", tags=["message"])
 broadcast = Broadcast("memory://")
 
 @router.websocket("/ws/groups/{group_id}/messages/")
-async def websocket_endpoint(websocket: WebSocket, group_id: int):
+async def websocket_endpoint(websocket: WebSocket, group_id: int,session: AsyncSession = Depends(models.get_session),):
     await websocket.accept()
 
     async def receive_messages():
         # Subscribe ไปที่ channel ของกลุ่มตาม group_id
         async with broadcast.subscribe(channel=f"group_{group_id}_messages") as subscriber:
             async for event in subscriber:
-                # ส่งข้อความไปยัง client ที่เชื่อมต่อ
                 await websocket.send_text(event.message)
 
     try:
@@ -33,7 +32,7 @@ async def websocket_endpoint(websocket: WebSocket, group_id: int):
         await websocket.send_text(f"Error: {str(e)}")
 
 # POST Endpoint เพื่อส่งข้อความ
-@router.post("/messages/")
+@router.post("/messages/{group_id}/")
 async def send_message(
     message: models.CreatedMessage,
     group_id: int,  # เพิ่มพารามิเตอร์ group_id
@@ -136,7 +135,7 @@ async def get_messages(
     result = await session.exec(
         select(models.DBGroup).where(
             (models.DBGroup.leader_id == current_user.id)  # Check if the user is the leader
-            | (models.DBGroup.id == select(models.DBPeople.group_id).where(models.DBPeople.user_id == current_user.id))  # Or a member of the group
+            | (models.DBGroup.id == select(models.PeopleGroupLink.group_id).where(models.DBPeople.user_id == current_user.id))  # Or a member of the group
         )
     )
     db_group = result.one_or_none()

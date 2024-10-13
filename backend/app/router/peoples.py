@@ -18,7 +18,7 @@ async def update_people(
         raise HTTPException(status_code=403, detail="Only one person can update")
 
     result = await session.exec(
-        select(models.DBPeople).where(models.DBPeople.id == current_user.people_id)  # หรือ property อื่นที่บ่งบอกถึงผู้ใช้
+        select(models.DBPeople).where(models.DBPeople.id == current_user.id)  # หรือ property อื่นที่บ่งบอกถึงผู้ใช้
     )
     db_people = result.one_or_none()
     
