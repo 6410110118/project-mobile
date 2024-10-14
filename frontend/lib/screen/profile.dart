@@ -32,18 +32,17 @@ class _ProfilePageState extends State<ProfilePage> {
           'Profile',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.white, // ปรับสีฟอนต์เป็นสีขาว
+            color: Colors.white, 
           ),
         ),
         centerTitle: true,
         automaticallyImplyLeading: false,
-        backgroundColor: const Color.fromARGB(255, 32, 86, 137), // สีหลักของแอป
+        backgroundColor: const Color.fromARGB(255, 32, 86, 137), 
       ),
-      backgroundColor: const Color(0xFFF6F7F0), // สีพื้นหลังเบจอ่อน
+      backgroundColor: const Color(0xFFF6F7F0), 
       body: BlocListener<GetMeBloc, GetMeState>(
         listener: (context, state) {
           if (state is ImageUploadLoading) {
-            // แสดง progress indicator หรือ dialog ที่นี่
           } else if (state is ImageUploaded) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Image uploaded successfully!')),
@@ -79,7 +78,7 @@ class _ProfilePageState extends State<ProfilePage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _buildProfileCard(user),
-          const Spacer(), // ดันปุ่มไปด้านล่างของหน้าจอ
+          const Spacer(), 
           _buildActionButtons(context, user),
         ],
       ),
@@ -88,9 +87,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildProfileCard(UserModel user) {
     return Container(
-      width: double.infinity, // ขยายเต็มความกว้างของหน้าจอ
-      padding: const EdgeInsets.symmetric(vertical: 105.0, horizontal: 30.0), // ลด padding ทางด้านบน-ล่าง
-      margin: const EdgeInsets.symmetric(horizontal: 16.0), // เพิ่ม margin ขอบซ้ายขวา
+      width: double.infinity, 
+      padding: const EdgeInsets.symmetric(vertical: 105.0, horizontal: 30.0), 
+      margin: const EdgeInsets.symmetric(horizontal: 16.0), 
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.0),
@@ -153,7 +152,7 @@ class _ProfilePageState extends State<ProfilePage> {
             });
           },
         ),
-        const SizedBox(height: 15), // เพิ่มระยะห่างระหว่างปุ่ม
+        const SizedBox(height: 15), 
         _buildProfileButton(
           icon: Icons.lock,
           label: 'Change Password',
@@ -168,7 +167,7 @@ class _ProfilePageState extends State<ProfilePage> {
             });
           },
         ),
-        const SizedBox(height: 15), // เพิ่มระยะห่างระหว่างปุ่ม
+        const SizedBox(height: 15), 
         _buildProfileButton(
           icon: Icons.photo,
           label: 'Upload Image',
@@ -181,7 +180,7 @@ class _ProfilePageState extends State<ProfilePage> {
             );
           },
         ),
-        const SizedBox(height: 15), // เพิ่มระยะห่างระหว่างปุ่ม
+        const SizedBox(height: 15), 
         _buildProfileButton(
           icon: Icons.logout,
           label: 'Logout',
@@ -204,7 +203,7 @@ class _ProfilePageState extends State<ProfilePage> {
     Color color = const Color.fromARGB(255, 32, 86, 137),
   }) {
     return SizedBox(
-      width: double.infinity, // ขยายปุ่มเต็มจอ
+      width: double.infinity, 
       child: ElevatedButton.icon(
         icon: Icon(icon, color: Colors.white, size: 18),
         label: Text(
