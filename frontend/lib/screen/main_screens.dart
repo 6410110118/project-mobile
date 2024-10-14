@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frontend/repositories/join_request_repository.dart';
 import 'package:frontend/repositories/profile_repository.dart';
 import 'package:frontend/repositories/trip_repository.dart';
+import 'package:frontend/screen/join_request_page.dart';
 import 'package:frontend/screen/group_page.dart';
 import 'package:frontend/screen/new_trip.dart';
 import 'package:frontend/screen/profile.dart';
@@ -16,10 +18,12 @@ class MainScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        RepositoryProvider(create: (_) => JoinRequestRepository()),
         BlocProvider(create: (context) => BottomNavigationBloc()),
         BlocProvider(
-            create: (context) => GetMeBloc(ProfileRepository())
-              ..add(FetchUserData())), // เรียกใช้งาน GetMeBloc
+          create: (context) =>
+              GetMeBloc(ProfileRepository())..add(FetchUserData()),
+        ),
       ],
       child: Scaffold(
         body: BlocBuilder<BottomNavigationBloc, BottomNavigationState>(
@@ -35,72 +39,102 @@ class MainScreen extends StatelessWidget {
                     } else if (userState is GetMeError) {
                       return Center(child: Text('Error: ${userState.message}'));
                     } else if (userState is GetMeLoaded) {
-                      // เช็คว่า user เป็น Leader หรือไม่
                       if (userState.user.role == 'Leader') {
                         return NewTripPage(tripRepository: TripRepository());
                       } else {
-                        return const TripListPage(); // แสดงรายการ Trip ที่ Leader สร้างไว้
+                        return TripListPage();
                       }
                     }
-                    return const Center(child: const Text('No user data available.'));
+                    return const Center(child: Text('No user data available.'));
                   },
                 );
               case 2:
                 return GroupScreen();
               case 3:
                 return ProfilePage();
+              case 4:
+                return JoinRequestsPage(
+                  joinRequestRepository: JoinRequestRepository(),
+                );
               default:
                 return TripHome();
             }
           },
         ),
-        bottomNavigationBar:
-            BlocBuilder<GetMeBloc, GetMeState>(builder: (context, userState) {
-          return BlocBuilder<BottomNavigationBloc, BottomNavigationState>(
-            builder: (context, state) {
-              String secondLabel = 'Create'; // ค่าเริ่มต้น
-              if (userState is GetMeLoaded && userState.user.role != 'Leader') {
-                secondLabel =
-                    'Trip List'; // เปลี่ยนเป็น Trip List เมื่อไม่ใช่ Leader
-              }
-
-              return BottomNavigationBar(
-                type: BottomNavigationBarType.fixed,
-                currentIndex: state.selectedIndex,
-                backgroundColor: const Color.fromARGB(255, 227, 229, 228),
-                onTap: (index) {
-                  context
-                      .read<BottomNavigationBloc>()
-                      .add(ChangeBottomNavigation(index));
-                },
-                items: [
-                  const BottomNavigationBarItem(
-                    icon: Icon(Icons.home),
-                    label: 'Home',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: const Icon(Icons.add),
-                    label: secondLabel, // ใช้ตัวแปร secondLabel ที่อัปเดตแล้ว
-                  ),
-                  const BottomNavigationBarItem(
-                    icon: Icon(Icons.group_add),
-                    label: 'Group',
-                  ),
-                  const BottomNavigationBarItem(
-                    icon: Icon(Icons.person),
-                    label: 'About',
-                  ),
-                ],
-                unselectedItemColor: const Color.fromARGB(255, 0, 0, 0),
-                selectedItemColor: const Color.fromARGB(255, 125, 0, 250),
-                selectedFontSize: 12,
-                unselectedFontSize: 12,
-                iconSize: 24,
-              );
-            },
-          );
-        }),
+        bottomNavigationBar: _buildBottomNavigationBar(context),
       ),
+    );
+  }
+
+  Widget _buildBottomNavigationBar(BuildContext context) {
+    return BlocBuilder<GetMeBloc, GetMeState>(
+      builder: (context, userState) {
+        return BlocBuilder<BottomNavigationBloc, BottomNavigationState>(
+          builder: (context, state) {
+            String secondLabel = 'Create';
+            bool isLeader = false;
+
+            if (userState is GetMeLoaded) {
+              isLeader = userState.user.role == 'Leader';
+              if (!isLeader) {
+                secondLabel = 'Trip List';
+              }
+            }
+
+            final items = [
+              const BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.add),
+                label: secondLabel,
+              ),
+              const BottomNavigationBarItem(
+                icon: Icon(Icons.group_add),
+                label: 'Group',
+              ),
+              const BottomNavigationBarItem(
+                icon: Icon(Icons.person),
+                label: 'About',
+              ),
+            ];
+
+            // Add the 'Requests' item to the bottom navigation bar if the user is a leader
+            if (isLeader) {
+              items.add(
+                const BottomNavigationBarItem(
+                  icon: Icon(Icons.request_page),
+                  label: 'Requests',
+                ),
+              );
+            }
+
+            int currentIndex = state.selectedIndex;
+            if (currentIndex < 0 || currentIndex >= items.length) {
+              currentIndex = 0; // Ensures we always have a valid index
+            }
+
+// If currentIndex exceeds the number of items, reset it to 0
+            if (currentIndex >= items.length) {
+              currentIndex = 0; // This will ensure no out-of-range errors occur
+            }
+
+            return BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
+              currentIndex: currentIndex,
+              onTap: (index) {
+                context.read<BottomNavigationBloc>().add(
+                      ChangeBottomNavigation(index),
+                    );
+              },
+              items: items,
+              unselectedItemColor: const Color.fromARGB(255, 0, 0, 0),
+              selectedItemColor: const Color.fromARGB(255, 125, 0, 250),
+            );
+          },
+        );
+      },
     );
   }
 }

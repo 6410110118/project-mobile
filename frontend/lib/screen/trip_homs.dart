@@ -18,9 +18,9 @@ class _TripHomeState extends State<TripHome> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => TripBloc(tripRepository: TripRepository())..add(FetchTripEvent()),
+          create: (context) =>
+              TripBloc(tripRepository: TripRepository())..add(FetchTripEvent()),
         ),
-
       ],
       child: Scaffold(
         appBar: null,
@@ -91,7 +91,8 @@ class _TripHomeState extends State<TripHome> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => SearchPage(trips: trips)),
+                MaterialPageRoute(
+                    builder: (context) => SearchPage(trips: trips)),
               );
             },
           ),
@@ -105,7 +106,8 @@ class _TripHomeState extends State<TripHome> {
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: Container(
         height: 150,
-        child: ListView(scrollDirection: Axis.horizontal, children: _buildStoryItems()),
+        child: ListView(
+            scrollDirection: Axis.horizontal, children: _buildStoryItems()),
       ),
     );
   }
@@ -196,12 +198,21 @@ class _TripHomeState extends State<TripHome> {
                   Text('Start: $formattedStartTime'),
                   Text('End: $formattedEndTime'),
                   SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: () {
-                      BlocProvider.of<TripBloc>(context).add(JoinTripEvent(trip: trip));
-                    },
-                    child: Text('Join Trip'),
-                  ),
+                  BlocBuilder<GetMeBloc, GetMeState>(
+                      builder: (context, userState) {
+                    // Only show "Join Trip" button if user is not a leader
+                    if (userState is GetMeLoaded &&
+                        userState.user.role != 'Leader') {
+                      return ElevatedButton(
+                        onPressed: () {
+                          BlocProvider.of<TripBloc>(context)
+                              .add(JoinTripEvent(trip: trip));
+                        },
+                        child: Text('Join Trip'),
+                      );
+                    }
+                    return Container(); // Return an empty container if user is a leader
+                  }),
                 ],
               ),
             ),
