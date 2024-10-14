@@ -30,3 +30,4 @@
     typing-extensions==4.12.2
     urllib3==2.2.2
     PyJWT==2.9.0
+    jwt
