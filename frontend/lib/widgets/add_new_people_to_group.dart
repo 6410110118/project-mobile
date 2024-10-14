@@ -14,34 +14,74 @@ class AddPeopleDialog extends StatelessWidget {
     final TextEditingController _controller = TextEditingController();
 
     return AlertDialog(
-      title: Text('Add People to Group'),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      title: Text(
+        'Add People to Group',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.black87,
+        ),
+      ),
       content: TextField(
         controller: _controller,
-        decoration: InputDecoration(hintText: 'Enter Username'), // เปลี่ยนเป็น Username
+        decoration: InputDecoration(
+          labelText: 'Username',
+          labelStyle: TextStyle(color: Colors.blueGrey),
+          hintText: 'Enter Username',
+          hintStyle: TextStyle(color: Colors.grey),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide(color: Colors.blueGrey, width: 1.5),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide(color: Color.fromARGB(255, 32, 86, 137), width: 2),
+          ),
+        ),
       ),
       actions: [
         TextButton(
-          child: Text('Cancel'),
+          child: Text(
+            'Cancel',
+            style: TextStyle(
+              color: Colors.redAccent,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
-        TextButton(
-          child: Text('Add'),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Color.fromARGB(255, 32, 86, 137),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+          ),
+          child: Text(
+            'Add',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           onPressed: () async {
-            final username = _controller.text.trim(); // เปลี่ยนชื่อ variable
+            final username = _controller.text.trim();
             if (username.isNotEmpty) {
-              final personId = await peopleRepository.getPeopleIdByUsername(username); // เรียกใช้ฟังก์ชันที่ถูกต้อง
-              
+              final personId = await peopleRepository.getPeopleIdByUsername(username);
               if (personId != null) {
-                // เรียกใช้ event เพื่อเพิ่มคน
                 context.read<GroupBloc>().add(AddPersonToGroupEvent(groupId: groupId, peopleId: personId));
                 Navigator.of(context).pop();
               } else {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No user found with that username'))); // เปลี่ยนข้อความ
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('No user found with that username')),
+                );
               }
             } else {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please enter a valid username'))); // เปลี่ยนข้อความ
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Please enter a valid username')),
+              );
             }
           },
         ),
