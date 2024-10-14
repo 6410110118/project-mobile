@@ -6,6 +6,7 @@ import 'package:frontend/repositories/trip_repository.dart';
 import 'package:frontend/screen/join_request_page.dart';
 import 'package:frontend/screen/group_page.dart';
 import 'package:frontend/screen/new_trip.dart';
+import 'package:frontend/screen/people_in_group.dart';
 import 'package:frontend/screen/profile.dart';
 import 'package:frontend/screen/trip_homs.dart';
 import 'package:frontend/screen/trip_list_page.dart';
@@ -49,7 +50,21 @@ class MainScreen extends StatelessWidget {
                   },
                 );
               case 2:
-                return GroupScreen();
+                return BlocBuilder<GetMeBloc, GetMeState>(
+                  builder: (context, userState) {
+                    if (userState is GetMeLoaded) {
+                      // ตรวจสอบเงื่อนไขว่าเป็น people หรือไม่
+                      if (userState.user.role == 'People') {
+                        return GroupPage(token: '',); // แสดงหน้า PeoplePage
+                      } else {
+                        return GroupScreen(); // แสดงหน้า GroupScreen ตามปกติ
+                      }
+                    }
+                    return Center(
+                        child: CircularProgressIndicator()); // Loading state
+                  },
+                );
+
               case 3:
                 return ProfilePage();
               case 4:
