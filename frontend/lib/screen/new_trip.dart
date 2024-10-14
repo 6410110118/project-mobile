@@ -39,14 +39,19 @@ class NewTripPage extends StatelessWidget {
       create: (context) => TripBloc(tripRepository: tripRepository),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Create New Trip', style: TextStyle(fontWeight: FontWeight.w600)),
-          backgroundColor: const Color(0xFFD7A976), // สีเบจ
+          title: const Text(
+            'Create New Trip',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: Colors.white, // สีข้อความเป็นสีขาว
+            ),
+          ),
+          backgroundColor: Color.fromARGB(255, 32, 86, 137), // สีหลักของแอป
           centerTitle: true, // จัดตำแหน่งตรงกลาง
           elevation: 0,
-          automaticallyImplyLeading: false,
-           // เพิ่ม back button
+          automaticallyImplyLeading: false, // เพิ่ม back button
         ),
-        backgroundColor: const Color(0xFFF5E5D7), // พื้นหลังสีเบจอ่อน
+        backgroundColor: const Color(0xFFF6F7F0), // สีพื้นหลังเบจอ่อน
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: BlocListener<TripBloc, TripState>(
@@ -77,9 +82,9 @@ class NewTripPage extends StatelessWidget {
                     const Text(
                       'Trip Information',
                       style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF5D4037),
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700, 
+                        color: Color.fromARGB(255, 30, 23, 105), 
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -125,14 +130,14 @@ class NewTripPage extends StatelessWidget {
                     Center(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFD7A976), // ปุ่มสีเบจเข้ม
-                          elevation: 2,
+                          backgroundColor: Color.fromARGB(255, 32, 86, 137), 
+                          elevation: 4, 
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 50,
+                            horizontal: 60, 
                             vertical: 18,
                           ),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25),
+                            borderRadius: BorderRadius.circular(25), 
                           ),
                         ),
                         onPressed: () {
@@ -154,10 +159,10 @@ class NewTripPage extends StatelessWidget {
                           }
                         },
                         child: const Text(
-                          'Submit trip',
+                          'Submit Trip',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: Colors.white, 
                             fontSize: 18,
                           ),
                         ),
@@ -180,6 +185,7 @@ class NewTripPage extends StatelessWidget {
       ),
     );
   }
+
   Widget _buildInputField({
     required TextEditingController controller,
     required String label,
@@ -187,16 +193,17 @@ class NewTripPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xFF8D6E63), width: 1.5),
-        borderRadius: BorderRadius.circular(10),
-        color: const Color(0xFFF5E5D7), // เพิ่มสีพื้นหลังให้ฟิลด์
+        border: Border.all(color: Color(0xFF707070), width: 1.5), 
+        borderRadius: BorderRadius.circular(15), 
+        color: const Color(0xFFF6F7F0), 
       ),
       child: TextField(
         controller: controller,
+        style: const TextStyle(fontSize: 16), 
         decoration: InputDecoration(
           labelText: label,
           labelStyle: const TextStyle(
-            color: Color(0xFF8D6E63),
+            color: Color.fromARGB(255, 32, 86, 137), 
             fontSize: 16,
           ),
           floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -213,23 +220,26 @@ class NewTripPage extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(
-          color: const Color(0xFF8D6E63),
+          color: Color(0xFF707070), 
           width: 1.5,
         ),
-        borderRadius: BorderRadius.circular(10),
-        color: const Color(0xFFF5E5D7), // เพิ่มสีพื้นหลังให้ฟิลด์
+        borderRadius: BorderRadius.circular(15), 
+        color: const Color(0xFFF6F7F0), 
       ),
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             '$label: $dateText',
-            style: const TextStyle(color: Color(0xFF8D6E63)),
+            style: const TextStyle(
+              color: Color.fromARGB(255, 32, 86, 137), 
+              fontSize: 16, 
+            ),
           ),
           IconButton(
             icon: const Icon(Icons.calendar_today),
-            color: const Color(0xFF8D6E63),
+            color: Color.fromARGB(255, 32, 86, 137), 
             onPressed: onPressed,
           ),
         ],
