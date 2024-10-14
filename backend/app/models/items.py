@@ -3,6 +3,7 @@ from pydantic import BaseModel, ConfigDict
 from sqlmodel import Relationship, SQLModel, Field
 import datetime
 
+from .item_people import ItemPeople
 from .users import DBUser, UserRole
 from .leaders import DBLeader
 from .google_maps import DBGoogleMap
@@ -46,6 +47,10 @@ class DBItem(SQLModel, Item, table=True):
     user: DBUser | None = Relationship(back_populates="item")
     role: UserRole = Field(default=None)
     join_requests: List["JoinRequest"] = Relationship(back_populates="item")
+    items_people: List["ItemPeople"] = Relationship(
+        back_populates="item",
+        sa_relationship_kwargs={"cascade": "all, delete-orphan"}
+    )
     # leader_id: int = Field(default=None, primary_key=True)
     # leader: DBLeader | None = Relationship(back_populates="items")
     # google_map_id:int = Field(default=None, foreign_key="google_maps.id")

@@ -3,6 +3,8 @@ from typing import Optional
 from pydantic import BaseModel, ConfigDict
 from sqlmodel import Field, SQLModel,Relationship
 
+from app.models.item_people import ItemPeople
+
 from .users import *
 from .groups import *
 from .messages import *
@@ -37,6 +39,11 @@ class DBPeople(BasePeople, SQLModel, table=True):
     
     group: Optional["DBGroup"] = Relationship(back_populates="people",link_model=PeopleGroupLink,sa_relationship_kwargs={"cascade": "all, delete"})
     messages: List["DBMessage"] = Relationship(back_populates="people")
+    items_people: List["ItemPeople"] = Relationship(
+        back_populates="people",
+       
+        sa_relationship_kwargs={"cascade": "all, delete-orphan"}
+    )
 
  
     
