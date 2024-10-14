@@ -23,10 +23,23 @@ class _TripHomeState extends State<TripHome> {
         ),
       ],
       child: Scaffold(
-        appBar: null,
+        backgroundColor: const Color(0xFFF6F7F0),
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: const Color.fromARGB(255, 32, 86, 137),
+          title: const Text(
+            'Home',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          centerTitle: true,
+        ),
         body: BlocBuilder<TripBloc, TripState>(builder: (context, tripState) {
           if (tripState is TripLoading) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (tripState is TripLoaded) {
             final List<Trip> trips = List<Trip>.from(tripState.trips);
 
@@ -35,11 +48,11 @@ class _TripHomeState extends State<TripHome> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildHeader(trips),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   _buildStorySection(),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   _buildRecommendedTripsHeader(),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   _buildRecommendedTripsList(trips),
                 ],
               ),
@@ -47,7 +60,7 @@ class _TripHomeState extends State<TripHome> {
           } else if (tripState is TripError) {
             return Center(child: Text(tripState.message));
           }
-          return Center(child: Text('No trips found'));
+          return const Center(child: Text('No trips found'));
         }),
       ),
     );
@@ -67,27 +80,31 @@ class _TripHomeState extends State<TripHome> {
                     radius: 20,
                     backgroundImage: userState.user.imageData != null
                         ? MemoryImage(userState.user.imageData!)
-                        : AssetImage('assets/start.jpg') as ImageProvider,
+                        : const AssetImage('assets/start.jpg') as ImageProvider,
                   ),
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                   Text(
                     'Hello ${userState.user.username}!',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 32, 86, 137),
+                    ),
                   ),
                 ],
               );
             } else if (userState is GetMeLoading) {
-              return CircularProgressIndicator();
+              return const CircularProgressIndicator();
             } else {
-              return CircleAvatar(
+              return const CircleAvatar(
                 radius: 20,
                 backgroundColor: Colors.grey,
-                child: Icon(Icons.person),
+                child: Icon(Icons.person, color: Colors.white),
               );
             }
           }),
           IconButton(
-            icon: Icon(Icons.search),
+            icon: const Icon(Icons.search, color: Color.fromARGB(255, 32, 86, 137)),
             onPressed: () {
               Navigator.push(
                 context,
@@ -104,7 +121,7 @@ class _TripHomeState extends State<TripHome> {
   Widget _buildStorySection() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: Container(
+      child: SizedBox(
         height: 150,
         child: ListView(
             scrollDirection: Axis.horizontal, children: _buildStoryItems()),
@@ -124,13 +141,13 @@ class _TripHomeState extends State<TripHome> {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Container(
-          width: 90,
-          height: 140,
+          width: 120,
+          height: 150,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
             image: DecorationImage(
               image: AssetImage(story['image']!),
-              fit: BoxFit.cover,
+              fit: BoxFit.fill,
             ),
           ),
         ),
@@ -139,11 +156,15 @@ class _TripHomeState extends State<TripHome> {
   }
 
   Widget _buildRecommendedTripsHeader() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.0),
       child: Text(
-        'Recommend trips',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        'Recommend Trips',
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Color.fromARGB(255, 32, 86, 137),
+        ),
       ),
     );
   }
@@ -176,47 +197,62 @@ class _TripHomeState extends State<TripHome> {
         );
       },
       child: Card(
-        margin: EdgeInsets.symmetric(vertical: 10),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: Image.network(trip.imageUrl!),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    trip.tripName!,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 5),
-                  Text('Start: $formattedStartTime'),
-                  Text('End: $formattedEndTime'),
-                  SizedBox(height: 10),
-                  BlocBuilder<GetMeBloc, GetMeState>(
-                      builder: (context, userState) {
-                    // Only show "Join Trip" button if user is not a leader
-                    if (userState is GetMeLoaded &&
-                        userState.user.role != 'Leader') {
-                      return ElevatedButton(
-                        onPressed: () {
-                          BlocProvider.of<TripBloc>(context)
-                              .add(JoinTripEvent(trip: trip));
-                        },
-                        child: Text('Join Trip'),
-                      );
-                    }
-                    return Container(); // Return an empty container if user is a leader
-                  }),
-                ],
+        margin: const EdgeInsets.symmetric(vertical: 20),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        elevation: 5,
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.9,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+                child: Image.network(
+                  trip.imageUrl!,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: 270,
+                ),
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      trip.tripName!,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.calendar_today_outlined,
+                          size: 18,
+                          color: Colors.grey[700],
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '$formattedStartTime – $formattedEndTime',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey[700],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
