@@ -26,7 +26,7 @@ pipeline {
                 }
             }
             steps {
-                sh "pip install -r requirements.txt --use-feature=2020-resolver"
+                sh "pip install -r requirements.txt "
                 sh "pytest --junitxml=result.xml"
             }
         }
