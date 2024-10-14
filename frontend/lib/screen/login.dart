@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:frontend/screen/main_screens.dart';
 import 'package:frontend/widgets/login_popup.dart';
 import '../bloc/export_bloc.dart';
 import '../repositories/auth_repository.dart';
-import 'reset_password_page.dart'; // เพิ่มการ import หน้านี้เข้ามา
-
+import 'reset_password_page.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -16,6 +14,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  bool passwordVisible = false;
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -31,17 +30,17 @@ class _LoginState extends State<Login> {
     return BlocProvider(
       create: (context) => LoginBloc(authRepository: AuthRepository()),
       child: Scaffold(
+        backgroundColor:
+            const Color(0xFFF6F7F0), // Beige white background color
         body: BlocListener<LoginBloc, LoginState>(
           listener: (context, state) {
             if (state is LoginSuccess) {
-              // Show the success popup here
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
                   return SuccessPopup(message: 'Login Success!');
                 },
               );
-              // Navigate to MainScreen after closing the dialog
               Future.delayed(const Duration(seconds: 1), () {
                 Navigator.pushReplacement(
                   context,
@@ -73,45 +72,89 @@ class _LoginState extends State<Login> {
                             ImageIcon(
                               AssetImage('assets/icon/flight.png'),
                               size: 128,
-                              color: Colors.blue,
+                              color: Color.fromARGB(255, 32, 86, 137),
                             ),
-                            SizedBox(height: 10), // Space between icon and text
+                            SizedBox(height: 10),
                             Text(
                               'Plan For Travel',
                               style: TextStyle(
-                                  fontSize: 24, fontWeight: FontWeight.bold),
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromARGB(255, 32, 86, 137),
+                              ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 40),
                         TextField(
                           controller: usernameController,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             labelText: 'Username',
-                            border: OutlineInputBorder(),
+                            labelStyle: const TextStyle(
+                                color: Color.fromARGB(255, 32, 86, 137)),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                  color: Color(
+                                      0xFFE5E5E5)), // Light grey border color
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                  color: Color.fromARGB(255, 32, 86, 137)),
+                            ),
                           ),
                         ),
                         const SizedBox(height: 20),
                         TextField(
                           controller: passwordController,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             labelText: 'Password',
-                            border: OutlineInputBorder(),
-                            suffixIcon: Icon(Icons.visibility_off),
+                            labelStyle: const TextStyle(
+                                color: Color.fromARGB(255, 32, 86, 137)),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                  color: Color(
+                                      0xFFE5E5E5)), // Light grey border color
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                  color: Color.fromARGB(255, 32, 86, 137)),
+                            ),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                passwordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: Color.fromARGB(255, 32, 86, 137),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  passwordVisible = !passwordVisible;
+                                });
+                              },
+                            ),
                           ),
-                          obscureText: true,
+                          obscureText: !passwordVisible,
                         ),
                         Align(
                           alignment: Alignment.centerRight,
                           child: TextButton(
                             onPressed: () {
-                              // เปลี่ยนจาก showDialog ไปเป็น Navigator.push เพื่อเปิดหน้า ResetPasswordPage
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => const ResetPasswordPage()),
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ResetPasswordPage()),
                               );
                             },
-                            child: const Text('Forgot Password?'),
+                            child: const Text(
+                              'Forgot Password?',
+                              style: TextStyle(
+                                  color: Color.fromARGB(255, 59, 99, 136)),
+                            ),
                           ),
                         ),
                         const SizedBox(height: 20),
@@ -125,7 +168,8 @@ class _LoginState extends State<Login> {
                               if (username.isEmpty || password.isEmpty) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content: Text('Please enter email and password'),
+                                    content:
+                                        Text('Please enter email and password'),
                                   ),
                                 );
                                 return;
@@ -141,11 +185,20 @@ class _LoginState extends State<Login> {
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               backgroundColor:
-                                  const Color.fromARGB(255, 41, 140, 155),
+                                  const Color.fromARGB(255, 32, 86, 137),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              elevation: 5,
                             ),
-                            child: const Text('Login',
-                                style: TextStyle(
-                                    color: Color.fromARGB(255, 255, 255, 255))),
+                            child: const Text(
+                              'Login',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
                         const SizedBox(height: 20),
@@ -154,8 +207,14 @@ class _LoginState extends State<Login> {
                             Navigator.pushReplacementNamed(
                                 context, '/register');
                           },
-                          child:
-                              const Text("Don't have an account? Register now"),
+                          child: const Text(
+                            "Don't have an account? Register now",
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 13, 44, 130),
+                              fontSize: 16,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
                         ),
                         if (state is LoginFailure)
                           Padding(
