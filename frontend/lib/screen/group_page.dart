@@ -26,12 +26,18 @@ class _GroupScreenState extends State<GroupScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text(
+        title: const Text(
           'Group',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
         ),
+        backgroundColor: const Color.fromARGB(255, 32, 86, 137), // สีหลักของแอป
         centerTitle: true,
+        elevation: 0,
       ),
+      backgroundColor: const Color(0xFFF6F7F0), // สีพื้นหลังเบจอ่อน
       body: Column(
         children: [
           _buildSearchField(),
@@ -47,7 +53,9 @@ class _GroupScreenState extends State<GroupScreen> {
                 }
               },
               child: GroupListView(
-                  searchQuery: searchQuery, token: token,), // ส่ง searchQuery ไปกรองข้อมูล
+                searchQuery: searchQuery,
+                token: token,
+              ), // ส่ง searchQuery ไปกรองข้อมูล
             ),
           ),
           _buildAddGroupButton(context),
@@ -59,17 +67,24 @@ class _GroupScreenState extends State<GroupScreen> {
   Widget _buildSearchField() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: TextField(
-        onChanged: (value) {
-          setState(() {
-            searchQuery = value;
-          });
-        },
-        decoration: InputDecoration(
-          hintText: 'Search',
-          prefixIcon: Icon(Icons.search),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16.0),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: const Color(0xFF707070), width: 1.5),
+          borderRadius: BorderRadius.circular(15),
+          color: const Color(0xFFF6F7F0),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        child: TextField(
+          onChanged: (value) {
+            setState(() {
+              searchQuery = value;
+            });
+          },
+          style: const TextStyle(fontSize: 16),
+          decoration: const InputDecoration(
+            hintText: 'Search',
+            prefixIcon: Icon(Icons.search, color: Color.fromARGB(255, 32, 86, 137)),
+            border: InputBorder.none,
           ),
         ),
       ),
@@ -91,15 +106,23 @@ class _GroupScreenState extends State<GroupScreen> {
             }
           });
         },
-        child: Text('Add New Group'),
         style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 32.0),
+          backgroundColor: const Color.fromARGB(255, 32, 86, 137),
+          elevation: 4,
+          padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 18),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(25),
+          ),
+        ),
+        child: const Text(
+          'Add New Group',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            fontSize: 18,
           ),
         ),
       ),
     );
   }
-  
 }
