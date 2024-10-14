@@ -28,21 +28,27 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profile'),
+        title: const Text(
+          'Profile',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white, // ปรับสีฟอนต์เป็นสีขาว
+          ),
+        ),
         centerTitle: true,
-        automaticallyImplyLeading: false, 
+        automaticallyImplyLeading: false,
+        backgroundColor: const Color.fromARGB(255, 32, 86, 137), // สีหลักของแอป
       ),
+      backgroundColor: const Color(0xFFF6F7F0), // สีพื้นหลังเบจอ่อน
       body: BlocListener<GetMeBloc, GetMeState>(
         listener: (context, state) {
           if (state is ImageUploadLoading) {
             // แสดง progress indicator หรือ dialog ที่นี่
           } else if (state is ImageUploaded) {
-            // แสดงข้อความว่าการอัปโหลดสำเร็จ
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Image uploaded successfully!')),
+              const SnackBar(content: Text('Image uploaded successfully!')),
             );
           } else if (state is ImageUploadFailure) {
-            // แสดงข้อความข้อผิดพลาด
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Error: ${state.error}')),
             );
@@ -51,14 +57,14 @@ class _ProfilePageState extends State<ProfilePage> {
         child: BlocBuilder<GetMeBloc, GetMeState>(
           builder: (context, state) {
             if (state is GetMeLoading) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             } else if (state is GetMeError) {
               return Center(child: Text('Error: ${state.message}'));
             } else if (state is GetMeLoaded) {
               final user = state.user;
               return _buildProfileContent(context, user);
             } else {
-              return Center(child: Text('No data available'));
+              return const Center(child: Text('No data available'));
             }
           },
         ),
@@ -67,12 +73,13 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildProfileContent(BuildContext context, UserModel user) {
-    return Center(
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _buildProfileCard(user),
-          Spacer(),
+          const Spacer(), // ดันปุ่มไปด้านล่างของหน้าจอ
           _buildActionButtons(context, user),
         ],
       ),
@@ -80,53 +87,51 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildProfileCard(UserModel user) {
-    return Padding(
-      padding: EdgeInsets.all(7),
-      child: Container(
-        padding: EdgeInsets.all(50.0),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10.0),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 2,
-              blurRadius: 5,
-              offset: Offset(2, 2),
+    return Container(
+      width: double.infinity, // ขยายเต็มความกว้างของหน้าจอ
+      padding: const EdgeInsets.symmetric(vertical: 105.0, horizontal: 30.0), // ลด padding ทางด้านบน-ล่าง
+      margin: const EdgeInsets.symmetric(horizontal: 16.0), // เพิ่ม margin ขอบซ้ายขวา
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: const Offset(2, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          CircleAvatar(
+            radius: 50,
+            backgroundImage: user.imageData != null
+                ? MemoryImage(user.imageData!)
+                : const AssetImage('assets/start.jpg') as ImageProvider,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            '${user.firstName} ${user.lastName}',
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: Color.fromARGB(255, 32, 86, 137),
             ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CircleAvatar(
-              radius: 50,
-              backgroundImage: user.imageData != null
-                  ? MemoryImage(user.imageData!)
-                  : AssetImage('assets/start.jpg') as ImageProvider,
-            ),
-            SizedBox(height: 20),
-            Text(
-              '${user.firstName} ${user.lastName}',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.deepPurple,
-              ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Role: ${user.role}',
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Email: ${user.email}',
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 20),
-          ],
-        ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Role: ${user.role}',
+            style: const TextStyle(fontSize: 16, color: Colors.black54),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Email: ${user.email}',
+            style: const TextStyle(fontSize: 16, color: Colors.black54),
+          ),
+        ],
       ),
     );
   }
@@ -134,100 +139,91 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _buildActionButtons(BuildContext context, UserModel user) {
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 10),
-          child: ElevatedButton.icon(
-            icon: Icon(Icons.edit),
-            label: Text('Edit Profile'),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EditProfilePage(user: user),
-                ),
-              ).then((_) {
-                // โหลดข้อมูลใหม่หลังจากกลับมาที่ ProfilePage
-                BlocProvider.of<GetMeBloc>(context).add(FetchUserData());
-              });
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Color.fromARGB(255, 205, 188, 235),
-              padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+        _buildProfileButton(
+          icon: Icons.edit,
+          label: 'Edit Profile',
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => EditProfilePage(user: user),
               ),
-            ),
-          ),
+            ).then((_) {
+              BlocProvider.of<GetMeBloc>(context).add(FetchUserData());
+            });
+          },
         ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 10),
-          child: ElevatedButton.icon(
-            icon: Icon(Icons.lock),
-            label: Text('Change Password'),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ChangePasswordPage(),
-                ),
-              ).then((_) {
-                // โหลดข้อมูลใหม่หลังจากกลับมาที่ ProfilePage
-                BlocProvider.of<GetMeBloc>(context).add(FetchUserData());
-              });
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Color.fromARGB(255, 205, 188, 235),
-              padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+        const SizedBox(height: 15), // เพิ่มระยะห่างระหว่างปุ่ม
+        _buildProfileButton(
+          icon: Icons.lock,
+          label: 'Change Password',
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChangePasswordPage(),
               ),
-            ),
-          ),
+            ).then((_) {
+              BlocProvider.of<GetMeBloc>(context).add(FetchUserData());
+            });
+          },
         ),
-        // ปุ่มสำหรับการเลือกและอัปโหลดภาพ
-        Padding(
-          padding: const EdgeInsets.only(bottom: 10),
-          child: ElevatedButton.icon(
-            icon: Icon(Icons.photo),
-            label: Text('Upload Image'),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return UploadImagePopup(); // เรียกใช้ UploadImagePopup
-                },
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Color.fromARGB(255, 205, 188, 235),
-              padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          ),
+        const SizedBox(height: 15), // เพิ่มระยะห่างระหว่างปุ่ม
+        _buildProfileButton(
+          icon: Icons.photo,
+          label: 'Upload Image',
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return UploadImagePopup();
+              },
+            );
+          },
         ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 10),
-          child: ElevatedButton.icon(
-            icon: Icon(Icons.logout),
-            label: Text('Logout'),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => LogoutDialog(),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Color.fromARGB(255, 205, 188, 235),
-              padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          ),
+        const SizedBox(height: 15), // เพิ่มระยะห่างระหว่างปุ่ม
+        _buildProfileButton(
+          icon: Icons.logout,
+          label: 'Logout',
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) => LogoutDialog(),
+            );
+          },
+          color: Colors.redAccent,
         ),
       ],
+    );
+  }
+
+  Widget _buildProfileButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onPressed,
+    Color color = const Color.fromARGB(255, 32, 86, 137),
+  }) {
+    return SizedBox(
+      width: double.infinity, // ขยายปุ่มเต็มจอ
+      child: ElevatedButton.icon(
+        icon: Icon(icon, color: Colors.white, size: 18),
+        label: Text(
+          label,
+          style: const TextStyle(
+            fontSize: 16,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color,
+          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      ),
     );
   }
 }
