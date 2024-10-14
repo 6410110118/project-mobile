@@ -131,28 +131,29 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Widget OnboardingPage({required String title, required String text, required String image}) {
     return FadeInUp(
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 700), // เพิ่มความยาวของการเคลื่อนไหว
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center, // จัดให้อยู่ตรงกลางในแนวตั้ง
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
-              flex: 5,
+              flex: 7,
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(30), // เพิ่มความโค้งให้มากขึ้น
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      spreadRadius: 4,
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
+                      color: Colors.black.withOpacity(0.3), // เพิ่มความเข้มของเงา
+                      spreadRadius: 6,
+                      blurRadius: 30,
+                      offset: const Offset(0, 15),
                     ),
                   ],
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(30),
                   child: Image.asset(
                     image,
                     height: double.infinity,
@@ -169,24 +170,30 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Colors.white, // เปลี่ยนสีตัวอักษรให้เป็นสีขาวเพื่อให้มองเห็นชัดเจนขึ้น
+            const SizedBox(height: 30), // เพิ่มระยะห่าง
+            ElasticIn(
+              child: Text(
+                title,
+                textAlign: TextAlign.center, // จัดให้อยู่ตรงกลาง
+                style: const TextStyle(
+                  fontSize: 32, // เพิ่มขนาดตัวอักษร
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white, // เปลี่ยนสีตัวอักษรให้เป็นสีขาวเพื่อให้มองเห็นชัดเจนขึ้น
+                ),
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
             Expanded(
               flex: 2,
-              child: Text(
-                text,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.white70, // สีตัวอักษรเบาจากสีหลักเพื่อความคมชัด
+              child: FadeIn(
+                duration: const Duration(milliseconds: 500),
+                child: Text(
+                  text,
+                  textAlign: TextAlign.center, // จัดให้อยู่ตรงกลาง
+                  style: const TextStyle(
+                    fontSize: 18, // เพิ่มขนาดตัวอักษร
+                    color: Colors.white70, // สีตัวอักษรเบาจากสีหลักเพื่อความคมชัด
+                  ),
                 ),
               ),
             ),
