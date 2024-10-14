@@ -34,7 +34,7 @@ idna
 iniconfig
 installer
 jaraco.classes
-jwt
+jwt==1.3.1
 keyring
 Mako
 MarkupSafe
