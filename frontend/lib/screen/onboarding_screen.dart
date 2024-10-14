@@ -44,7 +44,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0xFFF7E7CE), Color(0xFFD2B48C)], // สีเบจและสีน้ำตาล
+              colors: [Color(0xFF6A8FA4), Color(0xFF6A8FA4)], // ไล่สีพื้นหลัง Inky Blue ที่อ่อนกว่า
             ),
           ),
           child: SafeArea(
@@ -82,7 +82,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     duration: const Duration(milliseconds: 500),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF8B5E3C), // สีน้ำตาลเข้ม
+                        backgroundColor: const Color.fromARGB(255, 32, 86, 137), // ใช้สีหลักของแอป
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                         shape: RoundedRectangleBorder(
@@ -175,7 +175,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               style: const TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF5D4037), // สีน้ำตาลเข้ม
+                color: Colors.white, // เปลี่ยนสีตัวอักษรให้เป็นสีขาวเพื่อให้มองเห็นชัดเจนขึ้น
               ),
             ),
             const SizedBox(height: 10),
@@ -186,7 +186,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 16,
-                  color: Color(0xFF6D4C41), // สีน้ำตาลเข้ม
+                  color: Colors.white70, // สีตัวอักษรเบาจากสีหลักเพื่อความคมชัด
                 ),
               ),
             ),
