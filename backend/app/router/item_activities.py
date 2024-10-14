@@ -109,3 +109,19 @@ async def delete_item(
         
         return dict(message="delete success")
     raise HTTPException(status_code=404, detail="Item not found")
+
+@router.get("/{item_id}", response_model=models.Item)
+async def read_item(
+    item_id: int,
+    session: Annotated[AsyncSession, Depends(models.get_session)],
+    current_user: models.User = Depends(deps.get_current_user),
+) -> models.Item:
+    result = await session.exec(
+        select(models.DBItem).where(models.DBItem.id == item_id)
+    )
+    db_item = result.one_or_none()
+
+    if db_item:
+        return models.Item.from_orm(db_item)
+    
+    raise HTTPException(status_code=404, detail="Item not found")
