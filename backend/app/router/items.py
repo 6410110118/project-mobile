@@ -1,8 +1,11 @@
 import math
 from fastapi import APIRouter, HTTPException, Depends , status
 from typing import Optional, List, Annotated
+from pydantic import BaseModel
 from sqlalchemy import func
 from sqlmodel import Field, SQLModel, select
+
+from app.models.request_people import JoinRequestDecision
 
 from ..router import google_maps
 
@@ -14,6 +17,8 @@ from datetime import datetime, timedelta
 
 router = APIRouter(prefix="/items")
 
+
+    
 @router.post("")
 async def create_item(
     item: models.CreatedItem,
@@ -62,33 +67,30 @@ async def create_item(
     return models.Item.from_orm(dbitem)
 
 
-@router.get("/{item_id}/join_requests")
-async def get_join_requests(
-    item_id: int, 
+@router.get("/join_requests")
+async def get_all_join_requests(
     session: AsyncSession = Depends(models.get_session),
     current_user: models.User = Depends(deps.get_current_user)
 ):
-    # ตรวจสอบว่าไอเท็ม (ทริป) นั้นมีอยู่หรือไม่ และตรวจสอบว่า current_user เป็น leader หรือไม่
+    # ดึงรายการไอเท็มทั้งหมดที่ current_user เป็น leader
     result = await session.execute(
-        select(models.DBItem)
-        .filter(models.DBItem.id == item_id, models.DBItem.user_id == current_user.id)
+        select(models.DBItem).filter(models.DBItem.user_id == current_user.id)
     )
-    item = result.scalars().first()
-    if not item:
-        raise HTTPException(status_code=404, detail="Item not found or you are not the leader of this item")
+    items = result.scalars().all()
 
-    # ดึงรายการคำขอเข้าร่วมทั้งหมดที่เกี่ยวข้องกับไอเท็ม
+    if not items:
+        raise HTTPException(status_code=404, detail="No items found for the current user")
+
+    # ดึงรายการคำขอเข้าร่วมทั้งหมดที่เกี่ยวข้องกับไอเท็มที่ current_user เป็น leader
     join_requests = await session.execute(
-        select(models.JoinRequest).filter(models.JoinRequest.item_id == item_id)
+        select(models.JoinRequest).filter(models.JoinRequest.item_id.in_([item.id for item in items]))
     )
     return join_requests.scalars().all()
 
 
-# ส่งคำขอเข้าร่วมทริป
 @router.post("/{item_id}/join")
 async def request_to_join(
     item_id: int, 
-    
     session: AsyncSession = Depends(models.get_session),
     current_user: models.User = Depends(deps.get_current_user)
 ):
@@ -102,7 +104,6 @@ async def request_to_join(
     join_request = models.JoinRequest(
         people_id=current_user.id,  # ใช้ current_user.id แทน people_id
         item_id=item_id,
-        
     )
     
     session.add(join_request)
@@ -112,35 +113,57 @@ async def request_to_join(
     return {"message": "Join request sent successfully", "request": join_request}
 
 
+
 @router.put("/{item_id}/join/{join_request_id}")
 async def respond_to_join_request(
     item_id: int, 
     join_request_id: int, 
+    decision: JoinRequestDecision,
     session: AsyncSession = Depends(models.get_session),
-    current_user: models.User = Depends(deps.get_current_user)  # ใช้ current_user เพื่อตรวจสอบว่าเป็น leader
+    current_user: models.User = Depends(deps.get_current_user)
 ):
-    # ตรวจสอบว่าไอเท็ม (ทริป) นั้นมีอยู่หรือไม่ และตรวจสอบว่า current_user เป็น leader หรือไม่
-    result = await session.execute(select(models.DBItem).filter(models.DBItem.id == item_id, models.DBItem.user_id == current_user.id))
-    item = result.scalars().first()
+    # ตรวจสอบว่า item มีอยู่จริงและ current_user เป็น leader ของ item นั้นหรือไม่
+    result = await session.execute(
+        select(models.DBItem).where(models.DBItem.id == item_id, models.DBItem.user_id == current_user.id)
+    )
+    item = result.scalar_one_or_none()
     if not item:
         raise HTTPException(status_code=404, detail="Item not found or you are not the leader of this item")
-    
-    # ตรวจสอบคำขอเข้าร่วม
-    result = await session.execute(select(models.JoinRequest).filter(models.JoinRequest.id == join_request_id, models.JoinRequest.item_id == item_id))
-    join_request = result.scalars().first()
+
+    # ตรวจสอบ join request
+    result = await session.execute(
+        select(models.JoinRequest).where(models.JoinRequest.id == join_request_id, models.JoinRequest.item_id == item_id)
+    )
+    join_request = result.scalar_one_or_none()
     if not join_request:
         raise HTTPException(status_code=404, detail="Join request not found")
-
-    # อัปเดตสถานะของคำขอเข้าร่วมเป็น approved หรือ rejected ตามเงื่อนไข
-    # คุณสามารถเพิ่มเงื่อนไขการอนุมัติที่นี่ เช่น ตรวจสอบว่า join_request.status เป็น "pending"
+    
+    # ตรวจสอบสถานะของ join request
     if join_request.status != "pending":
         raise HTTPException(status_code=400, detail="Join request has already been processed")
 
-    join_request.status = "approved"  # ตั้งสถานะให้เป็น approved
-    join_request.updated_at = datetime.utcnow()
+    if decision.is_approved:
+        join_request.status = "approved"  # เปลี่ยนสถานะเป็น approved
+
+        # เพิ่ม user_id และ item_id ลงใน item_people
+        new_item_people = models.ItemPeople(
+            people_id=current_user.id,
+            item_id=item_id,
+        )
+        session.add(new_item_people)
+    else:
+        join_request.status = "rejected"  # เปลี่ยนสถานะเป็น rejected
     
+    join_request.updated_at = datetime.now()
     await session.commit()
     await session.refresh(join_request)
     
-    return {"message": "Join request approved successfully", "request": join_request}
+    message = "Join request approved successfully" if decision.is_approved else "Join request rejected successfully"
+    
+    return {"message": message, "request": join_request}
+
+
+
+
+
 
