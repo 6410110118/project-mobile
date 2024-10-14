@@ -1,9 +1,11 @@
 from datetime import datetime
 from typing import Optional
+from pydantic import BaseModel
 from sqlmodel import Field, Relationship, SQLModel
 
-
-
+class JoinRequestDecision(BaseModel):
+    is_approved: bool
+    
 class JoinRequest(SQLModel, table=True):
     __tablename__ = "join_requests"
     id: Optional[int] = Field(default=None, primary_key=True)
