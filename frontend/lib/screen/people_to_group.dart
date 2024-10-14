@@ -13,7 +13,6 @@ class _GroupPeoplePageState extends State<GroupPeoplePage> {
   @override
   void initState() {
     super.initState();
-    // เริ่มต้นไม่ต้องตั้งค่าอะไรที่นี่
   }
 
   @override
@@ -22,8 +21,6 @@ class _GroupPeoplePageState extends State<GroupPeoplePage> {
     final args = ModalRoute.of(context)?.settings.arguments;
     if (args != null) {
       groupId = args as int;
-
-      // เรียก FetchGroupPeople ที่นี่
       context.read<GroupBloc>().add(FetchGroupPeople(groupId));
     }
   }
@@ -32,34 +29,94 @@ class _GroupPeoplePageState extends State<GroupPeoplePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('People in Group'),
+        title: const Text(
+          'People in Group',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: const Color.fromARGB(255, 32, 86, 137), // สีหลักของแอป
+        centerTitle: true,
+        elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.white), // ปุ่มลูกศรย้อนกลับสีขาว
           onPressed: () {
-            Navigator.pop(context, groupId); // ส่งกลับ groupId เมื่อกดปุ่มย้อนกลับ
+            Navigator.pop(context); // ย้อนกลับไปหน้า Group List
           },
         ),
       ),
+      backgroundColor: const Color(0xFFF6F7F0), // สีพื้นหลังเบจอ่อน
       body: BlocBuilder<GroupBloc, GroupState>(
         builder: (context, state) {
           if (state is GroupPeopleLoading) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (state is GroupPeopleLoaded) {
-            // แก้ไขการแสดงผลเพื่อหลีกเลี่ยงค่าซ้ำ
-            final uniquePeople = state.people.toSet().toList(); // ลบค่าซ้ำ
+            // ลบค่าซ้ำ
+            final uniquePeople = state.people.toSet().toList();
+
+            if (uniquePeople.isEmpty) {
+              return const Center(
+                child: Text(
+                  'No people available in this group.',
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+              );
+            }
 
             return ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               itemCount: uniquePeople.length,
               itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(uniquePeople[index].firstname ?? 'Unnamed'),
+                return Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  elevation: 4,
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      radius: 24,
+                      backgroundColor: const Color.fromARGB(255, 32, 86, 137),
+                      child: Text(
+                        '${index + 1}', // แสดงลำดับสมาชิก
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    title: Text(
+                      uniquePeople[index].firstname ?? 'Unnamed',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Color.fromARGB(255, 32, 86, 137),
+                      ),
+                    ),
+                    subtitle: const Text(
+                      'Member', // ระบุประเภทของสมาชิก
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ),
                 );
               },
             );
           } else if (state is GroupPeopleError) {
-            return Center(child: Text(state.message));
+            return Center(
+              child: Text(
+                state.message,
+                style: const TextStyle(color: Colors.red),
+              ),
+            );
           }
-          return Center(child: Text('No data available.'));
+          return const Center(
+            child: Text(
+              'No data available.',
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+          );
         },
       ),
     );
