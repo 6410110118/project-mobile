@@ -23,7 +23,16 @@ class _TripHomeState extends State<TripHome> {
         ),
       ],
       child: Scaffold(
-        appBar: null, // ปิด AppBar
+        appBar: AppBar(
+          title: const Text('Home',
+              style: TextStyle(
+                color: Colors.white, // เปลี่ยนสีชื่อเป็นสีขาว
+                fontWeight: FontWeight.bold,
+              )),
+          backgroundColor: const Color.fromARGB(255, 32, 86, 137),
+          centerTitle: true,
+          automaticallyImplyLeading: false, // เอาลูกศรย้อนกลับออก
+        ),
         backgroundColor: const Color(0xFFF6F7F0), // สีพื้นหลัง
         body: BlocBuilder<TripBloc, TripState>(builder: (context, tripState) {
           if (tripState is TripLoading) {
@@ -229,7 +238,7 @@ class _TripHomeState extends State<TripHome> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          '$formattedStartTime – $formattedEndTime',
+                          '$formattedStartTime - $formattedEndTime',
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.grey[700],
