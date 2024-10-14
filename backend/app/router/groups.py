@@ -12,39 +12,48 @@ import math
 
 router = APIRouter(prefix="/groups", tags=["groups"])
 
-SIZE_PER_PAGE = 50
+SIZE_PER_PAGE = 10
 @router.get("")
 async def read_group(
     session: Annotated[AsyncSession, Depends(models.get_session)],
-    current_user: models.User = Depends(deps.get_current_user),
     page: int = 1,
-    
-) -> models.GroupList:
-    dbleader = (await session.exec(
-        select(models.DBLeader).where(models.DBLeader.user_id == current_user.id)
-    )).first()
+    current_user: models.User = Depends(deps.get_current_user),
+    ) -> models.GroupList:
+        dbleader = (await session.exec(
+            select(models.DBLeader).where(models.DBLeader.user_id == current_user.id)
+        )).one_or_none()
+        print("current_user.id", current_user.id)
+        print("dbleader", dbleader)
 
-    query = select(models.DBGroup).where(models.DBGroup.leader_id == current_user.id)
-    result = await session.exec(
-        query.offset((page - 1) * SIZE_PER_PAGE).limit(SIZE_PER_PAGE)
-    )
-    groups = result.all() 
-    
-    
-    
 
-    page_count = int(
-        math.ceil(
-            (await session.exec(select(func.count(models.DBGroup.id)))).first()
-            / SIZE_PER_PAGE
+        if not dbleader:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Leader not found",
+            )
+
+        query = select(models.DBGroup).where(models.DBGroup.leader_id== dbleader.id)
+        print("query", query)
+        result = await session.exec(
+            query.offset((page - 1) * SIZE_PER_PAGE).limit(SIZE_PER_PAGE)
         )
-    )
+        print('result', result)
+        groups = result.all()
+        print("groups", groups)
 
-    print("page_count", page_count)
-    print("groups", groups)
-    return models.GroupList.from_orm(
-        dict(groups=groups, page_count=page_count, page=page, size_per_page=SIZE_PER_PAGE)
-    )
+
+        page_count = int(
+            math.ceil(
+                (await session.exec(select(func.count(models.DBGroup.id)))).first()
+                / SIZE_PER_PAGE
+            )
+        )
+
+        print("page_count", page_count)
+        print("groups", groups)
+        return models.GroupList.from_orm(
+            dict(groups=groups, page_count=page_count, page=page, size_per_page=SIZE_PER_PAGE)
+        )
 
 
 @router.post("")
