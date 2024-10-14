@@ -24,13 +24,16 @@ class TripRepository {
 
       if (response.statusCode == 200) {
         print('Response data: ${response.data}');
-        
+
         // ตรวจสอบว่าข้อมูลเป็น List หรือ Map
         if (response.data is Map<String, dynamic>) {
-          final List<dynamic> tripsJson = response.data['items']; // ใช้ชื่อคีย์ที่ถูกต้อง
+          final List<dynamic> tripsJson =
+              response.data['items']; // ใช้ชื่อคีย์ที่ถูกต้อง
           return tripsJson.map((tripJson) => Trip.fromJson(tripJson)).toList();
         } else if (response.data is List<dynamic>) {
-          return (response.data as List<dynamic>).map((tripJson) => Trip.fromJson(tripJson)).toList();
+          return (response.data as List<dynamic>)
+              .map((tripJson) => Trip.fromJson(tripJson))
+              .toList();
         } else {
           throw Exception('Unexpected data format');
         }
@@ -41,8 +44,8 @@ class TripRepository {
       throw Exception('Failed to fetch trips: $e');
     }
   }
-  Future<void> postTrip(Trip trip) async{
 
+  Future<void> postTrip(Trip trip) async {
     try {
       final token = await tokenStorage.getToken();
       final response = await dio.post(
@@ -55,17 +58,18 @@ class TripRepository {
           },
         ),
       );
-      
-      if(response.statusCode == 200){
+
+      if (response.statusCode == 200) {
         print('Trip posted successfully: ${response.data}');
-      }else{
+      } else {
         throw Exception('Failed to post trip: ${response.data}');
       }
-    }catch(e){
+    } catch (e) {
       print('Error while posting trip: $e');
     }
   }
-   Future<void> joinTrip(String tripId) async {
+
+  Future<void> joinTrip(String tripId) async {
     try {
       final token = await tokenStorage.getToken();
       final response = await dio.post(
@@ -88,5 +92,4 @@ class TripRepository {
       throw Exception('Error while joining trip: $e');
     }
   }
-
 }
