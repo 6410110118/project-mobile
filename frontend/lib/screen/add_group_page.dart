@@ -35,17 +35,40 @@ class _AddGroupPageState extends State<AddGroupPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add New Group'),
+        title: const Text(
+          'Add New Group',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: const Color.fromARGB(255, 32, 86, 137),
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white), // ปรับลูกศรเป็นสีขาว
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
       ),
+      backgroundColor: const Color(0xFFF6F7F0),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: Column(
-            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               TextFormField(
-                decoration: InputDecoration(labelText: 'Group Name'),
+                decoration: InputDecoration(
+                  labelText: 'Group Name',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  fillColor: Colors.white,
+                  filled: true,
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a group name';
@@ -56,33 +79,48 @@ class _AddGroupPageState extends State<AddGroupPage> {
                   groupName = value;
                 },
               ),
+              const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                    child: TextButton(
+                    child: ElevatedButton(
                       onPressed: () => _selectDate(context, true),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color.fromARGB(254, 26, 25, 86), // ปรับสีให้เหมือนกัน
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
                       child: Text(
                         startDate == null
                             ? 'Select Start Date'
                             : 'Start Date: ${startDate!.toLocal()}'.split(' ')[0],
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ),
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Expanded(
-                    child: TextButton(
+                    child: ElevatedButton(
                       onPressed: () => _selectDate(context, false),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color.fromARGB(254, 26, 25, 86), // ปรับสีให้เหมือนกัน
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
                       child: Text(
                         endDate == null
                             ? 'Select End Date'
                             : 'End Date: ${endDate!.toLocal()}'.split(' ')[0],
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
@@ -93,11 +131,25 @@ class _AddGroupPageState extends State<AddGroupPage> {
                         endDate: endDate,
                       ),
                     );
-                     
+
                     Navigator.pop(context, true);
                   }
                 },
-                child: Text('Add Group'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 32, 86, 137),
+                  padding: const EdgeInsets.symmetric(vertical: 18),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text(
+                  'Add Group',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
               ),
             ],
           ),

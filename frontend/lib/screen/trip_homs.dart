@@ -129,10 +129,10 @@ class _TripHomeState extends State<TripHome> {
 
   List<Widget> _buildStoryItems() {
     List<Map<String, String>> stories = [
-      {'image': 'assets/images/start.jpg'},
-      {'image': 'assets/images/start.jpg'},
-      {'image': 'assets/images/start.jpg'},
-      {'image': 'assets/images/start.jpg'},
+      {'image': 'assets/images/1.jpg'},
+      {'image': 'assets/images/2.jpg'},
+      {'image': 'assets/images/3.jpg'},
+      {'image': 'assets/images/4.jpg'},
     ];
 
     return stories.map((story) {
