@@ -23,20 +23,8 @@ class _TripHomeState extends State<TripHome> {
         ),
       ],
       child: Scaffold(
-        backgroundColor: const Color(0xFFF6F7F0),
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: const Color.fromARGB(255, 32, 86, 137),
-          title: const Text(
-            'Home',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          centerTitle: true,
-        ),
+        appBar: null, // ปิด AppBar
+        backgroundColor: const Color(0xFFF6F7F0), // สีพื้นหลัง
         body: BlocBuilder<TripBloc, TripState>(builder: (context, tripState) {
           if (tripState is TripLoading) {
             return const Center(child: CircularProgressIndicator());
@@ -88,7 +76,7 @@ class _TripHomeState extends State<TripHome> {
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 32, 86, 137),
+                      color: Color.fromARGB(255, 32, 86, 137), // สีหลักของแอป
                     ),
                   ),
                 ],
@@ -104,7 +92,8 @@ class _TripHomeState extends State<TripHome> {
             }
           }),
           IconButton(
-            icon: const Icon(Icons.search, color: Color.fromARGB(255, 32, 86, 137)),
+            icon: const Icon(Icons.search,
+                color: Color.fromARGB(255, 32, 86, 137)), // สีไอคอนค้นหา
             onPressed: () {
               Navigator.push(
                 context,
@@ -141,7 +130,7 @@ class _TripHomeState extends State<TripHome> {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Container(
-          width: 120,
+          width: 120, // ขนาดของ Story
           height: 150,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
@@ -163,7 +152,7 @@ class _TripHomeState extends State<TripHome> {
         style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.bold,
-          color: Color.fromARGB(255, 32, 86, 137),
+          color: Color.fromARGB(255, 32, 86, 137), // สีหลักของแอป
         ),
       ),
     );
@@ -247,6 +236,31 @@ class _TripHomeState extends State<TripHome> {
                           ),
                         ),
                       ],
+                    ),
+                    const SizedBox(height: 10),
+                    // ปุ่ม Join Trip
+                    BlocBuilder<GetMeBloc, GetMeState>(
+                      builder: (context, userState) {
+                        if (userState is GetMeLoaded &&
+                            userState.user.role != 'Leader') {
+                          return ElevatedButton(
+                            onPressed: () {
+                              BlocProvider.of<TripBloc>(context)
+                                  .add(JoinTripEvent(trip: trip));
+                            },
+                            child: const Text('Join Trip'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color.fromARGB(255, 137, 174, 207), // ปุ่มสีหลักของแอป
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 30, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                          );
+                        }
+                        return Container(); // ถ้า user เป็น Leader จะไม่แสดงปุ่ม Join
+                      },
                     ),
                   ],
                 ),
