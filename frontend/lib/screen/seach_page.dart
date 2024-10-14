@@ -3,7 +3,6 @@ import 'package:frontend/widgets/seach_body.dart';
 
 import '../models/models.dart';
 
-
 class SearchPage extends StatefulWidget {
   final List<Trip> trips; // รายการทริปทั้งหมด
 
@@ -25,7 +24,16 @@ class _SearchPageState extends State<SearchPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('ค้นหา'),
+        title: const Text(
+          'Search',
+          style: TextStyle(color: Colors.white),
+        ),
+        centerTitle: true, // จัดให้หัวข้ออยู่ตรงกลาง
+        backgroundColor: const Color.fromARGB(255, 32, 86, 137), // สีหลักของแอป
+        iconTheme: const IconThemeData(
+          color: Colors.white, // เปลี่ยนสีของไอคอนลูกศรย้อนกลับเป็นสีขาว
+        ),
+        elevation: 0, // ไม่มีเงาใต้ AppBar
       ),
       body: SearchBody(
         trips: filteredTrips, // ส่งทริปที่กรองแล้ว
