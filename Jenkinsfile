@@ -26,7 +26,7 @@ pipeline {
                 }
             }
             steps {
-                sh "pip3 install pytest  coverage"
+                sh "pip3 install -r requirements.txt"
                 sh "pytest --junitxml=result.xml"
             }
         }
