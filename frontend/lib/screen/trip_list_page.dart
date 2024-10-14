@@ -26,17 +26,28 @@ class TripListPage extends StatelessWidget {
       ],
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Trip List'),
+          title: const Text(
+            'Trip List',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.white, // เปลี่ยนสีตัวอักษรเป็นสีขาว
+            ),
+          ),
+          backgroundColor: const Color.fromARGB(255, 32, 86, 137), // ใช้สีน้ำเงินตามธีม
+          centerTitle: true,
+          elevation: 0,
+          automaticallyImplyLeading: false, // เอาลูกศรย้อนกลับออก
         ),
+        backgroundColor: const Color(0xFFF6F7F0), // พื้นหลังสีเบจอ่อน
         body: BlocBuilder<ItemPeopleBloc, ItemPeopleState>(
           builder: (context, itemPeopleState) {
             if (itemPeopleState is ItemPeopleLoading) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             } else if (itemPeopleState is ItemPeopleLoaded) {
               return BlocBuilder<TripBloc, TripState>(
                 builder: (context, tripState) {
                   if (tripState is TripLoading) {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   } else if (tripState is TripLoaded) {
                     // Ensure the list is properly cast to List<Trip> and filter using itemPeopleList
                     final List<Trip> trips = tripState.trips
@@ -51,14 +62,14 @@ class TripListPage extends StatelessWidget {
                   } else if (tripState is TripError) {
                     return Center(child: Text(tripState.message));
                   } else {
-                    return Center(child: Text('No trips found'));
+                    return const Center(child: Text('No trips found'));
                   }
                 },
               );
             } else if (itemPeopleState is ItemPeopleError) {
               return Center(child: Text(itemPeopleState.message));
             } else {
-              return Center(child: Text('Please wait...'));
+              return const Center(child: Text('Please wait...'));
             }
           },
         ),
@@ -92,27 +103,87 @@ class TripListPage extends StatelessWidget {
         );
       },
       child: Card(
-        margin: EdgeInsets.symmetric(vertical: 10),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        elevation: 4,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: Image.network(trip.imageUrl!),
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                  child: Image.network(
+                    trip.imageUrl!,
+                    height: 200,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Positioned(
+                  right: 10,
+                  top: 10,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.black54,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Text(
+                      'New',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
             Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     trip.tripName!,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 32, 86, 137), // ใช้สีน้ำเงินตามธีม
+                    ),
                   ),
-                  SizedBox(height: 5),
-                  Text('Start: $formattedStartTime'),
-                  Text('End: $formattedEndTime'),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      const Icon(Icons.calendar_today, color: Colors.black54),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Start: $formattedStartTime',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.black54, // สีข้อความย่อย
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Icon(Icons.event, color: Colors.black54),
+                      const SizedBox(width: 8),
+                      Text(
+                        'End: $formattedEndTime',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.black54,
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
