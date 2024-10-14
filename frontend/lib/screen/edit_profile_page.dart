@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/bloc/export_bloc.dart';
 import 'package:frontend/models/user.dart';
 
-
 class EditProfilePage extends StatefulWidget {
   final UserModel user;
 
@@ -15,7 +14,6 @@ class EditProfilePage extends StatefulWidget {
 
 class _EditProfilePageState extends State<EditProfilePage> {
   late TextEditingController _emailController;
-  
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
 
@@ -23,7 +21,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   void initState() {
     super.initState();
     _emailController = TextEditingController(text: widget.user.email);
-    
     _firstNameController = TextEditingController(text: widget.user.firstName);
     _lastNameController = TextEditingController(text: widget.user.lastName);
   }
@@ -31,7 +28,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void dispose() {
     _emailController.dispose();
-    
     _firstNameController.dispose();
     _lastNameController.dispose();
     super.dispose();
@@ -41,41 +37,109 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Profile'),
+        title: const Text(
+          'Edit Profile',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        iconTheme: IconThemeData(
+          color: Colors.white, // ปรับสีไอคอนย้อนกลับเป็นสีขาว
+        ),
+        backgroundColor: const Color.fromARGB(255, 32, 86, 137), // สีหลักของแอป
+        centerTitle: true,
       ),
-      body: Padding(
+
+      backgroundColor: const Color(0xFFF6F7F0), // สีพื้นหลังเบจอ่อน
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextField(
+            _buildTextField(
               controller: _emailController,
-              decoration: InputDecoration(labelText: 'Email'),
+              label: 'Email',
+              icon: Icons.email,
+              enabled: true, // ทำให้ฟิลด์นี้แก้ไขได้
             ),
-            
-            TextField(
+            const SizedBox(height: 20),
+            _buildTextField(
               controller: _firstNameController,
-              decoration: InputDecoration(labelText: 'First Name'),
+              label: 'First Name',
+              icon: Icons.person,
             ),
-            TextField(
+            const SizedBox(height: 20),
+            _buildTextField(
               controller: _lastNameController,
-              decoration: InputDecoration(labelText: 'Last Name'),
+              label: 'Last Name',
+              icon: Icons.person_outline,
             ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // ส่งข้อมูลกลับไปยัง ProfilePage ด้วย Bloc event
-                context.read<GetMeBloc>().add(EditProfile(
-                      email: _emailController.text,
-                      
-                      firstName: _firstNameController.text,
-                      lastName: _lastNameController.text,
-                      role: widget.user.role!, 
-                    ));
-                Navigator.pop(context); // กลับไปที่หน้า ProfilePage
-              },
-              child: Text('Save Changes'),
+            const SizedBox(height: 40),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  context.read<GetMeBloc>().add(EditProfile(
+                        email: _emailController.text,
+                        firstName: _firstNameController.text,
+                        lastName: _lastNameController.text,
+                        role: widget.user.role!,
+                      ));
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(
+                      255, 32, 86, 137), // ปุ่มสีหลักของแอป
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: const Text(
+                  'Save Changes',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    bool enabled = true,
+  }) {
+    return TextField(
+      controller: controller,
+      enabled: enabled,
+      style: const TextStyle(fontSize: 16),
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon,
+            color: const Color.fromARGB(
+                255, 32, 86, 137)), // สีไอคอนตรงกับสีหลักของแอป
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.grey),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.grey),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color.fromARGB(255, 32, 86, 137)),
         ),
       ),
     );
