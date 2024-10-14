@@ -262,19 +262,20 @@ async def read_people_in_group(
     # ตรวจสอบว่า current_user เป็นผู้สร้างกลุ่มหรือไม่
     return group
 
-async def get_people_in_group(session: AsyncSession, group_id: int) -> List[models.DBUser]:
-    # สร้าง query เพื่อดึงข้อมูลคนในกลุ่ม
-    statement = select(models.PeopleGroupLink).where(models.PeopleGroupLink.group_id == group_id,)
+@router.get("/people_id/")
+async def read_people(
+    
+    session: Annotated[AsyncSession, Depends(models.get_session)],
+    current_user: models.User = Depends(deps.get_current_user),
+) :
+    people_result = await session.exec(
+        select(models.DBGroup).distinct().where(models.PeopleGroupLink.user_id== current_user.id)
 
-    results = await session.exec(statement)
 
-    # สร้างรายชื่อคนจากผลลัพธ์
-    people = []
-    links = results.all()
-    for link in links:
-        user = await session.get(models.DBUser, link.people_id)  # แทนที่ด้วย ID ของคนที่คุณต้องการ
-        if user:
-            people.append(user)
+    )
+    people = people_result.all()
+    
+    if not people:
+        raise HTTPException(status_code=404, detail="People not found")
 
     return people
-
