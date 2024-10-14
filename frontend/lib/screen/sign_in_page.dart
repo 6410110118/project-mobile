@@ -1,7 +1,5 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
-
 
 class SignInPage extends StatelessWidget {
   @override
@@ -16,11 +14,10 @@ class SignInPage extends StatelessWidget {
           ),
           // Apply blur and color overlay
           BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+            filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.grey
-                    .withOpacity(0.3), // Grey overlay with 30% opacity
+                color: Colors.black.withOpacity(0.4), // เพิ่มการปิดทับสีเข้มขึ้น
               ),
             ),
           ),
@@ -28,42 +25,73 @@ class SignInPage extends StatelessWidget {
             padding: const EdgeInsets.all(24.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Text(
                   'Sign in and plan your trip',
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 26, // ขนาดตัวอักษรใหญ่ขึ้นเล็กน้อย
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
+                    shadows: [
+                      Shadow(
+                        offset: Offset(2, 2),
+                        blurRadius: 5,
+                        color: Colors.black45,
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 16),
                 const Text(
                   'By continuing, you accept our Terms of Use and Privacy Statement',
-                  style: const TextStyle(color: Colors.white),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 40),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.pushReplacementNamed(context, '/login');
                   },
-                  child: const Text('Sign in',
-                      style: TextStyle(color: Colors.white)),
+                  child: const Text(
+                    'Sign in',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.brown, // Button color
+                    backgroundColor: const Color.fromARGB(255, 32, 86, 137), // ปรับสีปุ่มให้เป็นสีหลักของแอป
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 32, vertical: 16),
+                      horizontal: 40,
+                      vertical: 16,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    elevation: 5,
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 TextButton(
                   onPressed: () {
                     Navigator.pushReplacementNamed(context, '/register');
                   },
-                  child: const Text("Don't have an account? Register now"),
+                  child: const Text(
+                    "Don't have an account? Register now",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
                 ),
-
               ],
             ),
           ),
