@@ -4,7 +4,6 @@ import 'package:frontend/repositories/profile_repository.dart';
 import 'user_event.dart';
 import 'user_state.dart';
 
-
 class GetMeBloc extends Bloc<GetMeEvent, GetMeState> {
   final ProfileRepository repository;
 
@@ -24,7 +23,6 @@ class GetMeBloc extends Bloc<GetMeEvent, GetMeState> {
         // เรียกใช้งาน editProfile จาก repository โดยส่งข้อมูลที่ต้องการแก้ไข
         await repository.updateUser(
           email: event.email,
-          
           firstName: event.firstName,
           lastName: event.lastName,
           role: event.role,
@@ -38,26 +36,23 @@ class GetMeBloc extends Bloc<GetMeEvent, GetMeState> {
     on<ChangePasswordEvent>((event, emit) async {
       emit(ChangePasswordLoading());
       try {
-        await repository.changePassword(event.currentPassword, event.newPassword);
+        await repository.changePassword(
+            event.currentPassword, event.newPassword);
         emit(ChangePasswordSuccess());
       } catch (error) {
         emit(ChangePasswordFailure(error.toString()));
       }
     });
-    on<UploadImageEvent>((event , emit) async {
+    on<UploadImageEvent>((event, emit) async {
       emit(ImageUploadLoading());
       try {
-        
-        await repository.uploadImage( event.imageData);
-        
+        await repository.uploadImage(event.imageData);
 
-        emit(ImageUploaded()); 
+        emit(ImageUploaded());
         add(FetchUserData());
       } catch (e) {
-        emit(ImageUploadFailure(e.toString())); 
+        emit(ImageUploadFailure(e.toString()));
       }
     });
-    
-    
   }
 }
