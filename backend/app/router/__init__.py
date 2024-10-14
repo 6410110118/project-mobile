@@ -1,3 +1,4 @@
+from . import item_people
 from . import users
 from . import authentications
 from . import items
@@ -9,6 +10,8 @@ from . import peoples
 from . import google_maps
 from . import messages
 from . import images
+
+
 def init_router(app):
 
     app.include_router(users.router)
@@ -22,3 +25,4 @@ def init_router(app):
     app.include_router(google_maps.router)
     app.include_router(messages.router)
     app.include_router(images.router)
+    app.include_router(item_people.router)
