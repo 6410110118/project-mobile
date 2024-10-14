@@ -6,7 +6,6 @@ export 'navigation/bloc.dart';
 export 'navigation/bloc_event.dart';
 export 'navigation/bloc_state.dart';
 
-
 // export 'changepassword/change_password_event.dart';
 // export 'changepassword/change_password_bloc.dart';
 // export 'changepassword/change_password_state.dart';
@@ -29,3 +28,11 @@ export 'login/login_state.dart';
 export 'user/user_bloc.dart';
 export 'user/user_event.dart';
 export 'user/user_state.dart';
+
+export 'joinrequest/join_request_bloc.dart';
+export 'joinrequest/join_request_event.dart';
+export 'joinrequest/join_request_state.dart';
+
+export 'itempeople/bloc.dart';
+export 'itempeople/event.dart';
+export 'itempeople/state.dart';
