@@ -9,9 +9,11 @@ class ChangePasswordPage extends StatefulWidget {
 
 class _ChangePasswordPageState extends State<ChangePasswordPage> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _currentPasswordController = TextEditingController();
+  final TextEditingController _currentPasswordController =
+      TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   @override
   void dispose() {
@@ -25,80 +27,84 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Change Password'),
+        title: const Text(
+          'Change Password',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        iconTheme: IconThemeData(
+          color: Colors.white, // ปรับสีไอคอนย้อนกลับเป็นสีขาว
+        ),
+        backgroundColor: const Color.fromARGB(255, 32, 86, 137), // สีหลักของแอป
         centerTitle: true,
       ),
+
+      backgroundColor: const Color(0xFFF6F7F0), // สีพื้นหลังเบจอ่อน
       body: BlocListener<GetMeBloc, GetMeState>(
         listener: (context, state) {
           if (state is ChangePasswordSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Password changed successfully!')),
+              const SnackBar(content: Text('Password changed successfully!')),
             );
-            // เปลี่ยนกลับไปหน้าก่อนหน้าเมื่อเปลี่ยนรหัสสำเร็จ
             Navigator.pop(context);
           } else if (state is ChangePasswordFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Failed to change password: ${state.error}')),
+              SnackBar(
+                  content: Text('Failed to change password: ${state.error}')),
             );
           }
         },
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextFormField(
+                _buildPasswordField(
                   controller: _currentPasswordController,
-                  decoration: InputDecoration(labelText: 'Current Password'),
-                  obscureText: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your current password';
-                    }
-                    return null;
-                  },
+                  label: 'Current Password',
                 ),
-                SizedBox(height: 20),
-                TextFormField(
+                const SizedBox(height: 20),
+                _buildPasswordField(
                   controller: _newPasswordController,
-                  decoration: InputDecoration(labelText: 'New Password'),
-                  obscureText: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a new password';
-                    } else if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
-                    }
-                    return null;
-                  },
+                  label: 'New Password',
                 ),
-                SizedBox(height: 20),
-                TextFormField(
+                const SizedBox(height: 20),
+                _buildPasswordField(
                   controller: _confirmPasswordController,
-                  decoration: InputDecoration(labelText: 'Confirm New Password'),
-                  obscureText: true,
-                  validator: (value) {
-                    if (value != _newPasswordController.text) {
-                      return 'Passwords do not match';
-                    }
-                    return null;
-                  },
+                  label: 'Confirm New Password',
                 ),
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        // เรียกใช้ Bloc เพื่อเปลี่ยนรหัสผ่าน
-                        BlocProvider.of<GetMeBloc>(context).add(ChangePasswordEvent(
+                        BlocProvider.of<GetMeBloc>(context)
+                            .add(ChangePasswordEvent(
                           currentPassword: _currentPasswordController.text,
                           newPassword: _newPasswordController.text,
                         ));
                       }
                     },
-                    child: Text('Change Password'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          const Color.fromARGB(255, 32, 86, 137), // ปุ่มสีหลัก
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 50, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: const Text(
+                      'Change Password',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -106,6 +112,39 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildPasswordField({
+    required TextEditingController controller,
+    required String label,
+  }) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.grey),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.grey),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color.fromARGB(255, 32, 86, 137)),
+        ),
+      ),
+      obscureText: true,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your password';
+        }
+        return null;
+      },
     );
   }
 }
