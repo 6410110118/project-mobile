@@ -56,7 +56,7 @@ async def create(
 
     # ตรวจสอบว่าเป็น leader หรือไม่
     result = await session.exec(
-        select(models.DBLeader).where(models.DBLeader.id == current_user.id)
+        select(models.DBLeader).where(models.DBLeader.user_id == current_user.id)
     )
     db_leader = result.one_or_none()
 
