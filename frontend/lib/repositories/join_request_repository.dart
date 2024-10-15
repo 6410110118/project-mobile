@@ -44,12 +44,10 @@ class JoinRequestRepository {
     try {
       final requestUrl = '/items/$itemId/join/$joinRequestId';
       print('Making PUT request to: ${dio.options.baseUrl}$requestUrl');
-      
+
       final response = await dio.put(
         requestUrl,
-        data: {
-          'is_approved': isApproved  // ส่งค่า is_approved ใน request body
-        },
+        data: {'is_approved': isApproved},
         options: Options(
           headers: {
             'Authorization': 'Bearer ${await tokenStorage.getToken()}',
