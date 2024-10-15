@@ -63,7 +63,8 @@ class SearchBody extends StatelessWidget {
                             contentPadding: const EdgeInsets.all(16.0),
                             leading: CircleAvatar(
                               radius: 30,
-                              backgroundColor: const Color.fromARGB(255, 32, 86, 137),
+                              backgroundColor:
+                                  const Color.fromARGB(255, 32, 86, 137),
                               child: Text(
                                 trip.tripName != null
                                     ? trip.tripName![0].toUpperCase()

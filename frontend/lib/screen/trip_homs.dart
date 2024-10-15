@@ -259,8 +259,8 @@ class _TripHomeState extends State<TripHome> {
                             },
                             child: const Text('Join Trip'),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color.fromARGB(
-                                  255, 137, 174, 207), // ปุ่มสีหลักของแอป
+                              backgroundColor:
+                                  const Color.fromARGB(255, 137, 174, 207),
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 30, vertical: 12),
                               shape: RoundedRectangleBorder(
