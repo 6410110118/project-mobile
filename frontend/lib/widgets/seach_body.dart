@@ -25,13 +25,13 @@ class SearchBody extends StatelessWidget {
                     color: Colors.grey.withOpacity(0.3),
                     spreadRadius: 2,
                     blurRadius: 5,
-                    offset: Offset(0, 3),
+                    offset: const Offset(0, 3),
                   ),
                 ],
               ),
               child: TextField(
                 decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.search,
+                  prefixIcon: const Icon(Icons.search,
                       color: Color.fromARGB(255, 32, 86, 137)),
                   hintText: 'ค้นหา...',
                   border: InputBorder.none,
@@ -63,7 +63,7 @@ class SearchBody extends StatelessWidget {
                             contentPadding: const EdgeInsets.all(16.0),
                             leading: CircleAvatar(
                               radius: 30,
-                              backgroundColor: Color.fromARGB(255, 32, 86, 137),
+                              backgroundColor: const Color.fromARGB(255, 32, 86, 137),
                               child: Text(
                                 trip.tripName != null
                                     ? trip.tripName![0].toUpperCase()
