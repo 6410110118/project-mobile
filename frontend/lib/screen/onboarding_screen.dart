@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:animate_do/animate_do.dart'; 
+import 'package:animate_do/animate_do.dart';
 import '../bloc/onboarding/onboarding_bloc.dart';
 import '../bloc/onboarding/onboarding_event.dart';
 import 'sign_in_page.dart';
@@ -19,17 +19,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   List<Map<String, String>> onboardingData = [
     {
       "title": "Welcome to Plan For Travel",
-      "text": "Discover amazing places and plan your trips effortlessly with our app.",
+      "text":
+          "Discover amazing places and plan your trips effortlessly with our app.",
       "image": "assets/images/welcome_scenery.jpg",
     },
     {
       "title": "Create Your Travel Plan",
-      "text": "Easily organize your itinerary, track your expenses, and never miss out on any activities.",
+      "text":
+          "Easily organize your itinerary, track your expenses, and never miss out on any activities.",
       "image": "assets/images/planning.jpg",
     },
     {
       "title": "Enjoy Your Journey",
-      "text": "Get ready to experience the best of your adventures with our well-designed travel guides.",
+      "text":
+          "Get ready to experience the best of your adventures with our well-designed travel guides.",
       "image": "assets/images/enjoyjourney.jpg",
     },
   ];
@@ -44,7 +47,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0xFF6A8FA4), Color(0xFF6A8FA4)], // ไล่สีพื้นหลัง Inky Blue ที่อ่อนกว่า
+              colors: [
+                Color(0xFF6A8FA4),
+                Color(0xFF6A8FA4)
+              ], // ไล่สีพื้นหลัง Inky Blue ที่อ่อนกว่า
             ),
           ),
           child: SafeArea(
@@ -77,14 +83,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   child: FadeInUp(
                     duration: const Duration(milliseconds: 500),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 32, 86, 137), // ใช้สีหลักของแอป
+                        backgroundColor: const Color.fromARGB(
+                            255, 32, 86, 137), // ใช้สีหลักของแอป
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 50, vertical: 15),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50),
                         ),
@@ -95,21 +104,28 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            _currentPage == onboardingData.length - 1 ? "Get Started" : "Next",
-                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            _currentPage == onboardingData.length - 1
+                                ? "Get Started"
+                                : "Next",
+                            style: const TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(width: 10),
                           Icon(
-                            _currentPage == onboardingData.length - 1 ? Icons.arrow_forward : Icons.arrow_right,
+                            _currentPage == onboardingData.length - 1
+                                ? Icons.arrow_forward
+                                : Icons.arrow_right,
                             size: 20,
                           ),
                         ],
                       ),
                       onPressed: () {
                         if (_currentPage == onboardingData.length - 1) {
-                          BlocProvider.of<OnboardingBloc>(context).add(CompleteOnboarding());
+                          BlocProvider.of<OnboardingBloc>(context)
+                              .add(CompleteOnboarding());
                           Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: (context) => SignInPage()),
+                            MaterialPageRoute(
+                                builder: (context) => SignInPage()),
                           );
                         } else {
                           _pageController.nextPage(
@@ -129,23 +145,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  Widget OnboardingPage({required String title, required String text, required String image}) {
+  Widget OnboardingPage(
+      {required String title, required String text, required String image}) {
     return FadeInUp(
-      duration: const Duration(milliseconds: 700), // เพิ่มความยาวของการเคลื่อนไหว
+      duration:
+          const Duration(milliseconds: 700), // เพิ่มความยาวของการเคลื่อนไหว
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center, // จัดให้อยู่ตรงกลางในแนวตั้ง
+          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
               flex: 7,
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30), // เพิ่มความโค้งให้มากขึ้น
+                  borderRadius: BorderRadius.circular(30),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.3), // เพิ่มความเข้มของเงา
+                      color: Colors.black.withOpacity(0.3),
                       spreadRadius: 6,
                       blurRadius: 30,
                       offset: const Offset(0, 15),
@@ -170,15 +188,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 30), // เพิ่มระยะห่าง
+            const SizedBox(height: 30),
             ElasticIn(
               child: Text(
                 title,
-                textAlign: TextAlign.center, // จัดให้อยู่ตรงกลาง
+                textAlign: TextAlign.center,
                 style: const TextStyle(
-                  fontSize: 32, // เพิ่มขนาดตัวอักษร
+                  fontSize: 32,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white, // เปลี่ยนสีตัวอักษรให้เป็นสีขาวเพื่อให้มองเห็นชัดเจนขึ้น
+                  color: Colors.white,
                 ),
               ),
             ),
@@ -189,10 +207,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 duration: const Duration(milliseconds: 500),
                 child: Text(
                   text,
-                  textAlign: TextAlign.center, // จัดให้อยู่ตรงกลาง
+                  textAlign: TextAlign.center,
                   style: const TextStyle(
-                    fontSize: 18, // เพิ่มขนาดตัวอักษร
-                    color: Colors.white70, // สีตัวอักษรเบาจากสีหลักเพื่อความคมชัด
+                    fontSize: 18,
+                    color: Colors.white70,
                   ),
                 ),
               ),

@@ -12,12 +12,11 @@ class SignInPage extends StatelessWidget {
             'assets/images/start.jpg',
             fit: BoxFit.cover,
           ),
-          // Apply blur and color overlay
           BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.4), // เพิ่มการปิดทับสีเข้มขึ้น
+                color: Colors.black.withOpacity(0.4),
               ),
             ),
           ),
@@ -30,7 +29,7 @@ class SignInPage extends StatelessWidget {
                 const Text(
                   'Sign in and plan your trip',
                   style: TextStyle(
-                    fontSize: 26, // ขนาดตัวอักษรใหญ่ขึ้นเล็กน้อย
+                    fontSize: 26,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                     shadows: [
@@ -66,7 +65,7 @@ class SignInPage extends StatelessWidget {
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 32, 86, 137), // ปรับสีปุ่มให้เป็นสีหลักของแอป
+                    backgroundColor: const Color.fromARGB(255, 32, 86, 137),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 40,
                       vertical: 16,

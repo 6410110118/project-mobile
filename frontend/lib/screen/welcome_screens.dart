@@ -25,15 +25,15 @@ class WelcomePage extends StatelessWidget {
             fit: StackFit.expand,
             children: [
               Image.asset(
-                'assets/images/start.jpg', 
+                'assets/images/start.jpg',
                 fit: BoxFit.cover,
               ),
               Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ImageIcon(
-                      AssetImage('assets/icon/flight.png'), 
+                    const ImageIcon(
+                      const AssetImage('assets/icon/flight.png'),
                       size: 128,
                       color: Colors.white,
                     ),
@@ -66,8 +66,9 @@ class WelcomePage extends StatelessWidget {
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
-                        foregroundColor: Color.fromARGB(255, 22, 8, 111),
-                        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                        foregroundColor: const Color.fromARGB(255, 32, 86, 137),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 50, vertical: 15),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
@@ -80,9 +81,11 @@ class WelcomePage extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        BlocProvider.of<OnboardingBloc>(context).add(StartOnboarding());
+                        BlocProvider.of<OnboardingBloc>(context)
+                            .add(StartOnboarding());
                         Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(builder: (context) => OnboardingScreen()),
+                          MaterialPageRoute(
+                              builder: (context) => const OnboardingScreen()),
                         );
                       },
                     ),

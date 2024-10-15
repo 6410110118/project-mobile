@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/repositories/people_repository.dart';
 import 'package:frontend/screen/people_to_group.dart';
 import 'package:frontend/widgets/add_new_people_to_group.dart';
-import 'package:frontend/screen/message_page.dart'; // ตรวจสอบให้แน่ใจว่าได้ import หน้า MessagePage
+import 'package:frontend/screen/message_page.dart';
 
 import '../bloc/export_bloc.dart';
 import '../models/groups.dart';
@@ -22,7 +22,7 @@ class _GroupListViewState extends State<GroupListView> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // เรียก FetchGroupEvent เพื่อโหลดข้อมูลกลุ่มเมื่อ widget ถูกสร้าง
+
     context.read<GroupBloc>().add(FetchGroupEvent());
   }
 
@@ -32,29 +32,29 @@ class _GroupListViewState extends State<GroupListView> {
       builder: (context, state) {
         print("Current State: $state");
         if (state is GroupStateLoading) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         } else if (state is GroupStateLoaded) {
           return _buildGroupList(state.groups.cast<Group>());
         } else if (state is GroupError) {
           return Center(child: Text('Error: ${state.message}'));
         } else {
-          return Center(child: Text('No groups available'));
+          return const Center(child: Text('No groups available'));
         }
       },
     );
   }
 
   Widget _buildGroupList(List<Group> groups) {
-    // กรองกลุ่มตาม searchQuery
     final filteredGroups = groups
         .where((group) =>
             group.name != null &&
-            group.name!.toLowerCase().contains(widget.searchQuery.toLowerCase()))
+            group.name!
+                .toLowerCase()
+                .contains(widget.searchQuery.toLowerCase()))
         .toList();
 
-    // ตรวจสอบว่ามีกลุ่มที่ตรงกับการค้นหาหรือไม่
     if (filteredGroups.isEmpty) {
-      return Center(child: Text('No results found for your search'));
+      return const Center(child: Text('No results found for your search'));
     }
 
     return Column(
@@ -65,7 +65,7 @@ class _GroupListViewState extends State<GroupListView> {
             alignment: Alignment.centerLeft,
             child: Text(
               '${filteredGroups.length} Results matched your search',
-              style: TextStyle(fontSize: 16),
+              style: const TextStyle(fontSize: 16),
             ),
           ),
         ),
@@ -92,7 +92,7 @@ class _GroupListViewState extends State<GroupListView> {
         ),
         elevation: 4,
         child: ListTile(
-          contentPadding: EdgeInsets.all(16.0),
+          contentPadding: const EdgeInsets.all(16.0),
           leading: ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
             child: imageUrl.isNotEmpty
@@ -102,16 +102,16 @@ class _GroupListViewState extends State<GroupListView> {
                     height: 100,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
-                      return Icon(Icons.broken_image, size: 60);
+                      return const Icon(Icons.broken_image, size: 60);
                     },
                   )
-                : Icon(Icons.broken_image, size: 60),
+                : const Icon(Icons.broken_image, size: 60),
           ),
           title: Text(group.name ?? 'Unnamed Group'),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               Text('Start date: ${group.startDate ?? 'N/A'}'),
               Text('End date: ${group.endDate ?? 'N/A'}'),
             ],
@@ -123,15 +123,15 @@ class _GroupListViewState extends State<GroupListView> {
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                icon: Icon(Icons.add),
+                icon: const Icon(Icons.add),
                 onPressed: () {
                   _showAddPeopleDialog(group.id);
                 },
               ),
               IconButton(
-                icon: Icon(Icons.message), // เพิ่มไอคอนข้อความ
+                icon: const Icon(Icons.message),
                 onPressed: () {
-                  _onMessageButtonTap(group.id); // เรียกฟังก์ชันใหม่
+                  _onMessageButtonTap(group.id);
                 },
               ),
             ],
@@ -142,20 +142,18 @@ class _GroupListViewState extends State<GroupListView> {
   }
 
   void _onGroupTap(int groupId) async {
-    // ใช้ await เพื่อรอการนำทางกลับ
     await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => GroupPeoplePage(),
         settings: RouteSettings(
-          arguments: groupId, // ส่ง groupId เป็น argument
+          arguments: groupId,
         ),
       ),
     );
 
-    // ตรวจสอบให้แน่ใจว่า context ยังอยู่ใน tree
     if (mounted) {
-      context.read<GroupBloc>().add(FetchGroupEvent()); // Fetch group event ใหม่
+      context.read<GroupBloc>().add(FetchGroupEvent());
     }
   }
 
@@ -163,8 +161,8 @@ class _GroupListViewState extends State<GroupListView> {
     showDialog(
       context: context,
       builder: (context) => AddPeopleDialog(
-        groupId: groupId, // ส่งค่า groupId
-        peopleRepository: PeopleRepository(), // ส่ง PeopleRepository
+        groupId: groupId,
+        peopleRepository: PeopleRepository(),
       ),
     );
   }
@@ -173,7 +171,8 @@ class _GroupListViewState extends State<GroupListView> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => MessagePage(groupId: groupId, token: widget.token), // ส่ง groupId และ token
+        builder: (context) =>
+            MessagePage(groupId: groupId, token: widget.token),
       ),
     );
   }
