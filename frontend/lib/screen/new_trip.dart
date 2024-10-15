@@ -130,7 +130,8 @@ class NewTripPage extends StatelessWidget {
                     Center(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(255, 32, 86, 137),
+                          backgroundColor:
+                              const Color.fromARGB(255, 32, 86, 137),
                           elevation: 4,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 60,

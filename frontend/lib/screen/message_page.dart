@@ -117,8 +117,8 @@ class _MessagePageState extends State<MessagePage> {
                       controller: _messageController,
                       decoration: const InputDecoration(
                         hintText: 'Enter your message',
-                        contentPadding: EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         border: InputBorder.none,
                       ),
                     ),

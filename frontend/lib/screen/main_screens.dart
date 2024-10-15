@@ -53,17 +53,15 @@ class MainScreen extends StatelessWidget {
                 return BlocBuilder<GetMeBloc, GetMeState>(
                   builder: (context, userState) {
                     if (userState is GetMeLoaded) {
-                      // ตรวจสอบเงื่อนไขว่าเป็น people หรือไม่
                       if (userState.user.role == 'People') {
                         return GroupPage(
                           token: '',
-                        ); // แสดงหน้า PeoplePage
+                        );
                       } else {
-                        return GroupScreen(); // แสดงหน้า GroupScreen ตามปกติ
+                        return GroupScreen();
                       }
                     }
-                    return const Center(
-                        child: CircularProgressIndicator()); // Loading state
+                    return const Center(child: CircularProgressIndicator());
                   },
                 );
 
