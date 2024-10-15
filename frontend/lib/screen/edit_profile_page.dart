@@ -45,13 +45,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
           ),
         ),
         iconTheme: IconThemeData(
-          color: Colors.white, // ปรับสีไอคอนย้อนกลับเป็นสีขาว
+          color: Colors.white,
         ),
-        backgroundColor: const Color.fromARGB(255, 32, 86, 137), // สีหลักของแอป
+        backgroundColor: const Color.fromARGB(255, 32, 86, 137),
         centerTitle: true,
       ),
-
-      backgroundColor: const Color(0xFFF6F7F0), // สีพื้นหลังเบจอ่อน
+      backgroundColor: const Color(0xFFF6F7F0),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -61,7 +60,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               controller: _emailController,
               label: 'Email',
               icon: Icons.email,
-              enabled: true, // ทำให้ฟิลด์นี้แก้ไขได้
+              enabled: true,
             ),
             const SizedBox(height: 20),
             _buildTextField(
@@ -88,8 +87,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(
-                      255, 32, 86, 137), // ปุ่มสีหลักของแอป
+                  backgroundColor: const Color.fromARGB(255, 32, 86, 137),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   shape: RoundedRectangleBorder(
@@ -124,9 +122,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       style: const TextStyle(fontSize: 16),
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon,
-            color: const Color.fromARGB(
-                255, 32, 86, 137)), // สีไอคอนตรงกับสีหลักของแอป
+        prefixIcon: Icon(icon, color: const Color.fromARGB(255, 32, 86, 137)),
         filled: true,
         fillColor: Colors.white,
         border: OutlineInputBorder(

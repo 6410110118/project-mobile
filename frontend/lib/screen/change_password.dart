@@ -35,13 +35,12 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           ),
         ),
         iconTheme: IconThemeData(
-          color: Colors.white, // ปรับสีไอคอนย้อนกลับเป็นสีขาว
+          color: Colors.white,
         ),
-        backgroundColor: const Color.fromARGB(255, 32, 86, 137), // สีหลักของแอป
+        backgroundColor: const Color.fromARGB(255, 32, 86, 137),
         centerTitle: true,
       ),
-
-      backgroundColor: const Color(0xFFF6F7F0), // สีพื้นหลังเบจอ่อน
+      backgroundColor: const Color(0xFFF6F7F0),
       body: BlocListener<GetMeBloc, GetMeState>(
         listener: (context, state) {
           if (state is ChangePasswordSuccess) {
@@ -90,8 +89,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          const Color.fromARGB(255, 32, 86, 137), // ปุ่มสีหลัก
+                      backgroundColor: const Color.fromARGB(255, 32, 86, 137),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 50, vertical: 15),
                       shape: RoundedRectangleBorder(
