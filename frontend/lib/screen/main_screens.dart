@@ -62,7 +62,7 @@ class MainScreen extends StatelessWidget {
                         return GroupScreen(); // แสดงหน้า GroupScreen ตามปกติ
                       }
                     }
-                    return Center(
+                    return const Center(
                         child: CircularProgressIndicator()); // Loading state
                   },
                 );
