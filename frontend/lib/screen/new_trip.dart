@@ -46,7 +46,7 @@ class NewTripPage extends StatelessWidget {
               color: Colors.white,
             ),
           ),
-          backgroundColor: Color.fromARGB(255, 32, 86, 137),
+          backgroundColor: const Color.fromARGB(255, 32, 86, 137),
           centerTitle: true,
           elevation: 0,
           automaticallyImplyLeading: false,
@@ -59,7 +59,7 @@ class NewTripPage extends StatelessWidget {
               if (state is TripSubmitted) {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => MainScreen()),
+                  MaterialPageRoute(builder: (context) => const MainScreen()),
                 );
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Trip submitted successfully!')),
@@ -130,7 +130,7 @@ class NewTripPage extends StatelessWidget {
                     Center(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color.fromARGB(255, 32, 86, 137),
+                          backgroundColor: const Color.fromARGB(255, 32, 86, 137),
                           elevation: 4,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 60,
@@ -193,7 +193,7 @@ class NewTripPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: BoxDecoration(
-        border: Border.all(color: Color(0xFF707070), width: 1.5),
+        border: Border.all(color: const Color(0xFF707070), width: 1.5),
         borderRadius: BorderRadius.circular(15),
         color: const Color(0xFFF6F7F0),
       ),
@@ -220,7 +220,7 @@ class NewTripPage extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(
-          color: Color(0xFF707070),
+          color: const Color(0xFF707070),
           width: 1.5,
         ),
         borderRadius: BorderRadius.circular(15),
@@ -239,7 +239,7 @@ class NewTripPage extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.calendar_today),
-            color: Color.fromARGB(255, 32, 86, 137),
+            color: const Color.fromARGB(255, 32, 86, 137),
             onPressed: onPressed,
           ),
         ],
