@@ -16,7 +16,7 @@ class LogoutDialog extends StatelessWidget {
         style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 20,
-          color: Color.fromARGB(255, 32, 86, 137), // สีหลักของแอป
+          color: Color.fromARGB(255, 32, 86, 137),
         ),
       ),
       content: const Text(
