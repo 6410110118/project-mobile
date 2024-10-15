@@ -18,28 +18,25 @@ class UploadImagePopup extends StatelessWidget {
                 await imagePicker.pickImage(source: ImageSource.gallery);
             if (pickedFile != null) {
               try {
-                
                 Uint8List imageData = await pickedFile.readAsBytes();
-                
+
                 BlocProvider.of<GetMeBloc>(context)
                     .add(UploadImageEvent(imageData));
-                Navigator.of(context).pop(); 
+                Navigator.of(context).pop();
               } catch (e) {
-                
                 ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Error: ${e.toString()}')));
               }
             } else {
-              
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(const SnackBar(content: Text('No image selected.')));
+              ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('No image selected.')));
             }
           },
           child: const Text('Select from Gallery'),
         ),
         TextButton(
           onPressed: () {
-            Navigator.of(context).pop(); 
+            Navigator.of(context).pop();
           },
           child: const Text('Cancel'),
         ),
