@@ -3,15 +3,15 @@ import 'package:frontend/widgets/detail_page.dart';
 import '../models/models.dart';
 
 class SearchBody extends StatelessWidget {
-  final List<Trip> trips; // รับ trips จาก SearchPage
-  final ValueChanged<String> onSearch; // ฟังก์ชันการค้นหา
+  final List<Trip> trips;
+  final ValueChanged<String> onSearch;
 
   SearchBody({required this.trips, required this.onSearch});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xFFF6F7F0), // สีพื้นหลังของทั้งหน้าเป็นสีเบจอ่อน
+      color: const Color(0xFFF6F7F0),
       child: Column(
         children: [
           Padding(
@@ -31,14 +31,15 @@ class SearchBody extends StatelessWidget {
               ),
               child: TextField(
                 decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.search, color: Color.fromARGB(255, 32, 86, 137)),
+                  prefixIcon: Icon(Icons.search,
+                      color: Color.fromARGB(255, 32, 86, 137)),
                   hintText: 'ค้นหา...',
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(vertical: 15.0),
                   hintStyle: TextStyle(color: Colors.grey[500]),
                 ),
                 onChanged: (value) {
-                  onSearch(value); // เรียกใช้ฟังก์ชันค้นหา
+                  onSearch(value);
                 },
               ),
             ),
@@ -57,7 +58,7 @@ class SearchBody extends StatelessWidget {
                             borderRadius: BorderRadius.circular(20.0),
                           ),
                           elevation: 4,
-                          color: Colors.white, // พื้นหลังของการ์ดเป็นสีขาว เพื่อให้เห็นความต่าง
+                          color: Colors.white,
                           child: ListTile(
                             contentPadding: const EdgeInsets.all(16.0),
                             leading: CircleAvatar(
@@ -88,7 +89,8 @@ class SearchBody extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => TripDetailPage(trip: trip),
+                                  builder: (context) =>
+                                      TripDetailPage(trip: trip),
                                 ),
                               );
                             },

@@ -18,19 +18,19 @@ class UploadImagePopup extends StatelessWidget {
                 await imagePicker.pickImage(source: ImageSource.gallery);
             if (pickedFile != null) {
               try {
-                // แปลงภาพเป็น Uint8List
+                
                 Uint8List imageData = await pickedFile.readAsBytes();
-                // สร้าง UploadImageEvent และส่งไปยัง Bloc
+                
                 BlocProvider.of<GetMeBloc>(context)
                     .add(UploadImageEvent(imageData));
-                Navigator.of(context).pop(); // ปิดป๊อปอัพ
+                Navigator.of(context).pop(); 
               } catch (e) {
-                // แสดงข้อความข้อผิดพลาด
+                
                 ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Error: ${e.toString()}')));
               }
             } else {
-              // แสดงข้อความเมื่อไม่มีการเลือกภาพ
+              
               ScaffoldMessenger.of(context)
                   .showSnackBar(SnackBar(content: Text('No image selected.')));
             }
@@ -39,7 +39,7 @@ class UploadImagePopup extends StatelessWidget {
         ),
         TextButton(
           onPressed: () {
-            Navigator.of(context).pop(); // ปิดป๊อปอัพ
+            Navigator.of(context).pop(); 
           },
           child: Text('Cancel'),
         ),
