@@ -3,7 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/screen/login.dart';
 
 class LogoutDialog extends StatelessWidget {
-  final FlutterSecureStorage storage = FlutterSecureStorage(); // Initialize storage
+  final FlutterSecureStorage storage = const FlutterSecureStorage(); // Initialize storage
 
   @override
   Widget build(BuildContext context) {
@@ -43,12 +43,12 @@ class LogoutDialog extends StatelessWidget {
 
             // Navigate to login page and remove all previous routes
             Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => Login()),
+              MaterialPageRoute(builder: (context) => const Login()),
               (Route<dynamic> route) => false,
             );
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color.fromARGB(255, 137, 32, 32),
+            backgroundColor: const Color.fromARGB(255, 137, 32, 32),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),

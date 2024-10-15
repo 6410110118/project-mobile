@@ -8,8 +8,8 @@ class UploadImagePopup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Upload Image'),
-      content: Text('Choose an image to upload.'),
+      title: const Text('Upload Image'),
+      content: const Text('Choose an image to upload.'),
       actions: [
         TextButton(
           onPressed: () async {
@@ -32,16 +32,16 @@ class UploadImagePopup extends StatelessWidget {
             } else {
               
               ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text('No image selected.')));
+                  .showSnackBar(const SnackBar(content: Text('No image selected.')));
             }
           },
-          child: Text('Select from Gallery'),
+          child: const Text('Select from Gallery'),
         ),
         TextButton(
           onPressed: () {
             Navigator.of(context).pop(); 
           },
-          child: Text('Cancel'),
+          child: const Text('Cancel'),
         ),
       ],
     );
