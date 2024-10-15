@@ -46,7 +46,7 @@ class _GroupScreenState extends State<GroupScreen> {
               listener: (context, state) {
                 if (state is GroupCreated) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Group added successfully!')),
+                    const SnackBar(content: Text('Group added successfully!')),
                   );
                   context.read<GroupBloc>().add(FetchGroupEvent());
                 }

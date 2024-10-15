@@ -72,7 +72,7 @@ class _AddGroupPageState extends State<AddGroupPage> {
                   filled: true,
                   contentPadding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Color.fromARGB(255, 32, 86, 137)),
+                    borderSide: const BorderSide(color: Color.fromARGB(255, 32, 86, 137)),
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
