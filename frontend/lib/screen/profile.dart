@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/widgets/upload_image_popup.dart';
@@ -32,14 +31,14 @@ class _ProfilePageState extends State<ProfilePage> {
           'Profile',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.white, 
+            color: Colors.white,
           ),
         ),
         centerTitle: true,
         automaticallyImplyLeading: false,
-        backgroundColor: const Color.fromARGB(255, 32, 86, 137), 
+        backgroundColor: const Color.fromARGB(255, 32, 86, 137),
       ),
-      backgroundColor: const Color(0xFFF6F7F0), 
+      backgroundColor: const Color(0xFFF6F7F0),
       body: BlocListener<GetMeBloc, GetMeState>(
         listener: (context, state) {
           if (state is ImageUploadLoading) {
@@ -78,7 +77,7 @@ class _ProfilePageState extends State<ProfilePage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _buildProfileCard(user),
-          const Spacer(), 
+          const Spacer(),
           _buildActionButtons(context, user),
         ],
       ),
@@ -87,9 +86,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildProfileCard(UserModel user) {
     return Container(
-      width: double.infinity, 
-      padding: const EdgeInsets.symmetric(vertical: 105.0, horizontal: 30.0), 
-      margin: const EdgeInsets.symmetric(horizontal: 16.0), 
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 105.0, horizontal: 30.0),
+      margin: const EdgeInsets.symmetric(horizontal: 16.0),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.0),
@@ -152,7 +151,7 @@ class _ProfilePageState extends State<ProfilePage> {
             });
           },
         ),
-        const SizedBox(height: 15), 
+        const SizedBox(height: 15),
         _buildProfileButton(
           icon: Icons.lock,
           label: 'Change Password',
@@ -167,7 +166,7 @@ class _ProfilePageState extends State<ProfilePage> {
             });
           },
         ),
-        const SizedBox(height: 15), 
+        const SizedBox(height: 15),
         _buildProfileButton(
           icon: Icons.photo,
           label: 'Upload Image',
@@ -180,7 +179,7 @@ class _ProfilePageState extends State<ProfilePage> {
             );
           },
         ),
-        const SizedBox(height: 15), 
+        const SizedBox(height: 15),
         _buildProfileButton(
           icon: Icons.logout,
           label: 'Logout',
@@ -203,7 +202,7 @@ class _ProfilePageState extends State<ProfilePage> {
     Color color = const Color.fromARGB(255, 32, 86, 137),
   }) {
     return SizedBox(
-      width: double.infinity, 
+      width: double.infinity,
       child: ElevatedButton.icon(
         icon: Icon(icon, color: Colors.white, size: 18),
         label: Text(

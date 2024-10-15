@@ -43,15 +43,15 @@ class NewTripPage extends StatelessWidget {
             'Create New Trip',
             style: TextStyle(
               fontWeight: FontWeight.w600,
-              color: Colors.white, // สีข้อความเป็นสีขาว
+              color: Colors.white,
             ),
           ),
-          backgroundColor: Color.fromARGB(255, 32, 86, 137), // สีหลักของแอป
-          centerTitle: true, // จัดตำแหน่งตรงกลาง
+          backgroundColor: Color.fromARGB(255, 32, 86, 137),
+          centerTitle: true,
           elevation: 0,
-          automaticallyImplyLeading: false, // เพิ่ม back button
+          automaticallyImplyLeading: false,
         ),
-        backgroundColor: const Color(0xFFF6F7F0), // สีพื้นหลังเบจอ่อน
+        backgroundColor: const Color(0xFFF6F7F0),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: BlocListener<TripBloc, TripState>(
@@ -83,8 +83,8 @@ class NewTripPage extends StatelessWidget {
                       'Trip Information',
                       style: TextStyle(
                         fontSize: 22,
-                        fontWeight: FontWeight.w700, 
-                        color: Color.fromARGB(255, 30, 23, 105), 
+                        fontWeight: FontWeight.w700,
+                        color: Color.fromARGB(255, 30, 23, 105),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -130,14 +130,14 @@ class NewTripPage extends StatelessWidget {
                     Center(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color.fromARGB(255, 32, 86, 137), 
-                          elevation: 4, 
+                          backgroundColor: Color.fromARGB(255, 32, 86, 137),
+                          elevation: 4,
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 60, 
+                            horizontal: 60,
                             vertical: 18,
                           ),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25), 
+                            borderRadius: BorderRadius.circular(25),
                           ),
                         ),
                         onPressed: () {
@@ -162,7 +162,7 @@ class NewTripPage extends StatelessWidget {
                           'Submit Trip',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Colors.white, 
+                            color: Colors.white,
                             fontSize: 18,
                           ),
                         ),
@@ -193,17 +193,17 @@ class NewTripPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: BoxDecoration(
-        border: Border.all(color: Color(0xFF707070), width: 1.5), 
-        borderRadius: BorderRadius.circular(15), 
-        color: const Color(0xFFF6F7F0), 
+        border: Border.all(color: Color(0xFF707070), width: 1.5),
+        borderRadius: BorderRadius.circular(15),
+        color: const Color(0xFFF6F7F0),
       ),
       child: TextField(
         controller: controller,
-        style: const TextStyle(fontSize: 16), 
+        style: const TextStyle(fontSize: 16),
         decoration: InputDecoration(
           labelText: label,
           labelStyle: const TextStyle(
-            color: Color.fromARGB(255, 32, 86, 137), 
+            color: Color.fromARGB(255, 32, 86, 137),
             fontSize: 16,
           ),
           floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -220,11 +220,11 @@ class NewTripPage extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(
-          color: Color(0xFF707070), 
+          color: Color(0xFF707070),
           width: 1.5,
         ),
-        borderRadius: BorderRadius.circular(15), 
-        color: const Color(0xFFF6F7F0), 
+        borderRadius: BorderRadius.circular(15),
+        color: const Color(0xFFF6F7F0),
       ),
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       child: Row(
@@ -233,13 +233,13 @@ class NewTripPage extends StatelessWidget {
           Text(
             '$label: $dateText',
             style: const TextStyle(
-              color: Color.fromARGB(255, 32, 86, 137), 
-              fontSize: 16, 
+              color: Color.fromARGB(255, 32, 86, 137),
+              fontSize: 16,
             ),
           ),
           IconButton(
             icon: const Icon(Icons.calendar_today),
-            color: Color.fromARGB(255, 32, 86, 137), 
+            color: Color.fromARGB(255, 32, 86, 137),
             onPressed: onPressed,
           ),
         ],

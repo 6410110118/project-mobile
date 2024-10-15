@@ -6,7 +6,7 @@ import '../bloc/message/message_state.dart';
 import '../repositories/websocket_repository.dart';
 
 class MessagePage extends StatefulWidget {
-  final int groupId; // ประกาศ groupId
+  final int groupId;
   final String token;
 
   const MessagePage({required this.groupId, required this.token, Key? key})
@@ -19,25 +19,23 @@ class MessagePage extends StatefulWidget {
 class _MessagePageState extends State<MessagePage> {
   late WebSocketBloc _webSocketBloc;
   late TextEditingController _messageController;
-  final List<String> _messages = []; // สร้าง List เพื่อเก็บข้อความ
+  final List<String> _messages = [];
 
   @override
   void initState() {
     super.initState();
-    // สร้าง WebSocketRepository และ WebSocketBloc สำหรับการเชื่อมต่อ WebSocket
+
     WebSocketRepository repository =
         WebSocketRepository(widget.groupId, widget.token);
     _webSocketBloc = WebSocketBloc(repository);
     _messageController = TextEditingController();
 
-    // เริ่มเชื่อมต่อ WebSocket
     _webSocketBloc.add(ConnectWebSocketEvent());
 
-    // ฟังข้อความที่ได้รับ
     _webSocketBloc.stream.listen((state) {
       if (state is WebSocketMessageReceived) {
         setState(() {
-          _messages.add(state.message); // เพิ่มข้อความที่ได้รับไปยัง List
+          _messages.add(state.message);
         });
       }
     });
@@ -45,8 +43,8 @@ class _MessagePageState extends State<MessagePage> {
 
   @override
   void dispose() {
-    _webSocketBloc.close(); // ปิด Bloc
-    _messageController.dispose(); // ปิด TextEditingController
+    _webSocketBloc.close();
+    _messageController.dispose();
     super.dispose();
   }
 
@@ -56,26 +54,25 @@ class _MessagePageState extends State<MessagePage> {
       appBar: AppBar(
         automaticallyImplyLeading: true,
         title: Text(
-          'Messages in Group ${widget.groupId}', // ใช้ groupId
-          style: TextStyle(
+          'Messages in Group ${widget.groupId}',
+          style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: const Color.fromARGB(255, 32, 86, 137), // สีหลักของแอป
+        backgroundColor: const Color.fromARGB(255, 32, 86, 137),
         centerTitle: true,
         elevation: 0,
-        iconTheme: IconThemeData(
-          color: Colors.white, // เปลี่ยนสีของไอคอนลูกศรเป็นสีขาว
+        iconTheme: const IconThemeData(
+          color: Colors.white,
         ),
       ),
-
-      backgroundColor: const Color(0xFFF6F7F0), // สีพื้นหลังเบจอ่อน
+      backgroundColor: const Color(0xFFF6F7F0),
       body: Column(
         children: [
           Expanded(
             child: ListView.builder(
-              itemCount: _messages.length, // ใช้จำนวนข้อความใน List
+              itemCount: _messages.length,
               itemBuilder: (context, index) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(
@@ -118,9 +115,9 @@ class _MessagePageState extends State<MessagePage> {
                     ),
                     child: TextField(
                       controller: _messageController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: 'Enter your message',
-                        contentPadding: const EdgeInsets.symmetric(
+                        contentPadding: EdgeInsets.symmetric(
                             horizontal: 16, vertical: 12),
                         border: InputBorder.none,
                       ),
@@ -135,12 +132,10 @@ class _MessagePageState extends State<MessagePage> {
                     final message = _messageController.text;
                     if (message.isNotEmpty) {
                       try {
-                        // ส่งข้อความไปยัง API พร้อม groupId และวันที่
                         await _webSocketBloc.repository.sendMessageToApi(
                             message, DateTime.now(), widget.groupId);
-                        _messageController.clear(); // ล้างข้อความใน TextField
+                        _messageController.clear();
                       } catch (e) {
-                        // จัดการข้อผิดพลาดที่เกิดขึ้น
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text("Error sending message: $e")),
                         );
