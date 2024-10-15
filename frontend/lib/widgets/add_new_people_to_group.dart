@@ -15,7 +15,7 @@ class AddPeopleDialog extends StatelessWidget {
 
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      title: Text(
+      title: const Text(
         'Add People to Group',
         style: TextStyle(
           fontWeight: FontWeight.bold,
@@ -26,22 +26,23 @@ class AddPeopleDialog extends StatelessWidget {
         controller: _controller,
         decoration: InputDecoration(
           labelText: 'Username',
-          labelStyle: TextStyle(color: Colors.blueGrey),
+          labelStyle: const TextStyle(color: Colors.blueGrey),
           hintText: 'Enter Username',
-          hintStyle: TextStyle(color: Colors.grey),
+          hintStyle: const TextStyle(color: Colors.grey),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
-            borderSide: BorderSide(color: Colors.blueGrey, width: 1.5),
+            borderSide: const BorderSide(color: Colors.blueGrey, width: 1.5),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
-            borderSide: BorderSide(color: Color.fromARGB(255, 32, 86, 137), width: 2),
+            borderSide: const BorderSide(
+                color: Color.fromARGB(255, 32, 86, 137), width: 2),
           ),
         ),
       ),
       actions: [
         TextButton(
-          child: Text(
+          child: const Text(
             'Cancel',
             style: TextStyle(
               color: Colors.redAccent,
@@ -54,12 +55,12 @@ class AddPeopleDialog extends StatelessWidget {
         ),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color.fromARGB(255, 32, 86, 137),
+            backgroundColor: const Color.fromARGB(255, 32, 86, 137),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
           ),
-          child: Text(
+          child: const Text(
             'Add',
             style: TextStyle(
               color: Colors.white,
@@ -69,18 +70,21 @@ class AddPeopleDialog extends StatelessWidget {
           onPressed: () async {
             final username = _controller.text.trim();
             if (username.isNotEmpty) {
-              final personId = await peopleRepository.getPeopleIdByUsername(username);
+              final personId =
+                  await peopleRepository.getPeopleIdByUsername(username);
               if (personId != null) {
-                context.read<GroupBloc>().add(AddPersonToGroupEvent(groupId: groupId, peopleId: personId));
+                context.read<GroupBloc>().add(AddPersonToGroupEvent(
+                    groupId: groupId, peopleId: personId));
                 Navigator.of(context).pop();
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('No user found with that username')),
+                  const SnackBar(
+                      content: Text('No user found with that username')),
                 );
               }
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Please enter a valid username')),
+                const SnackBar(content: Text('Please enter a valid username')),
               );
             }
           },
