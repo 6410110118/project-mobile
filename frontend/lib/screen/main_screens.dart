@@ -55,7 +55,9 @@ class MainScreen extends StatelessWidget {
                     if (userState is GetMeLoaded) {
                       // ตรวจสอบเงื่อนไขว่าเป็น people หรือไม่
                       if (userState.user.role == 'People') {
-                        return GroupPage(token: '',); // แสดงหน้า PeoplePage
+                        return GroupPage(
+                          token: '',
+                        ); // แสดงหน้า PeoplePage
                       } else {
                         return GroupScreen(); // แสดงหน้า GroupScreen ตามปกติ
                       }
@@ -115,7 +117,6 @@ class MainScreen extends StatelessWidget {
               ),
             ];
 
-            // Add the 'Requests' item to the bottom navigation bar if the user is a leader
             if (isLeader) {
               items.add(
                 const BottomNavigationBarItem(
@@ -127,12 +128,10 @@ class MainScreen extends StatelessWidget {
 
             int currentIndex = state.selectedIndex;
             if (currentIndex < 0 || currentIndex >= items.length) {
-              currentIndex = 0; // Ensures we always have a valid index
+              currentIndex = 0;
             }
-
-// If currentIndex exceeds the number of items, reset it to 0
             if (currentIndex >= items.length) {
-              currentIndex = 0; // This will ensure no out-of-range errors occur
+              currentIndex = 0;
             }
 
             return BottomNavigationBar(
