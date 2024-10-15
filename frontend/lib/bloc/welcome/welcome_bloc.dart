@@ -7,7 +7,7 @@ class TravelBloc extends Bloc<TravelEvent, TravelState> {
   TravelBloc() : super(TravelInitial()) {
     on<LoadTravelPage>((event, emit) async {
       // Simulate loading with a delay (5 seconds here)
-      await Future.delayed(Duration(
+      await Future.delayed(const Duration(
           seconds: 5)); // Keep this 5 seconds to display the first page longer
       emit(TravelLoaded());
     });
