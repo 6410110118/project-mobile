@@ -3,9 +3,9 @@ import 'package:frontend/services/dio_client.dart';
 import '../services/token_storage.dart';
 
 class UserRepository {
-  final Dio dio = DioClient.createDio(); // Create DioClient instance
+  final Dio dio = DioClient.createDio();
   final TokenStorage tokenStorage = TokenStorage();
-  
+
   Future<void> register({
     required String email,
     required String username,
@@ -15,15 +15,12 @@ class UserRepository {
     required String role,
     required String confirmPassword,
   }) async {
-    final String endpoint = role == 'Leader'
-        ? '/users/register_leader'
-        : '/users/register_people';
+    final String endpoint =
+        role == 'Leader' ? '/users/register_leader' : '/users/register_people';
 
     try {
-      // Retrieve the token
       final token = await tokenStorage.getToken();
 
-      // Prepare the data with user_info
       final Map<String, dynamic> data = {
         'user_info': {
           'email': email,
@@ -34,23 +31,20 @@ class UserRepository {
         },
       };
 
-      // Add leader_info if the role is Leader
       if (role == 'Leader') {
         data['leader_info'] = {
           'firstname': firstName,
           'lastname': lastName,
         };
-      }else{
+      } else {
         data['people_info'] = {
           'firstname': firstName,
           'lastname': lastName,
         };
       }
 
-      // Print data for debugging
       print('Data being sent: $data');
 
-      // Send the registration request
       final response = await dio.post(
         endpoint,
         data: data,

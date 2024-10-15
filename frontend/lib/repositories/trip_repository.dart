@@ -5,7 +5,7 @@ import '../models/models.dart';
 import '../services/token_storage.dart';
 
 class TripRepository {
-  final Dio dio = DioClient.createDio(); // เรียกใช้ DioClient
+  final Dio dio = DioClient.createDio();
   final TokenStorage tokenStorage = TokenStorage();
 
   Future<List<Trip>> fetchTrips() async {
@@ -25,10 +25,8 @@ class TripRepository {
       if (response.statusCode == 200) {
         print('Response data: ${response.data}');
 
-        // ตรวจสอบว่าข้อมูลเป็น List หรือ Map
         if (response.data is Map<String, dynamic>) {
-          final List<dynamic> tripsJson =
-              response.data['items']; // ใช้ชื่อคีย์ที่ถูกต้อง
+          final List<dynamic> tripsJson = response.data['items'];
           return tripsJson.map((tripJson) => Trip.fromJson(tripJson)).toList();
         } else if (response.data is List<dynamic>) {
           return (response.data as List<dynamic>)

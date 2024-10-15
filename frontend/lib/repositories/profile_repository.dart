@@ -1,16 +1,11 @@
-
-
-
-
 import 'dart:typed_data';
-
 import 'package:dio/dio.dart';
 import 'package:frontend/models/user.dart';
 import 'package:frontend/services/dio_client.dart';
 import 'package:frontend/services/token_storage.dart';
 
 class ProfileRepository {
-  final Dio dio = DioClient.createDio(); // เรียกใช้ DioClient
+  final Dio dio = DioClient.createDio();
   final TokenStorage tokenStorage = TokenStorage();
 
   Future<UserModel> fetchProfile() async {
@@ -30,8 +25,6 @@ class ProfileRepository {
       if (response.statusCode == 200) {
         print('Response data: ${response.data}');
         return UserModel.fromJson(response.data);
-
-        // ตรวจสอบว่าข้อมูลเป็น List หรือ Map
       } else {
         throw Exception('Failed to fetch user data');
       }
@@ -40,11 +33,8 @@ class ProfileRepository {
     }
   }
 
- 
-
   Future<void> updateUser({
     required String email,
-    
     required String firstName,
     required String lastName,
     required String role,
@@ -61,23 +51,24 @@ class ProfileRepository {
         ), // เปลี่ยนเป็น URL ของ API ที่ถูกต้อง
         data: {
           'email': email,
-          
           'first_name': firstName,
           'last_name': lastName,
           'role': role,
         },
       );
 
-      if(response.statusCode != 200){
-         throw Exception('Failed to update profile');
-      } 
+      if (response.statusCode != 200) {
+        throw Exception('Failed to update profile');
+      }
     } catch (e) {
       throw Exception('Failed to update profile: $e'); // แสดงข้อผิดพลาด
-       // คืนค่า false หากเกิดข้อผิดพลาด
+      // คืนค่า false หากเกิดข้อผิดพลาด
     }
   }
-  Future<void> changePassword(String currentPassword, String newPassword) async {
-    try{
+
+  Future<void> changePassword(
+      String currentPassword, String newPassword) async {
+    try {
       final token = await tokenStorage.getToken();
       final response = await dio.put(
         '/users/change_password',
@@ -91,18 +82,17 @@ class ProfileRepository {
           'current_password': currentPassword,
           'new_password': newPassword,
         },
-        
       );
       if (response.statusCode != 200) {
         throw Exception('Failed to change password: ${response.data}');
-      }else{
+      } else {
         print('Password changed successfully');
       }
-    }catch(e){
+    } catch (e) {
       throw Exception('Failed to change password: $e');
     }
   }
-  
+
   Future<void> uploadImage(Uint8List imageData) async {
     try {
       final token = await tokenStorage.getToken(); // ใช้ read แทน getToken()
@@ -135,5 +125,4 @@ class ProfileRepository {
       throw Exception('Failed to upload image: $e');
     }
   }
-  
 }
