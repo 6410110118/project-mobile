@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from typing import Any, Union
-from jose import jwt
+import jwt
 from googlemaps import Client
 from . import config
 from dotenv import load_dotenv

@@ -2,7 +2,7 @@ from fastapi import Depends, HTTPException, status, Path, Query
 from fastapi.security import OAuth2PasswordBearer
 
 import typing
-from jose import jwt
+import jwt
 from pydantic import ValidationError
 
 from . import models
