@@ -36,23 +36,22 @@ class _GroupPeoplePageState extends State<GroupPeoplePage> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: const Color.fromARGB(255, 32, 86, 137), // สีหลักของแอป
+        backgroundColor: const Color.fromARGB(255, 32, 86, 137),
         centerTitle: true,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white), // ปุ่มลูกศรย้อนกลับสีขาว
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context); // ย้อนกลับไปหน้า Group List
+            Navigator.pop(context);
           },
         ),
       ),
-      backgroundColor: const Color(0xFFF6F7F0), // สีพื้นหลังเบจอ่อน
+      backgroundColor: const Color(0xFFF6F7F0),
       body: BlocBuilder<GroupBloc, GroupState>(
         builder: (context, state) {
           if (state is GroupPeopleLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is GroupPeopleLoaded) {
-            // ลบค่าซ้ำ
             final uniquePeople = state.people.toSet().toList();
 
             if (uniquePeople.isEmpty) {
@@ -96,7 +95,7 @@ class _GroupPeoplePageState extends State<GroupPeoplePage> {
                       ),
                     ),
                     subtitle: const Text(
-                      'Member', // ระบุประเภทของสมาชิก
+                      'Member',
                       style: TextStyle(color: Colors.grey),
                     ),
                   ),
