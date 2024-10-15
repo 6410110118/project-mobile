@@ -48,7 +48,6 @@ class _GroupScreenState extends State<GroupScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Group added successfully!')),
                   );
-                  // โหลดข้อมูลกลุ่มใหม่หลังจากสร้างสำเร็จ
                   context.read<GroupBloc>().add(FetchGroupEvent());
                 }
               },
@@ -83,7 +82,8 @@ class _GroupScreenState extends State<GroupScreen> {
           style: const TextStyle(fontSize: 16),
           decoration: const InputDecoration(
             hintText: 'Search',
-            prefixIcon: Icon(Icons.search, color: Color.fromARGB(255, 32, 86, 137)),
+            prefixIcon:
+                Icon(Icons.search, color: Color.fromARGB(255, 32, 86, 137)),
             border: InputBorder.none,
           ),
         ),
@@ -101,7 +101,6 @@ class _GroupScreenState extends State<GroupScreen> {
             MaterialPageRoute(builder: (context) => AddGroupPage()),
           ).then((isGroupAdded) {
             if (isGroupAdded == true) {
-              // ถ้ามีกลุ่มที่ถูกเพิ่มใหม่ให้ทำการดึงข้อมูลใหม่
               context.read<GroupBloc>().add(FetchGroupEvent());
             }
           });
