@@ -5,13 +5,13 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 
 class WebSocketRepository {
   final WebSocketChannel channel;
-  final Dio dio = DioClient.createDio(); // เรียกใช้ DioClient
+  final Dio dio = DioClient.createDio();
   final TokenStorage tokenStorage = TokenStorage();
-  
 
   WebSocketRepository(int groupId, String token)
       : channel = WebSocketChannel.connect(
-          Uri.parse('ws://10.0.2.2:8000/groups/ws/groups/$groupId/messages/?token=$token'),
+          Uri.parse(
+              'ws://10.0.2.2:8000/groups/ws/groups/$groupId/messages/?token=$token'),
         );
 
   Stream<dynamic> get messages => channel.stream;
@@ -20,13 +20,14 @@ class WebSocketRepository {
     channel.sink.add(message);
   }
 
-  Future<void> sendMessageToApi(String content, DateTime? startDate ,  int groupId) async {
+  Future<void> sendMessageToApi(
+      String content, DateTime? startDate, int groupId) async {
     try {
       final token = await tokenStorage.getToken();
       final messageData = {
         'content': content,
-        'created_at': startDate?.toIso8601String() ?? DateTime.now().toIso8601String(),
-        
+        'created_at':
+            startDate?.toIso8601String() ?? DateTime.now().toIso8601String(),
       };
       final response = await dio.post(
         '/groups/messages/$groupId/',
@@ -39,10 +40,9 @@ class WebSocketRepository {
         ),
       );
 
-      // เช็คการตอบกลับจาก API
       if (response.statusCode == 200) {
         final sentMessage = response.data['content'];
-        sendMessage(sentMessage); // ส่งข้อความที่ส่งกลับไปยัง WebSocket
+        sendMessage(sentMessage); 
       } else {
         throw Exception('Failed to send message: ${response.statusCode}');
       }
