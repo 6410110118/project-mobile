@@ -4,7 +4,7 @@ import 'package:frontend/widgets/seach_body.dart';
 import '../models/models.dart';
 
 class SearchPage extends StatefulWidget {
-  final List<Trip> trips; // รายการทริปทั้งหมด
+  final List<Trip> trips;
 
   SearchPage({required this.trips});
 
@@ -17,9 +17,11 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    // กรองทริปตามคำค้นหา
     final filteredTrips = widget.trips.where((trip) {
-      return trip.tripName?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false;
+      return trip.tripName
+              ?.toLowerCase()
+              .contains(_searchQuery.toLowerCase()) ??
+          false;
     }).toList();
 
     return Scaffold(
@@ -28,18 +30,18 @@ class _SearchPageState extends State<SearchPage> {
           'Search',
           style: TextStyle(color: Colors.white),
         ),
-        centerTitle: true, // จัดให้หัวข้ออยู่ตรงกลาง
-        backgroundColor: const Color.fromARGB(255, 32, 86, 137), // สีหลักของแอป
+        centerTitle: true,
+        backgroundColor: const Color.fromARGB(255, 32, 86, 137),
         iconTheme: const IconThemeData(
-          color: Colors.white, // เปลี่ยนสีของไอคอนลูกศรย้อนกลับเป็นสีขาว
+          color: Colors.white,
         ),
-        elevation: 0, // ไม่มีเงาใต้ AppBar
+        elevation: 0,
       ),
       body: SearchBody(
-        trips: filteredTrips, // ส่งทริปที่กรองแล้ว
+        trips: filteredTrips,
         onSearch: (query) {
           setState(() {
-            _searchQuery = query; // อัปเดตคำค้นหา
+            _searchQuery = query;
           });
         },
       ),

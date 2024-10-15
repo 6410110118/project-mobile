@@ -30,18 +30,18 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
             color: Colors.white,
           ),
         ),
-        backgroundColor: const Color.fromARGB(255, 32, 86, 137), // สีหลักของแอป
+        backgroundColor: const Color.fromARGB(255, 32, 86, 137),
         centerTitle: true,
         elevation: 0,
       ),
-      backgroundColor: const Color(0xFFF6F7F0), // สีพื้นหลังเบจอ่อน
+      backgroundColor: const Color(0xFFF6F7F0),
       body: BlocListener<LoginBloc, LoginState>(
         listener: (context, state) {
           if (state is ResetPasswordSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text('Password reset email sent successfully'),
             ));
-            Navigator.pop(context); // กลับไปหน้าก่อนหน้าเมื่อสำเร็จ
+            Navigator.pop(context);
           } else if (state is ResetPasswordFailure) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text(state.error),
@@ -102,7 +102,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Please enter a valid email')),
+                      const SnackBar(
+                          content: Text('Please enter a valid email')),
                     );
                   }
                 },
@@ -157,7 +158,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
               ? Icon(icon, color: const Color.fromARGB(255, 32, 86, 137))
               : null,
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
         ),
       ),
     );

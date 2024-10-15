@@ -23,25 +23,24 @@ class RegisterPage extends StatelessWidget {
         userRepository: RepositoryProvider.of<UserRepository>(context),
       ),
       child: Scaffold(
-        backgroundColor: const Color(0xFFF6F7F0), // Beige white background color
+        backgroundColor: const Color(0xFFF6F7F0),
         appBar: AppBar(
-          // Add a back button using IconButton
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () {
-              Navigator.pushReplacementNamed(context, '/login'); // Navigate back to the previous page
+              Navigator.pushReplacementNamed(context, '/login');
             },
           ),
           title: const Text(
             'Register',
             style: TextStyle(
-              fontSize: 24, // Make the title larger
-              fontWeight: FontWeight.bold, // Make the title bold
-              color: Colors.white, // Change text color to white
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
           ),
-          centerTitle: true, // Center the title
-          backgroundColor: const Color.fromARGB(255, 32, 86, 137), // Match app theme color
+          centerTitle: true,
+          backgroundColor: const Color.fromARGB(255, 32, 86, 137),
         ),
         body: BlocListener<RegisterBloc, RegisterState>(
           listener: (context, state) {
@@ -66,10 +65,8 @@ class RegisterPage extends StatelessWidget {
                 padding: const EdgeInsets.all(16.0),
                 child: ListView(
                   children: [
-                    // Row with First Name and Last Name Labels and Fields
                     Row(
                       children: [
-                        // First Name Label and Field
                         Flexible(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,22 +83,24 @@ class RegisterPage extends StatelessWidget {
                               TextField(
                                 controller: _firstNameController,
                                 decoration: InputDecoration(
-                                  hintText: 'John', // Placeholder inside the box
+                                  hintText: 'John',
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8.0),
-                                    borderSide: const BorderSide(color: Color(0xFFE5E5E5)), // Light grey border color
+                                    borderSide: const BorderSide(
+                                        color: Color(0xFFE5E5E5)),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8.0),
-                                    borderSide: const BorderSide(color: Color.fromARGB(255, 32, 86, 137)),
+                                    borderSide: const BorderSide(
+                                        color:
+                                            Color.fromARGB(255, 32, 86, 137)),
                                   ),
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        const SizedBox(width: 16), // Space between fields
-                        // Last Name Label and Field
+                        const SizedBox(width: 16),
                         Flexible(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,14 +117,18 @@ class RegisterPage extends StatelessWidget {
                               TextField(
                                 controller: _lastNameController,
                                 decoration: InputDecoration(
-                                  hintText: 'Doe', // Placeholder inside the box
+                                  hintText: 'Doe',
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8.0),
-                                    borderSide: const BorderSide(color: Color(0xFFE5E5E5)), // Light grey border color
+                                    borderSide: const BorderSide(
+                                        color: Color(
+                                            0xFFE5E5E5)), // Light grey border color
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8.0),
-                                    borderSide: const BorderSide(color: Color.fromARGB(255, 32, 86, 137)),
+                                    borderSide: const BorderSide(
+                                        color:
+                                            Color.fromARGB(255, 32, 86, 137)),
                                   ),
                                 ),
                               ),
@@ -136,7 +139,6 @@ class RegisterPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
 
-                    // Username Label and Field
                     const Text(
                       'Username',
                       style: TextStyle(
@@ -149,20 +151,21 @@ class RegisterPage extends StatelessWidget {
                     TextField(
                       controller: _usernameController,
                       decoration: InputDecoration(
-                        hintText: 'Enter your Username', // Placeholder inside
+                        hintText: 'Enter your Username',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
-                          borderSide: const BorderSide(color: Color(0xFFE5E5E5)), // Light grey border color
+                          borderSide:
+                              const BorderSide(color: Color(0xFFE5E5E5)),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
-                          borderSide: const BorderSide(color: Color.fromARGB(255, 32, 86, 137)),
+                          borderSide: const BorderSide(
+                              color: Color.fromARGB(255, 32, 86, 137)),
                         ),
                       ),
                     ),
                     const SizedBox(height: 16),
 
-                    // Email Label and Field
                     const Text(
                       'E-mail',
                       style: TextStyle(
@@ -175,20 +178,21 @@ class RegisterPage extends StatelessWidget {
                     TextField(
                       controller: _emailController,
                       decoration: InputDecoration(
-                        hintText: 'Enter your email', // Placeholder inside
+                        hintText: 'Enter your email',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
-                          borderSide: const BorderSide(color: Color(0xFFE5E5E5)), // Light grey border color
+                          borderSide:
+                              const BorderSide(color: Color(0xFFE5E5E5)),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
-                          borderSide: const BorderSide(color: Color.fromARGB(255, 32, 86, 137)),
+                          borderSide: const BorderSide(
+                              color: Color.fromARGB(255, 32, 86, 137)),
                         ),
                       ),
                     ),
                     const SizedBox(height: 16),
 
-                    // Password Label and Field with Visibility Toggle
                     const Text(
                       'Password',
                       style: TextStyle(
@@ -202,14 +206,17 @@ class RegisterPage extends StatelessWidget {
                       controller: _passwordController,
                       obscureText: !_isPasswordVisible,
                       decoration: InputDecoration(
-                        hintText: '********', // Placeholder inside
+                        hintText: '********',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
-                          borderSide: const BorderSide(color: Color(0xFFE5E5E5)), // Light grey border color
+                          borderSide: const BorderSide(
+                              color:
+                                  Color(0xFFE5E5E5)), // Light grey border color
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
-                          borderSide: const BorderSide(color: Color.fromARGB(255, 32, 86, 137)),
+                          borderSide: const BorderSide(
+                              color: Color.fromARGB(255, 32, 86, 137)),
                         ),
                         suffixIcon: IconButton(
                           icon: Icon(
@@ -226,7 +233,6 @@ class RegisterPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
 
-                    // Confirm Password Label and Field with Visibility Toggle
                     const Text(
                       'Confirm Password',
                       style: TextStyle(
@@ -240,14 +246,17 @@ class RegisterPage extends StatelessWidget {
                       controller: _confirmPasswordController,
                       obscureText: !_isConfirmPasswordVisible,
                       decoration: InputDecoration(
-                        hintText: '********', // Placeholder inside
+                        hintText: '********',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
-                          borderSide: const BorderSide(color: Color(0xFFE5E5E5)), // Light grey border color
+                          borderSide: const BorderSide(
+                              color:
+                                  Color(0xFFE5E5E5)), // Light grey border color
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
-                          borderSide: const BorderSide(color: Color.fromARGB(255, 32, 86, 137)),
+                          borderSide: const BorderSide(
+                              color: Color.fromARGB(255, 32, 86, 137)),
                         ),
                         suffixIcon: IconButton(
                           icon: Icon(
@@ -257,14 +266,14 @@ class RegisterPage extends StatelessWidget {
                             color: Colors.white,
                           ),
                           onPressed: () {
-                            _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                            _isConfirmPasswordVisible =
+                                !_isConfirmPasswordVisible;
                           },
                         ),
                       ),
                     ),
                     const SizedBox(height: 16),
 
-                    // Role Dropdown Label and Field
                     const Text(
                       'Role',
                       style: TextStyle(
@@ -288,11 +297,14 @@ class RegisterPage extends StatelessWidget {
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
-                          borderSide: const BorderSide(color: Color(0xFFE5E5E5)), // Light grey border color
+                          borderSide: const BorderSide(
+                              color:
+                                  Color(0xFFE5E5E5)), // Light grey border color
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
-                          borderSide: const BorderSide(color: Color.fromARGB(255, 32, 86, 137)),
+                          borderSide: const BorderSide(
+                              color: Color.fromARGB(255, 32, 86, 137)),
                         ),
                       ),
                     ),
@@ -323,13 +335,12 @@ class RegisterPage extends StatelessWidget {
                       child: const Text(
                         'Create Account',
                         style: TextStyle(
-                          color: Colors.white, // Change button text color to white
+                          color: Colors.white,
                         ),
                       ),
                     ),
                     const SizedBox(height: 20),
 
-                    // Already have an account? Login Button
                     TextButton(
                       onPressed: () {
                         Navigator.pushReplacementNamed(context, '/login');
@@ -337,7 +348,7 @@ class RegisterPage extends StatelessWidget {
                       child: const Text(
                         'Already have an account? Login',
                         style: TextStyle(
-                          color: Color.fromARGB(255, 10, 8, 128), // Change link text color to white
+                          color: Color.fromARGB(255, 10, 8, 128),
                           fontSize: 16,
                           decoration: TextDecoration.underline,
                         ),

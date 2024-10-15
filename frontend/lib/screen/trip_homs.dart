@@ -26,14 +26,14 @@ class _TripHomeState extends State<TripHome> {
         appBar: AppBar(
           title: const Text('Home',
               style: TextStyle(
-                color: Colors.white, // เปลี่ยนสีชื่อเป็นสีขาว
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
               )),
           backgroundColor: const Color.fromARGB(255, 32, 86, 137),
           centerTitle: true,
-          automaticallyImplyLeading: false, // เอาลูกศรย้อนกลับออก
+          automaticallyImplyLeading: false,
         ),
-        backgroundColor: const Color(0xFFF6F7F0), // สีพื้นหลัง
+        backgroundColor: const Color(0xFFF6F7F0),
         body: BlocBuilder<TripBloc, TripState>(builder: (context, tripState) {
           if (tripState is TripLoading) {
             return const Center(child: CircularProgressIndicator());
@@ -85,7 +85,7 @@ class _TripHomeState extends State<TripHome> {
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 32, 86, 137), // สีหลักของแอป
+                      color: Color.fromARGB(255, 32, 86, 137),
                     ),
                   ),
                 ],
@@ -102,7 +102,7 @@ class _TripHomeState extends State<TripHome> {
           }),
           IconButton(
             icon: const Icon(Icons.search,
-                color: Color.fromARGB(255, 32, 86, 137)), // สีไอคอนค้นหา
+                color: Color.fromARGB(255, 32, 86, 137)),
             onPressed: () {
               Navigator.push(
                 context,
@@ -139,7 +139,7 @@ class _TripHomeState extends State<TripHome> {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Container(
-          width: 120, // ขนาดของ Story
+          width: 120,
           height: 150,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
@@ -161,7 +161,7 @@ class _TripHomeState extends State<TripHome> {
         style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.bold,
-          color: Color.fromARGB(255, 32, 86, 137), // สีหลักของแอป
+          color: Color.fromARGB(255, 32, 86, 137),
         ),
       ),
     );
@@ -259,7 +259,8 @@ class _TripHomeState extends State<TripHome> {
                             },
                             child: const Text('Join Trip'),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Color.fromARGB(255, 137, 174, 207), // ปุ่มสีหลักของแอป
+                              backgroundColor: Color.fromARGB(
+                                  255, 137, 174, 207), // ปุ่มสีหลักของแอป
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 30, vertical: 12),
                               shape: RoundedRectangleBorder(
@@ -268,7 +269,7 @@ class _TripHomeState extends State<TripHome> {
                             ),
                           );
                         }
-                        return Container(); // ถ้า user เป็น Leader จะไม่แสดงปุ่ม Join
+                        return Container();
                       },
                     ),
                   ],
