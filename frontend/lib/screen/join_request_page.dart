@@ -16,7 +16,7 @@ class JoinRequestsPage extends StatelessWidget {
           JoinRequestBloc(joinRequestRepository)..add(FetchJoinRequests()),
       child: Scaffold(
         appBar: AppBar(
-          automaticallyImplyLeading: false, // Remove back arrow
+          automaticallyImplyLeading: false,
           title: const Text(
             'Join Requests',
             style: TextStyle(

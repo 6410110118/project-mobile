@@ -30,8 +30,7 @@ class _LoginState extends State<Login> {
     return BlocProvider(
       create: (context) => LoginBloc(authRepository: AuthRepository()),
       child: Scaffold(
-        backgroundColor:
-            const Color(0xFFF6F7F0), // Beige white background color
+        backgroundColor: const Color(0xFFF6F7F0),
         body: BlocListener<LoginBloc, LoginState>(
           listener: (context, state) {
             if (state is LoginSuccess) {
@@ -114,9 +113,8 @@ class _LoginState extends State<Login> {
                                 color: Color.fromARGB(255, 32, 86, 137)),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                  color: Color(
-                                      0xFFE5E5E5)), // Light grey border color
+                              borderSide:
+                                  const BorderSide(color: Color(0xFFE5E5E5)),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
