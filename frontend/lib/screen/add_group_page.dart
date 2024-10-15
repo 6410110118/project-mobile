@@ -44,30 +44,37 @@ class _AddGroupPageState extends State<AddGroupPage> {
         ),
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 32, 86, 137),
-        elevation: 0,
+        elevation: 4,  // เพิ่มเงาให้ AppBar
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white), // ปรับลูกศรเป็นสีขาว
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
       ),
       backgroundColor: const Color(0xFFF6F7F0),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // เพิ่มการตกแต่งให้ TextFormField
               TextFormField(
                 decoration: InputDecoration(
                   labelText: 'Group Name',
+                  prefixIcon: const Icon(Icons.group, color: Color.fromARGB(255, 32, 86, 137)),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   fillColor: Colors.white,
                   filled: true,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color.fromARGB(255, 32, 86, 137)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -79,49 +86,76 @@ class _AddGroupPageState extends State<AddGroupPage> {
                   groupName = value;
                 },
               ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => _selectDate(context, true),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color.fromARGB(254, 26, 25, 86), // ปรับสีให้เหมือนกัน
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      child: Text(
-                        startDate == null
-                            ? 'Select Start Date'
-                            : 'Start Date: ${startDate!.toLocal()}'.split(' ')[0],
-                        style: const TextStyle(color: Colors.white),
-                      ),
+              const SizedBox(height: 20),
+              // เพิ่มการแยก Section ให้ชัดเจนขึ้น
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF0F3F5),
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: const Offset(0, 3),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => _selectDate(context, false),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color.fromARGB(254, 26, 25, 86), // ปรับสีให้เหมือนกัน
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: () => _selectDate(context, true),
+                            icon: const Icon(Icons.calendar_today, color: Colors.white),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color.fromARGB(254, 26, 25, 86),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 18),
+                              elevation: 2,
+                            ),
+                            label: Text(
+                              startDate == null
+                                  ? 'Select Start Date'
+                                  : 'Start Date: ${startDate!.toLocal()}'.split(' ')[0],
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          ),
                         ),
-                      ),
-                      child: Text(
-                        endDate == null
-                            ? 'Select End Date'
-                            : 'End Date: ${endDate!.toLocal()}'.split(' ')[0],
-                        style: const TextStyle(color: Colors.white),
-                      ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: () => _selectDate(context, false),
+                            icon: const Icon(Icons.calendar_today_outlined, color: Colors.white),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color.fromARGB(254, 26, 25, 86),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 18),
+                              elevation: 2,
+                            ),
+                            label: Text(
+                              endDate == null
+                                  ? 'Select End Date'
+                                  : 'End Date: ${endDate!.toLocal()}'.split(' ')[0],
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              const SizedBox(height: 16),
-              ElevatedButton(
+              const SizedBox(height: 20),
+              // ปุ่มเพิ่มกลุ่มพร้อมลูกเล่นแอนิเมชัน
+              ElevatedButton.icon(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     BlocProvider.of<GroupBloc>(context).add(
@@ -131,18 +165,19 @@ class _AddGroupPageState extends State<AddGroupPage> {
                         endDate: endDate,
                       ),
                     );
-
                     Navigator.pop(context, true);
                   }
                 },
+                icon: const Icon(Icons.add, color: Colors.white),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 32, 86, 137),
                   padding: const EdgeInsets.symmetric(vertical: 18),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(12),
                   ),
+                  elevation: 3,
                 ),
-                child: const Text(
+                label: const Text(
                   'Add Group',
                   style: TextStyle(
                     color: Colors.white,

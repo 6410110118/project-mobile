@@ -5,10 +5,9 @@ import 'package:frontend/services/dio_client.dart';
 import '../services/token_storage.dart';
 
 class GroupRepository {
-  final Dio dio = DioClient.createDio(); // เรียกใช้ DioClient
+  final Dio dio = DioClient.createDio();
   final TokenStorage tokenStorage = TokenStorage();
 
-  // ฟังก์ชันดึงข้อมูลกลุ่มที่มีอยู่
   Future<List<Group>> fetchGroups() async {
     try {
       final token = await tokenStorage.getToken();
@@ -46,8 +45,6 @@ class GroupRepository {
     }
   }
 
-  // ฟังก์ชันสำหรับสร้างกลุ่มใหม่
-
   Future<void> createGroup({
     String? name,
     DateTime? startDate,
@@ -56,18 +53,15 @@ class GroupRepository {
     try {
       final token = await tokenStorage.getToken();
 
-      // สร้างข้อมูลกลุ่มในรูปแบบ Map
       final groupData = {
         'name': name,
-        'start_date':
-            startDate?.toIso8601String(), // แปลง DateTime เป็น ISO 8601 String
-        'end_date':
-            endDate?.toIso8601String() // แปลง DateTime เป็น ISO 8601 String
+        'start_date': startDate?.toIso8601String(),
+        'end_date': endDate?.toIso8601String()
       };
 
       final response = await dio.post(
         '/groups',
-        data: groupData, // ส่งข้อมูลกลุ่มในรูปแบบ Map
+        data: groupData,
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -77,7 +71,6 @@ class GroupRepository {
       );
 
       if (response.statusCode == 200) {
-        // เปลี่ยนเป็น 201 สำหรับการสร้างที่สำเร็จ
         print('Group Created successfully: ${response.data}');
       } else {
         throw Exception('Failed to create group: ${response.data}');
@@ -89,10 +82,10 @@ class GroupRepository {
 
   Future<void> addPersonToGroup(int groupId, int userId) async {
     try {
-      print('Group ID: $groupId, User ID: $userId'); // พิมพ์ค่า ID
+      print('Group ID: $groupId, User ID: $userId');
       final token = await tokenStorage.getToken();
       final response = await dio.put(
-        '/groups/add_people_to_group/$groupId/$userId/', // ใช้ userId แทน peopleId
+        '/groups/add_people_to_group/$groupId/$userId/',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -107,7 +100,7 @@ class GroupRepository {
         throw Exception('Failed to add user to group: ${response.data}');
       }
     } catch (e) {
-      print(e); // พิมพ์ข้อผิดพลาด
+      print(e);
       throw Exception('Failed to add user to group: $e');
     }
   }
@@ -143,5 +136,4 @@ class GroupRepository {
       throw Exception('Failed to load people: $e');
     }
   }
-
 }
