@@ -3,7 +3,7 @@ import '../services/dio_client.dart';
 import '../services/token_storage.dart';
 
 class AuthRepository {
-  final Dio dio = DioClient.createDio(); // เรียกใช้ DioClient
+  final Dio dio = DioClient.createDio();
   final TokenStorage tokenStorage = TokenStorage();
 
   Future<String> login(String username, String password) async {
@@ -12,7 +12,7 @@ class AuthRepository {
         '/token',
         options: Options(
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded', // กำหนด Content-Type
+            'Content-Type': 'application/x-www-form-urlencoded',
           },
         ),
         data: {
@@ -25,7 +25,6 @@ class AuthRepository {
         final accessToken = response.data['access_token'];
         final refreshToken = response.data['refresh_token'];
 
-        // บันทึกทั้ง access token และ refresh token
         await tokenStorage.saveToken(accessToken);
         await tokenStorage.saveRefreshToken(refreshToken);
         return accessToken;
@@ -44,7 +43,8 @@ class AuthRepository {
         '/token/refresh',
         options: Options(
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded', // กำหนด Content-Type
+            'Content-Type':
+                'application/x-www-form-urlencoded', // กำหนด Content-Type
           },
         ),
         data: {
@@ -66,11 +66,11 @@ class AuthRepository {
 
   Future<void> logout() async {
     await tokenStorage.deleteToken();
-    await tokenStorage.deleteRefreshToken(); // ลบ refresh token ด้วย
-    // Add any additional logout logic here
+    await tokenStorage.deleteRefreshToken();
   }
-   Future<void> resetPassword(String email , String newPassword) async {
-    try{
+
+  Future<void> resetPassword(String email, String newPassword) async {
+    try {
       final response = await dio.put(
         '/users/reset-password',
         options: Options(
@@ -82,16 +82,15 @@ class AuthRepository {
           'email': email,
           'new_password': newPassword,
         },
-        
       );
 
       if (response.statusCode != 200) {
         throw Exception('Failed to reset password: ${response.data}');
-      }else{
+      } else {
         print('Password reset successfully');
       }
-    }catch(e){
+    } catch (e) {
       throw Exception('Failed to reset password: $e');
     }
-   }  
+  }
 }

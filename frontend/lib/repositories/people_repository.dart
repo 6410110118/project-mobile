@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:frontend/bloc/people/people_state.dart';
 import 'package:frontend/models/groups.dart';
-import 'package:frontend/models/user.dart';
 import 'package:frontend/services/dio_client.dart';
 import 'package:frontend/services/token_storage.dart';
 
@@ -30,7 +29,7 @@ class PeopleRepository {
       }
       throw Exception('Failed to fetch people: $e');
     }
-    return null; // คืนค่า null หากไม่พบ
+    return null;
   }
 
   Future<List<Group>> fetchGroup() async {
@@ -50,7 +49,8 @@ class PeopleRepository {
         print('Response data: ${response.data}');
 
         if (response.data is Map<String, dynamic>) {
-          final List<dynamic> groupsJson = response.data['people_group_links'] ?? [];
+          final List<dynamic> groupsJson =
+              response.data['people_group_links'] ?? [];
           return groupsJson
               .map((groupJson) => Group.fromJson(groupJson))
               .toList();
