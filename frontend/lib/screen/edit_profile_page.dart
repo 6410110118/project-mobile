@@ -44,7 +44,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             color: Colors.white,
           ),
         ),
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.white,
         ),
         backgroundColor: const Color.fromARGB(255, 32, 86, 137),

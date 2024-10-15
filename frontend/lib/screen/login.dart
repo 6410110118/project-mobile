@@ -37,13 +37,13 @@ class _LoginState extends State<Login> {
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
-                  return SuccessPopup(message: 'Login Success!');
+                  return const SuccessPopup(message: 'Login Success!');
                 },
               );
               Future.delayed(const Duration(seconds: 1), () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => MainScreen()),
+                  MaterialPageRoute(builder: (context) => const MainScreen()),
                 );
               });
             } else if (state is LoginFailure) {
@@ -126,7 +126,7 @@ class _LoginState extends State<Login> {
                                 passwordVisible
                                     ? Icons.visibility
                                     : Icons.visibility_off,
-                                color: Color.fromARGB(255, 32, 86, 137),
+                                color: const Color.fromARGB(255, 32, 86, 137),
                               ),
                               onPressed: () {
                                 setState(() {
