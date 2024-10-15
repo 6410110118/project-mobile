@@ -1,15 +1,15 @@
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/bloc/people/people_bloc.dart';
 import 'package:frontend/bloc/people/people_event.dart';
 import 'package:frontend/bloc/people/people_state.dart';
 import 'package:frontend/repositories/people_repository.dart';
-import 'package:frontend/screen/message_page.dart'; // import MessagePage
+import 'package:frontend/screen/message_page.dart'; 
 
 class GroupPage extends StatefulWidget {
-  final String token; // เพิ่มตัวแปร token
+  final String token;
 
-  GroupPage({required this.token}); // รับ token ผ่าน constructor
+  GroupPage({required this.token}); 
 
   @override
   _GroupPageState createState() => _GroupPageState();
@@ -50,83 +50,95 @@ class _GroupPageState extends State<GroupPage> {
             }
 
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
               child: ListView.builder(
                 itemCount: groups.length,
                 itemBuilder: (context, index) {
-                  final group = groups[index]; // กลุ่มแต่ละกลุ่ม
-                  final imageUrl = convertGiphyUrl(group.imageUrl); // แปลง URL ของ Giphy
+                  final group = groups[index]; 
+                  final imageUrl =
+                      convertGiphyUrl(group.imageUrl); 
 
-                  return GestureDetector( // ใช้ GestureDetector เพื่อรับการแตะ
-                    onTap: () {
-                      _onMessageButtonTap(group.id, widget.token); // ใช้ widget.token
-                    },
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
-                      elevation: 4,
-                      margin: const EdgeInsets.symmetric(vertical: 10),
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: imageUrl.isNotEmpty
-                                  ? Image.network(
-                                      imageUrl,
-                                      height: 120,
-                                      width: double.infinity,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (context, error, stackTrace) {
-                                        return const Icon(
-                                          Icons.broken_image,
-                                          size: 50,
-                                          color: Colors.grey,
-                                        ); // จัดการข้อผิดพลาดในการโหลดภาพ
-                                      },
-                                    )
-                                  : const Icon(
-                                      Icons.broken_image,
-                                      size: 50,
-                                      color: Colors.grey,
-                                    ), // แสดงไอคอนถ้า URL ไม่ถูกต้อง
+                  return Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    elevation: 4,
+                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: imageUrl.isNotEmpty
+                                ? Image.network(
+                                    imageUrl,
+                                    height: 120,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return const Icon(
+                                        Icons.broken_image,
+                                        size: 50,
+                                        color: Colors.grey,
+                                      );
+                                    },
+                                  )
+                                : const Icon(
+                                    Icons.broken_image,
+                                    size: 50,
+                                    color: Colors.grey,
+                                  ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            group.name ?? 'Unnamed Group',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromARGB(255, 32, 86, 137),
                             ),
-                            const SizedBox(height: 10),
-                            Text(
-                              group.name ?? 'Unnamed Group',
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              const Icon(Icons.calendar_today,
+                                  size: 16, color: Colors.grey),
+                              const SizedBox(width: 5),
+                              Text(
+                                'Start Date: ${group.startDate}',
+                                style: const TextStyle(color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 5),
+                          Row(
+                            children: [
+                              const Icon(Icons.event,
+                                  size: 16, color: Colors.grey),
+                              const SizedBox(width: 5),
+                              Text(
+                                'End Date: ${group.endDate}',
+                                style: const TextStyle(color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: IconButton(
+                              icon: const Icon(
+                                Icons.message,
                                 color: Color.fromARGB(255, 32, 86, 137),
                               ),
+                              onPressed: () {
+                                _onMessageButtonTap(group.id, widget.token);
+                              },
                             ),
-                            const SizedBox(height: 8),
-                            Row(
-                              children: [
-                                const Icon(Icons.calendar_today, size: 16, color: Colors.grey),
-                                const SizedBox(width: 5),
-                                Text(
-                                  'Start Date: ${group.startDate}',
-                                  style: const TextStyle(color: Colors.grey),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 5),
-                            Row(
-                              children: [
-                                const Icon(Icons.event, size: 16, color: Colors.grey),
-                                const SizedBox(width: 5),
-                                Text(
-                                  'End Date: ${group.endDate}',
-                                  style: const TextStyle(color: Colors.grey),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   );
@@ -142,12 +154,11 @@ class _GroupPageState extends State<GroupPage> {
     );
   }
 
-  // ฟังก์ชันในการจัดการการนำทางไปยัง MessagePage
   void _onMessageButtonTap(int groupId, String token) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => MessagePage(groupId: groupId, token: token), // ส่ง groupId และ token ไปยัง MessagePage
+        builder: (context) => MessagePage(groupId: groupId, token: token),
       ),
     );
   }
